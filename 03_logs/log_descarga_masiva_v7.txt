@@ -1,0 +1,2357 @@
+[2026-09-29 10:10:25] ============================================================
+[2026-09-29 10:10:25]  DESCARGA MASIVA DE PLIEGOS - VERSION v7 (CORREGIDA)
+[2026-09-29 10:10:25] ============================================================
+[2026-09-29 10:10:25] Leyendo Excel: D:\00_THESIS_ALAN_BRUCE\CORRER CÓDIGO PARA CONSULTAS Y OBSERVACIONES\03_resultados\BASE_FINAL_137_PROCESOS.xlsx
+[2026-09-29 10:10:25] Total de procesos: 137
+[2026-09-29 10:10:25] Procesos a procesar: 137
+[2026-09-29 10:10:28] 
+[1/137] Codigo: 653257 (anio base 2020)
+[2026-09-29 10:10:28]    >>> Probando anio 2020
+[2026-09-29 10:10:28]    [Intento] Codigo=653257, Anio=2020
+[2026-09-29 10:10:53]       Hay resultados. Buscando fila...
+[2026-09-29 10:10:54]       Fila encontrada en indice 36
+[2026-09-29 10:11:01]       Esperando que cargue la ficha...
+[2026-09-29 10:11:05]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:11:05]       *** ENCONTRADO PLIEGO en fila 88 ***
+[2026-09-29 10:11:05]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:11:05]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:11:05]       Enlace de descarga encontrado
+[2026-09-29 10:11:07]       Nombre del archivo descargado: 04122020_042744+-+pliegoabsolutorio+-+convocatoria+-+567474_20201204_162744_430.pdf
+[2026-09-29 10:11:07]       Archivo guardado: 653257.pdf
+[2026-09-29 10:11:07]       Verificando contenido del PDF...
+[2026-09-29 10:11:08]       OK - PDF verificado y guardado: 653257.pdf (tipo: PLIEGO)
+[2026-09-29 10:11:08]    <<< Resultado anio 2020: OK
+[2026-09-29 10:11:11] 
+[2/137] Codigo: 638506 (anio base 2020)
+[2026-09-29 10:11:11]    >>> Probando anio 2020
+[2026-09-29 10:11:11]    [Intento] Codigo=638506, Anio=2020
+[2026-09-29 10:11:34]       Hay resultados. Buscando fila...
+[2026-09-29 10:11:34]       Fila encontrada en indice 36
+[2026-09-29 10:11:41]       Esperando que cargue la ficha...
+[2026-09-29 10:11:45]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:11:46]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:11:46]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:11:46]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:11:46]       Enlace de descarga encontrado
+[2026-09-29 10:11:47]       Nombre del archivo descargado: 13082020_084754+-+pliegoabsolutorio+-+convocatoria+-+543648_20200813_204754_474.pdf
+[2026-09-29 10:11:48]       Archivo guardado: 638506.pdf
+[2026-09-29 10:11:48]       Verificando contenido del PDF...
+[2026-09-29 10:11:48]       OK - PDF verificado y guardado: 638506.pdf (tipo: PLIEGO)
+[2026-09-29 10:11:48]    <<< Resultado anio 2020: OK
+[2026-09-29 10:11:51] 
+[3/137] Codigo: 645854 (anio base 2020)
+[2026-09-29 10:11:51]    >>> Probando anio 2020
+[2026-09-29 10:11:51]    [Intento] Codigo=645854, Anio=2020
+[2026-09-29 10:12:14]       Hay resultados. Buscando fila...
+[2026-09-29 10:12:14]       Fila encontrada en indice 36
+[2026-09-29 10:12:21]       Esperando que cargue la ficha...
+[2026-09-29 10:12:25]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:12:26]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:12:26]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:12:26]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:12:26]       Enlace de descarga encontrado
+[2026-09-29 10:12:27]       Nombre del archivo descargado: 04092020_062348+-+pliegoabsolutorio+-+convocatoria+-+556111_20200904_182348_738.pdf
+[2026-09-29 10:12:27]       Archivo guardado: 645854.pdf
+[2026-09-29 10:12:27]       Verificando contenido del PDF...
+[2026-09-29 10:12:27]       OK - PDF verificado y guardado: 645854.pdf (tipo: PLIEGO)
+[2026-09-29 10:12:27]    <<< Resultado anio 2020: OK
+[2026-09-29 10:12:30] 
+[4/137] Codigo: 664728 (anio base 2020)
+[2026-09-29 10:12:30]    >>> Probando anio 2020
+[2026-09-29 10:12:30]    [Intento] Codigo=664728, Anio=2020
+[2026-09-29 10:12:53]       Hay resultados. Buscando fila...
+[2026-09-29 10:12:54]       Fila encontrada en indice 36
+[2026-09-29 10:13:01]       Esperando que cargue la ficha...
+[2026-09-29 10:13:05]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:13:05]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:13:05]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:13:05]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:13:05]       Enlace de descarga encontrado
+[2026-09-29 10:13:08]       Nombre del archivo descargado: 29102020_044825+-+pliegoabsolutorio+-+convocatoria+-+567724_20201029_164825_889.pdf
+[2026-09-29 10:13:08]       Archivo guardado: 664728.pdf
+[2026-09-29 10:13:08]       Verificando contenido del PDF...
+[2026-09-29 10:13:08]       OK - PDF verificado y guardado: 664728.pdf (tipo: PLIEGO)
+[2026-09-29 10:13:08]    <<< Resultado anio 2020: OK
+[2026-09-29 10:13:11] 
+[5/137] Codigo: 676061 (anio base 2020)
+[2026-09-29 10:13:11]    >>> Probando anio 2020
+[2026-09-29 10:13:11]    [Intento] Codigo=676061, Anio=2020
+[2026-09-29 10:13:34]       Hay resultados. Buscando fila...
+[2026-09-29 10:13:35]       Fila encontrada en indice 36
+[2026-09-29 10:13:42]       Esperando que cargue la ficha...
+[2026-09-29 10:13:46]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:13:46]       *** ENCONTRADO PLIEGO en fila 87 ***
+[2026-09-29 10:13:46]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:13:46]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:13:46]       Enlace de descarga encontrado
+[2026-09-29 10:13:47]       Nombre del archivo descargado: 08092020_111708+-+pliegoabsolutorio+-+convocatoria+-+558136_20200908_231708_485.pdf
+[2026-09-29 10:13:47]       Archivo guardado: 676061.pdf
+[2026-09-29 10:13:47]       Verificando contenido del PDF...
+[2026-09-29 10:13:47]       OK - PDF verificado y guardado: 676061.pdf (tipo: PLIEGO)
+[2026-09-29 10:13:47]    <<< Resultado anio 2020: OK
+[2026-09-29 10:13:50] 
+[6/137] Codigo: 619504 (anio base 2020)
+[2026-09-29 10:13:50]    >>> Probando anio 2020
+[2026-09-29 10:13:50]    [Intento] Codigo=619504, Anio=2020
+[2026-09-29 10:14:13]       Hay resultados. Buscando fila...
+[2026-09-29 10:14:13]       Fila encontrada en indice 36
+[2026-09-29 10:14:20]       Esperando que cargue la ficha...
+[2026-09-29 10:14:24]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:14:25]       *** ENCONTRADO PLIEGO en fila 87 ***
+[2026-09-29 10:14:25]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:14:25]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:14:25]       Enlace de descarga encontrado
+[2026-09-29 10:14:26]       Nombre del archivo descargado: 07082020_080654+-+pliegoabsolutorio+-+convocatoria+-+532758_20200807_200654_189.pdf
+[2026-09-29 10:14:26]       Archivo guardado: 619504.pdf
+[2026-09-29 10:14:26]       Verificando contenido del PDF...
+[2026-09-29 10:14:26]       OK - PDF verificado y guardado: 619504.pdf (tipo: PLIEGO)
+[2026-09-29 10:14:26]    <<< Resultado anio 2020: OK
+[2026-09-29 10:14:29] 
+[7/137] Codigo: 696209 (anio base 2020)
+[2026-09-29 10:14:29]    >>> Probando anio 2020
+[2026-09-29 10:14:29]    [Intento] Codigo=696209, Anio=2020
+[2026-09-29 10:14:53]       Hay resultados. Buscando fila...
+[2026-09-29 10:14:53]       Fila encontrada en indice 36
+[2026-09-29 10:15:00]       Esperando que cargue la ficha...
+[2026-09-29 10:15:04]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:15:04]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:15:04]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:15:04]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:15:04]       Enlace de descarga encontrado
+[2026-09-29 10:15:06]       Nombre del archivo descargado: 08032021_013306+-+pliegoabsolutorio+-+convocatoria+-+585663_20210308_133306_942.pdf
+[2026-09-29 10:15:06]       Archivo guardado: 696209.pdf
+[2026-09-29 10:15:06]       Verificando contenido del PDF...
+[2026-09-29 10:15:06]       OK - PDF verificado y guardado: 696209.pdf (tipo: PLIEGO)
+[2026-09-29 10:15:06]    <<< Resultado anio 2020: OK
+[2026-09-29 10:15:09] 
+[8/137] Codigo: 654278 (anio base 2020)
+[2026-09-29 10:15:09]    >>> Probando anio 2020
+[2026-09-29 10:15:09]    [Intento] Codigo=654278, Anio=2020
+[2026-09-29 10:15:33]       Hay resultados. Buscando fila...
+[2026-09-29 10:15:33]       Fila encontrada en indice 36
+[2026-09-29 10:15:40]       Esperando que cargue la ficha...
+[2026-09-29 10:15:44]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:15:44]       *** ENCONTRADO PLIEGO en fila 87 ***
+[2026-09-29 10:15:44]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:15:44]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:15:44]       Enlace de descarga encontrado
+[2026-09-29 10:15:45]       Nombre del archivo descargado: 11112020_094652+-+pliegoabsolutorio+-+convocatoria+-+568431_20201111_214652_193.pdf
+[2026-09-29 10:15:45]       Archivo guardado: 654278.pdf
+[2026-09-29 10:15:45]       Verificando contenido del PDF...
+[2026-09-29 10:15:45]       OK - PDF verificado y guardado: 654278.pdf (tipo: PLIEGO)
+[2026-09-29 10:15:45]    <<< Resultado anio 2020: OK
+[2026-09-29 10:15:48] 
+[9/137] Codigo: 654914 (anio base 2020)
+[2026-09-29 10:15:48]    >>> Probando anio 2020
+[2026-09-29 10:15:48]    [Intento] Codigo=654914, Anio=2020
+[2026-09-29 10:16:12]       Hay resultados. Buscando fila...
+[2026-09-29 10:16:12]       Fila encontrada en indice 36
+[2026-09-29 10:16:19]       Esperando que cargue la ficha...
+[2026-09-29 10:16:23]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:16:23]       *** ENCONTRADO PLIEGO en fila 76 ***
+[2026-09-29 10:16:23]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:16:23]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:16:23]       Enlace de descarga encontrado
+[2026-09-29 10:16:24]       Nombre del archivo descargado: 29102020_042635+-+pliegoabsolutorio+-+convocatoria+-+569304_20201029_162635_012.pdf
+[2026-09-29 10:16:24]       Archivo guardado: 654914.pdf
+[2026-09-29 10:16:24]       Verificando contenido del PDF...
+[2026-09-29 10:16:24]       OK - PDF verificado y guardado: 654914.pdf (tipo: PLIEGO)
+[2026-09-29 10:16:24]    <<< Resultado anio 2020: OK
+[2026-09-29 10:16:27] 
+[10/137] Codigo: 686773 (anio base 2020)
+[2026-09-29 10:16:27]    >>> Probando anio 2020
+[2026-09-29 10:16:27]    [Intento] Codigo=686773, Anio=2020
+[2026-09-29 10:16:50]       Hay resultados. Buscando fila...
+[2026-09-29 10:16:50]       Fila encontrada en indice 36
+[2026-09-29 10:16:57]       Esperando que cargue la ficha...
+[2026-09-29 10:17:02]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:17:02]       *** ENCONTRADO PLIEGO en fila 88 ***
+[2026-09-29 10:17:02]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:17:02]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:17:02]       Enlace de descarga encontrado
+[2026-09-29 10:17:03]       Nombre del archivo descargado: 05042021_045328+-+pliegoabsolutorio+-+convocatoria+-+593811_20210405_165328_239.pdf
+[2026-09-29 10:17:03]       Archivo guardado: 686773.pdf
+[2026-09-29 10:17:03]       Verificando contenido del PDF...
+[2026-09-29 10:17:03]       OK - PDF verificado y guardado: 686773.pdf (tipo: PLIEGO)
+[2026-09-29 10:17:03]    <<< Resultado anio 2020: OK
+[2026-09-29 10:17:06] 
+[11/137] Codigo: 644853 (anio base 2020)
+[2026-09-29 10:17:06]    >>> Probando anio 2020
+[2026-09-29 10:17:06]    [Intento] Codigo=644853, Anio=2020
+[2026-09-29 10:17:30]       Hay resultados. Buscando fila...
+[2026-09-29 10:17:30]       Fila encontrada en indice 36
+[2026-09-29 10:17:37]       Esperando que cargue la ficha...
+[2026-09-29 10:17:41]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:17:41]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:17:41]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:17:41]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:17:41]       Enlace de descarga encontrado
+[2026-09-29 10:17:42]       Nombre del archivo descargado: 06102020_071448+-+pliegoabsolutorio+-+convocatoria+-+561847_20201006_191448_307.pdf
+[2026-09-29 10:17:42]       Archivo guardado: 644853.pdf
+[2026-09-29 10:17:42]       Verificando contenido del PDF...
+[2026-09-29 10:17:42]       OK - PDF verificado y guardado: 644853.pdf (tipo: PLIEGO)
+[2026-09-29 10:17:42]    <<< Resultado anio 2020: OK
+[2026-09-29 10:17:45] 
+[12/137] Codigo: 619659 (anio base 2020)
+[2026-09-29 10:17:45]    >>> Probando anio 2020
+[2026-09-29 10:17:45]    [Intento] Codigo=619659, Anio=2020
+[2026-09-29 10:18:09]       Hay resultados. Buscando fila...
+[2026-09-29 10:18:09]       Fila encontrada en indice 36
+[2026-09-29 10:18:16]       Esperando que cargue la ficha...
+[2026-09-29 10:18:20]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:18:20]       *** ENCONTRADO PLIEGO en fila 87 ***
+[2026-09-29 10:18:20]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:18:20]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:18:20]       Enlace de descarga encontrado
+[2026-09-29 10:18:22]       Nombre del archivo descargado: 11082020_063950+-+pliegoabsolutorio+-+convocatoria+-+533073_20200811_183950_294.pdf
+[2026-09-29 10:18:22]       Archivo guardado: 619659.pdf
+[2026-09-29 10:18:22]       Verificando contenido del PDF...
+[2026-09-29 10:18:22]       OK - PDF verificado y guardado: 619659.pdf (tipo: PLIEGO)
+[2026-09-29 10:18:22]    <<< Resultado anio 2020: OK
+[2026-09-29 10:18:25] 
+[13/137] Codigo: 678446 (anio base 2020)
+[2026-09-29 10:18:25]    >>> Probando anio 2020
+[2026-09-29 10:18:25]    [Intento] Codigo=678446, Anio=2020
+[2026-09-29 10:18:48]       Hay resultados. Buscando fila...
+[2026-09-29 10:18:48]       Fila encontrada en indice 36
+[2026-09-29 10:18:55]       Esperando que cargue la ficha...
+[2026-09-29 10:18:59]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:19:00]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:19:00]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:19:00]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:19:00]       Enlace de descarga encontrado
+[2026-09-29 10:19:01]       Nombre del archivo descargado: 03082021_091252+-+pliegoabsolutorio+-+convocatoria+-+589245_20210803_211252_415.pdf
+[2026-09-29 10:19:01]       Archivo guardado: 678446.pdf
+[2026-09-29 10:19:01]       Verificando contenido del PDF...
+[2026-09-29 10:19:01]       OK - PDF verificado y guardado: 678446.pdf (tipo: PLIEGO)
+[2026-09-29 10:19:01]    <<< Resultado anio 2020: OK
+[2026-09-29 10:19:04] 
+[14/137] Codigo: 732696 (anio base 2021)
+[2026-09-29 10:19:04]    >>> Probando anio 2021
+[2026-09-29 10:19:04]    [Intento] Codigo=732696, Anio=2021
+[2026-09-29 10:19:28]       Hay resultados. Buscando fila...
+[2026-09-29 10:19:28]       Fila encontrada en indice 36
+[2026-09-29 10:19:35]       Esperando que cargue la ficha...
+[2026-09-29 10:19:39]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:19:39]       *** ENCONTRADO PLIEGO en fila 76 ***
+[2026-09-29 10:19:39]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:19:39]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:19:39]       Enlace de descarga encontrado
+[2026-09-29 10:19:41]       Nombre del archivo descargado: 28092021_075831+-+pliegoabsolutorio+-+convocatoria+-+630016_20210928_195831_455.pdf
+[2026-09-29 10:19:41]       Archivo guardado: 732696.pdf
+[2026-09-29 10:19:41]       Verificando contenido del PDF...
+[2026-09-29 10:19:41]       OK - PDF verificado y guardado: 732696.pdf (tipo: PLIEGO)
+[2026-09-29 10:19:41]    <<< Resultado anio 2021: OK
+[2026-09-29 10:19:44] 
+[15/137] Codigo: 691573 (anio base 2021)
+[2026-09-29 10:19:44]    >>> Probando anio 2021
+[2026-09-29 10:19:44]    [Intento] Codigo=691573, Anio=2021
+[2026-09-29 10:20:08]       Hay resultados. Buscando fila...
+[2026-09-29 10:20:08]       Fila encontrada en indice 36
+[2026-09-29 10:20:15]       Esperando que cargue la ficha...
+[2026-09-29 10:20:19]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:20:19]       *** ENCONTRADO PLIEGO en fila 87 ***
+[2026-09-29 10:20:19]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:20:19]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:20:19]       Enlace de descarga encontrado
+[2026-09-29 10:20:21]       Nombre del archivo descargado: 25032021_030526+-+pliegoabsolutorio+-+convocatoria+-+597264_20210325_150526_919.pdf
+[2026-09-29 10:20:21]       Archivo guardado: 691573.pdf
+[2026-09-29 10:20:21]       Verificando contenido del PDF...
+[2026-09-29 10:20:21]       OK - PDF verificado y guardado: 691573.pdf (tipo: PLIEGO)
+[2026-09-29 10:20:21]    <<< Resultado anio 2021: OK
+[2026-09-29 10:20:24] 
+[16/137] Codigo: 726358 (anio base 2021)
+[2026-09-29 10:20:24]    >>> Probando anio 2021
+[2026-09-29 10:20:24]    [Intento] Codigo=726358, Anio=2021
+[2026-09-29 10:20:47]       Hay resultados. Buscando fila...
+[2026-09-29 10:20:48]       Fila encontrada en indice 36
+[2026-09-29 10:20:55]       Esperando que cargue la ficha...
+[2026-09-29 10:20:59]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:20:59]       *** ENCONTRADO PLIEGO en fila 86 ***
+[2026-09-29 10:20:59]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:20:59]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:20:59]       Enlace de descarga encontrado
+[2026-09-29 10:21:00]       Nombre del archivo descargado: 16072021_041249+-+pliegoabsolutorio+-+convocatoria+-+620273_20210716_161249_727.pdf
+[2026-09-29 10:21:00]       Archivo guardado: 726358.pdf
+[2026-09-29 10:21:00]       Verificando contenido del PDF...
+[2026-09-29 10:21:00]       OK - PDF verificado y guardado: 726358.pdf (tipo: PLIEGO)
+[2026-09-29 10:21:00]    <<< Resultado anio 2021: OK
+[2026-09-29 10:21:03] 
+[17/137] Codigo: 739874 (anio base 2021)
+[2026-09-29 10:21:03]    >>> Probando anio 2021
+[2026-09-29 10:21:03]    [Intento] Codigo=739874, Anio=2021
+[2026-09-29 10:21:27]       Hay resultados. Buscando fila...
+[2026-09-29 10:21:27]       Fila encontrada en indice 36
+[2026-09-29 10:21:34]       Esperando que cargue la ficha...
+[2026-09-29 10:21:38]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:21:38]       *** ENCONTRADO PLIEGO en fila 92 ***
+[2026-09-29 10:21:38]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:21:38]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:21:38]       Enlace de descarga encontrado
+[2026-09-29 10:21:39]       Nombre del archivo descargado: 13092021_085311+-+pliegoabsolutorio+-+convocatoria+-+625604_20210913_205311_368.pdf
+[2026-09-29 10:21:39]       Archivo guardado: 739874.pdf
+[2026-09-29 10:21:39]       Verificando contenido del PDF...
+[2026-09-29 10:21:39]       OK - PDF verificado y guardado: 739874.pdf (tipo: PLIEGO)
+[2026-09-29 10:21:39]    <<< Resultado anio 2021: OK
+[2026-09-29 10:21:42] 
+[18/137] Codigo: 747170 (anio base 2021)
+[2026-09-29 10:21:42]    >>> Probando anio 2021
+[2026-09-29 10:21:42]    [Intento] Codigo=747170, Anio=2021
+[2026-09-29 10:22:06]       Hay resultados. Buscando fila...
+[2026-09-29 10:22:06]       Fila encontrada en indice 36
+[2026-09-29 10:22:13]       Esperando que cargue la ficha...
+[2026-09-29 10:22:17]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:22:17]       *** ENCONTRADO PLIEGO en fila 86 ***
+[2026-09-29 10:22:17]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:22:17]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:22:17]       Enlace de descarga encontrado
+[2026-09-29 10:22:19]       Nombre del archivo descargado: 05112021_014814+-+pliegoabsolutorio+-+convocatoria+-+641294_20211105_134814_392.pdf
+[2026-09-29 10:22:19]       Archivo guardado: 747170.pdf
+[2026-09-29 10:22:19]       Verificando contenido del PDF...
+[2026-09-29 10:22:19]       OK - PDF verificado y guardado: 747170.pdf (tipo: PLIEGO)
+[2026-09-29 10:22:19]    <<< Resultado anio 2021: OK
+[2026-09-29 10:22:22] 
+[19/137] Codigo: 771181 (anio base 2021)
+[2026-09-29 10:22:22]    >>> Probando anio 2021
+[2026-09-29 10:22:22]    [Intento] Codigo=771181, Anio=2021
+[2026-09-29 10:22:46]       Hay resultados. Buscando fila...
+[2026-09-29 10:22:46]       Fila encontrada en indice 36
+[2026-09-29 10:22:53]       Esperando que cargue la ficha...
+[2026-09-29 10:22:57]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:22:57]       *** ENCONTRADO PLIEGO en fila 85 ***
+[2026-09-29 10:22:57]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:22:57]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:22:57]       Enlace de descarga encontrado
+[2026-09-29 10:22:58]       Nombre del archivo descargado: 08022022_051825+-+pliegoabsolutorio+-+convocatoria+-+659934_20220208_171825_666.pdf
+[2026-09-29 10:22:58]       Archivo guardado: 771181.pdf
+[2026-09-29 10:22:58]       Verificando contenido del PDF...
+[2026-09-29 10:22:58]       OK - PDF verificado y guardado: 771181.pdf (tipo: PLIEGO)
+[2026-09-29 10:22:58]    <<< Resultado anio 2021: OK
+[2026-09-29 10:23:01] 
+[20/137] Codigo: 769850 (anio base 2021)
+[2026-09-29 10:23:01]    >>> Probando anio 2021
+[2026-09-29 10:23:01]    [Intento] Codigo=769850, Anio=2021
+[2026-09-29 10:23:25]       Hay resultados. Buscando fila...
+[2026-09-29 10:23:25]       Fila encontrada en indice 36
+[2026-09-29 10:23:32]       Esperando que cargue la ficha...
+[2026-09-29 10:23:36]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:23:37]       *** ENCONTRADO PLIEGO en fila 86 ***
+[2026-09-29 10:23:37]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:23:37]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:23:37]       Enlace de descarga encontrado
+[2026-09-29 10:23:38]       Nombre del archivo descargado: 14012022_085740+-+pliegoabsolutorio+-+convocatoria+-+659118_20220114_205740_677.pdf
+[2026-09-29 10:23:38]       Archivo guardado: 769850.pdf
+[2026-09-29 10:23:38]       Verificando contenido del PDF...
+[2026-09-29 10:23:38]       OK - PDF verificado y guardado: 769850.pdf (tipo: PLIEGO)
+[2026-09-29 10:23:38]    <<< Resultado anio 2021: OK
+[2026-09-29 10:23:41] 
+[21/137] Codigo: 730365 (anio base 2021)
+[2026-09-29 10:23:41]    >>> Probando anio 2021
+[2026-09-29 10:23:41]    [Intento] Codigo=730365, Anio=2021
+[2026-09-29 10:24:05]       Hay resultados. Buscando fila...
+[2026-09-29 10:24:05]       Fila encontrada en indice 36
+[2026-09-29 10:24:12]       Esperando que cargue la ficha...
+[2026-09-29 10:24:16]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:24:16]       *** ENCONTRADO PLIEGO en fila 82 ***
+[2026-09-29 10:24:16]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:24:16]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:24:16]       Enlace de descarga encontrado
+[2026-09-29 10:24:18]       Nombre del archivo descargado: 26042021_115215+-+pliegoabsolutorio+-+convocatoria+-+603537_20210426_235215_910.pdf
+[2026-09-29 10:24:18]       Archivo guardado: 730365.pdf
+[2026-09-29 10:24:18]       Verificando contenido del PDF...
+[2026-09-29 10:24:18]       OK - PDF verificado y guardado: 730365.pdf (tipo: PLIEGO)
+[2026-09-29 10:24:18]    <<< Resultado anio 2021: OK
+[2026-09-29 10:24:21] 
+[22/137] Codigo: 716023 (anio base 2021)
+[2026-09-29 10:24:21]    >>> Probando anio 2021
+[2026-09-29 10:24:21]    [Intento] Codigo=716023, Anio=2021
+[2026-09-29 10:24:44]       Hay resultados. Buscando fila...
+[2026-09-29 10:24:44]       Fila encontrada en indice 36
+[2026-09-29 10:24:51]       Esperando que cargue la ficha...
+[2026-09-29 10:24:55]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:24:56]       *** ENCONTRADO PLIEGO en fila 86 ***
+[2026-09-29 10:24:56]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:24:56]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:24:56]       Enlace de descarga encontrado
+[2026-09-29 10:24:57]       Nombre del archivo descargado: 21062021_071056+-+pliegoabsolutorio+-+convocatoria+-+616541_20210621_191056_393.pdf
+[2026-09-29 10:24:57]       Archivo guardado: 716023.pdf
+[2026-09-29 10:24:57]       Verificando contenido del PDF...
+[2026-09-29 10:24:57]       OK - PDF verificado y guardado: 716023.pdf (tipo: PLIEGO)
+[2026-09-29 10:24:57]    <<< Resultado anio 2021: OK
+[2026-09-29 10:25:00] 
+[23/137] Codigo: 757402 (anio base 2021)
+[2026-09-29 10:25:00]    >>> Probando anio 2021
+[2026-09-29 10:25:00]    [Intento] Codigo=757402, Anio=2021
+[2026-09-29 10:25:24]       Hay resultados. Buscando fila...
+[2026-09-29 10:25:24]       Fila encontrada en indice 36
+[2026-09-29 10:25:31]       Esperando que cargue la ficha...
+[2026-09-29 10:25:35]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:25:35]       *** ENCONTRADO PLIEGO en fila 92 ***
+[2026-09-29 10:25:35]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:25:35]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:25:35]       Enlace de descarga encontrado
+[2026-09-29 10:25:37]       Nombre del archivo descargado: 17112021_114329+-+pliegoabsolutorio+-+convocatoria+-+639946_20211117_234329_216.pdf
+[2026-09-29 10:25:37]       Archivo guardado: 757402.pdf
+[2026-09-29 10:25:37]       Verificando contenido del PDF...
+[2026-09-29 10:25:37]       OK - PDF verificado y guardado: 757402.pdf (tipo: PLIEGO)
+[2026-09-29 10:25:37]    <<< Resultado anio 2021: OK
+[2026-09-29 10:25:40] 
+[24/137] Codigo: 701050 (anio base 2021)
+[2026-09-29 10:25:40]    >>> Probando anio 2021
+[2026-09-29 10:25:40]    [Intento] Codigo=701050, Anio=2021
+[2026-09-29 10:26:03]       Hay resultados. Buscando fila...
+[2026-09-29 10:26:03]       Fila encontrada en indice 36
+[2026-09-29 10:26:10]       Esperando que cargue la ficha...
+[2026-09-29 10:26:14]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:26:15]       *** ENCONTRADO PLIEGO en fila 87 ***
+[2026-09-29 10:26:15]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:26:15]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:26:15]       Enlace de descarga encontrado
+[2026-09-29 10:26:16]       Nombre del archivo descargado: 20042021_092152+-+pliegoabsolutorio+-+convocatoria+-+604462_20210420_212152_152.pdf
+[2026-09-29 10:26:16]       Archivo guardado: 701050.pdf
+[2026-09-29 10:26:16]       Verificando contenido del PDF...
+[2026-09-29 10:26:16]       OK - PDF verificado y guardado: 701050.pdf (tipo: PLIEGO)
+[2026-09-29 10:26:16]    <<< Resultado anio 2021: OK
+[2026-09-29 10:26:19] 
+[25/137] Codigo: 711351 (anio base 2021)
+[2026-09-29 10:26:19]    >>> Probando anio 2021
+[2026-09-29 10:26:19]    [Intento] Codigo=711351, Anio=2021
+[2026-09-29 10:26:43]       Hay resultados. Buscando fila...
+[2026-09-29 10:26:43]       Fila encontrada en indice 36
+[2026-09-29 10:26:50]       Esperando que cargue la ficha...
+[2026-09-29 10:26:54]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:26:55]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:26:55]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:26:55]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:26:55]       Enlace de descarga encontrado
+[2026-09-29 10:26:56]       Nombre del archivo descargado: 27072021_094525+-+pliegoabsolutorio+-+convocatoria+-+619057_20210727_214525_608.pdf
+[2026-09-29 10:26:56]       Archivo guardado: 711351.pdf
+[2026-09-29 10:26:56]       Verificando contenido del PDF...
+[2026-09-29 10:26:56]       OK - PDF verificado y guardado: 711351.pdf (tipo: PLIEGO)
+[2026-09-29 10:26:56]    <<< Resultado anio 2021: OK
+[2026-09-29 10:26:59] 
+[26/137] Codigo: 719832 (anio base 2021)
+[2026-09-29 10:26:59]    >>> Probando anio 2021
+[2026-09-29 10:26:59]    [Intento] Codigo=719832, Anio=2021
+[2026-09-29 10:27:22]       Hay resultados. Buscando fila...
+[2026-09-29 10:27:22]       Fila encontrada en indice 36
+[2026-09-29 10:27:29]       Esperando que cargue la ficha...
+[2026-09-29 10:27:33]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:27:34]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:27:34]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:27:34]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:27:34]       Enlace de descarga encontrado
+[2026-09-29 10:27:35]       Nombre del archivo descargado: 06082021_105200+-+pliegoabsolutorio+-+convocatoria+-+619359_20210806_225200_374.pdf
+[2026-09-29 10:27:35]       Archivo guardado: 719832.pdf
+[2026-09-29 10:27:35]       Verificando contenido del PDF...
+[2026-09-29 10:27:35]       OK - PDF verificado y guardado: 719832.pdf (tipo: PLIEGO)
+[2026-09-29 10:27:35]    <<< Resultado anio 2021: OK
+[2026-09-29 10:27:38] 
+[27/137] Codigo: 727561 (anio base 2021)
+[2026-09-29 10:27:38]    >>> Probando anio 2021
+[2026-09-29 10:27:38]    [Intento] Codigo=727561, Anio=2021
+[2026-09-29 10:28:02]       Hay resultados. Buscando fila...
+[2026-09-29 10:28:02]       Fila encontrada en indice 36
+[2026-09-29 10:28:09]       Esperando que cargue la ficha...
+[2026-09-29 10:28:13]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:28:13]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:28:13]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:28:13]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:28:13]       Enlace de descarga encontrado
+[2026-09-29 10:28:15]       Nombre del archivo descargado: 21072021_124515+-+pliegoabsolutorio+-+convocatoria+-+618612_20210721_124515_663.pdf
+[2026-09-29 10:28:15]       Archivo guardado: 727561.pdf
+[2026-09-29 10:28:15]       Verificando contenido del PDF...
+[2026-09-29 10:28:15]       OK - PDF verificado y guardado: 727561.pdf (tipo: PLIEGO)
+[2026-09-29 10:28:15]    <<< Resultado anio 2021: OK
+[2026-09-29 10:28:18] 
+[28/137] Codigo: 743324 (anio base 2021)
+[2026-09-29 10:28:18]    >>> Probando anio 2021
+[2026-09-29 10:28:18]    [Intento] Codigo=743324, Anio=2021
+[2026-09-29 10:28:41]       Hay resultados. Buscando fila...
+[2026-09-29 10:28:41]       Fila encontrada en indice 36
+[2026-09-29 10:28:48]       Esperando que cargue la ficha...
+[2026-09-29 10:28:52]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:28:53]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:28:53]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:28:53]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:28:53]       Enlace de descarga encontrado
+[2026-09-29 10:28:55]       Nombre del archivo descargado: 19072021_102459+-+pliegoabsolutorio+-+convocatoria+-+611123_20210719_222459_704.pdf
+[2026-09-29 10:28:55]       Archivo guardado: 743324.pdf
+[2026-09-29 10:28:55]       Verificando contenido del PDF...
+[2026-09-29 10:28:55]       OK - PDF verificado y guardado: 743324.pdf (tipo: PLIEGO)
+[2026-09-29 10:28:55]    <<< Resultado anio 2021: OK
+[2026-09-29 10:28:58] 
+[29/137] Codigo: 709352 (anio base 2021)
+[2026-09-29 10:28:58]    >>> Probando anio 2021
+[2026-09-29 10:28:58]    [Intento] Codigo=709352, Anio=2021
+[2026-09-29 10:29:21]       Hay resultados. Buscando fila...
+[2026-09-29 10:29:21]       Fila encontrada en indice 36
+[2026-09-29 10:29:28]       Esperando que cargue la ficha...
+[2026-09-29 10:29:32]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:29:33]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:29:33]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:29:33]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:29:33]       Enlace de descarga encontrado
+[2026-09-29 10:29:34]       Nombre del archivo descargado: 06052021_095726+-+pliegoabsolutorio+-+convocatoria+-+601462_20210506_095726_207.pdf
+[2026-09-29 10:29:34]       Archivo guardado: 709352.pdf
+[2026-09-29 10:29:34]       Verificando contenido del PDF...
+[2026-09-29 10:29:34]       OK - PDF verificado y guardado: 709352.pdf (tipo: PLIEGO)
+[2026-09-29 10:29:34]    <<< Resultado anio 2021: OK
+[2026-09-29 10:29:37] 
+[30/137] Codigo: 839615 (anio base 2022)
+[2026-09-29 10:29:37]    >>> Probando anio 2022
+[2026-09-29 10:29:37]    [Intento] Codigo=839615, Anio=2022
+[2026-09-29 10:30:01]       Hay resultados. Buscando fila...
+[2026-09-29 10:30:01]       Fila encontrada en indice 36
+[2026-09-29 10:30:08]       Esperando que cargue la ficha...
+[2026-09-29 10:30:12]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:30:12]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:30:12]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:30:12]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:30:12]       Enlace de descarga encontrado
+[2026-09-29 10:30:13]       Nombre del archivo descargado: 31082022_070308+-+pliegoabsolutorio+-+convocatoria+-+708410_20220831_190308_963.pdf
+[2026-09-29 10:30:13]       Archivo guardado: 839615.pdf
+[2026-09-29 10:30:13]       Verificando contenido del PDF...
+[2026-09-29 10:30:13]       OK - PDF verificado y guardado: 839615.pdf (tipo: PLIEGO)
+[2026-09-29 10:30:13]    <<< Resultado anio 2022: OK
+[2026-09-29 10:30:16] 
+[31/137] Codigo: 885569 (anio base 2022)
+[2026-09-29 10:30:16]    >>> Probando anio 2022
+[2026-09-29 10:30:16]    [Intento] Codigo=885569, Anio=2022
+[2026-09-29 10:30:40]       Hay resultados. Buscando fila...
+[2026-09-29 10:30:40]       Fila encontrada en indice 36
+[2026-09-29 10:30:47]       Esperando que cargue la ficha...
+[2026-09-29 10:30:51]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:30:51]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:30:51]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:30:51]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:30:51]       Enlace de descarga encontrado
+[2026-09-29 10:30:52]       Nombre del archivo descargado: 14032023_105940+-+pliegoabsolutorio+-+convocatoria+-+720915_20230314_105940_544.pdf
+[2026-09-29 10:30:52]       Archivo guardado: 885569.pdf
+[2026-09-29 10:30:52]       Verificando contenido del PDF...
+[2026-09-29 10:30:52]       OK - PDF verificado y guardado: 885569.pdf (tipo: PLIEGO)
+[2026-09-29 10:30:52]    <<< Resultado anio 2022: OK
+[2026-09-29 10:30:55] 
+[32/137] Codigo: 845027 (anio base 2022)
+[2026-09-29 10:30:55]    >>> Probando anio 2022
+[2026-09-29 10:30:55]    [Intento] Codigo=845027, Anio=2022
+[2026-09-29 10:31:19]       Hay resultados. Buscando fila...
+[2026-09-29 10:31:19]       Fila encontrada en indice 36
+[2026-09-29 10:31:27]       Esperando que cargue la ficha...
+[2026-09-29 10:31:31]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:31:31]       *** ENCONTRADO PLIEGO en fila 86 ***
+[2026-09-29 10:31:31]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:31:31]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:31:31]       Enlace de descarga encontrado
+[2026-09-29 10:31:32]       Nombre del archivo descargado: 18102022_105609+-+pliegoabsolutorio+-+convocatoria+-+718304_20221018_225609_545.pdf
+[2026-09-29 10:31:32]       Archivo guardado: 845027.pdf
+[2026-09-29 10:31:32]       Verificando contenido del PDF...
+[2026-09-29 10:31:32]       OK - PDF verificado y guardado: 845027.pdf (tipo: PLIEGO)
+[2026-09-29 10:31:32]    <<< Resultado anio 2022: OK
+[2026-09-29 10:31:35] 
+[33/137] Codigo: 773713 (anio base 2022)
+[2026-09-29 10:31:35]    >>> Probando anio 2022
+[2026-09-29 10:31:35]    [Intento] Codigo=773713, Anio=2022
+[2026-09-29 10:31:59]       Hay resultados. Buscando fila...
+[2026-09-29 10:31:59]       Fila encontrada en indice 36
+[2026-09-29 10:32:06]       Esperando que cargue la ficha...
+[2026-09-29 10:32:10]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:32:10]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:32:10]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:32:10]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:32:10]       Enlace de descarga encontrado
+[2026-09-29 10:32:11]       Nombre del archivo descargado: 08022022_064941+-+pliegoabsolutorio+-+convocatoria+-+661882_20220208_184941_504.pdf
+[2026-09-29 10:32:11]       Archivo guardado: 773713.pdf
+[2026-09-29 10:32:11]       Verificando contenido del PDF...
+[2026-09-29 10:32:11]       OK - PDF verificado y guardado: 773713.pdf (tipo: PLIEGO)
+[2026-09-29 10:32:11]    <<< Resultado anio 2022: OK
+[2026-09-29 10:32:14] 
+[34/137] Codigo: 832929 (anio base 2022)
+[2026-09-29 10:32:14]    >>> Probando anio 2022
+[2026-09-29 10:32:14]    [Intento] Codigo=832929, Anio=2022
+[2026-09-29 10:32:38]       Hay resultados. Buscando fila...
+[2026-09-29 10:32:38]       Fila encontrada en indice 36
+[2026-09-29 10:32:45]       Esperando que cargue la ficha...
+[2026-09-29 10:32:49]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:32:49]       *** ENCONTRADO PLIEGO en fila 86 ***
+[2026-09-29 10:32:49]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:32:49]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:32:49]       Enlace de descarga encontrado
+[2026-09-29 10:32:51]       Nombre del archivo descargado: 09082022_055957+-+pliegoabsolutorio+-+convocatoria+-+703933_20220809_175957_229.pdf
+[2026-09-29 10:32:51]       Archivo guardado: 832929.pdf
+[2026-09-29 10:32:51]       Verificando contenido del PDF...
+[2026-09-29 10:32:51]       OK - PDF verificado y guardado: 832929.pdf (tipo: PLIEGO)
+[2026-09-29 10:32:51]    <<< Resultado anio 2022: OK
+[2026-09-29 10:32:54] 
+[35/137] Codigo: 881247 (anio base 2022)
+[2026-09-29 10:32:54]    >>> Probando anio 2022
+[2026-09-29 10:32:54]    [Intento] Codigo=881247, Anio=2022
+[2026-09-29 10:33:18]       Hay resultados. Buscando fila...
+[2026-09-29 10:33:18]       Fila encontrada en indice 36
+[2026-09-29 10:33:25]       Esperando que cargue la ficha...
+[2026-09-29 10:33:29]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:33:29]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:33:29]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:33:29]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:33:29]       Enlace de descarga encontrado
+[2026-09-29 10:33:30]       Nombre del archivo descargado: 24022023_043404+-+pliegoabsolutorio+-+convocatoria+-+732892_20230224_163404_077.pdf
+[2026-09-29 10:33:31]       Archivo guardado: 881247.pdf
+[2026-09-29 10:33:31]       Verificando contenido del PDF...
+[2026-09-29 10:33:31]       OK - PDF verificado y guardado: 881247.pdf (tipo: PLIEGO)
+[2026-09-29 10:33:31]    <<< Resultado anio 2022: OK
+[2026-09-29 10:33:34] 
+[36/137] Codigo: 834703 (anio base 2022)
+[2026-09-29 10:33:34]    >>> Probando anio 2022
+[2026-09-29 10:33:34]    [Intento] Codigo=834703, Anio=2022
+[2026-09-29 10:33:57]       Hay resultados. Buscando fila...
+[2026-09-29 10:33:57]       Fila encontrada en indice 36
+[2026-09-29 10:34:04]       Esperando que cargue la ficha...
+[2026-09-29 10:34:08]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:34:08]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:34:08]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:34:08]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:34:08]       Enlace de descarga encontrado
+[2026-09-29 10:34:10]       Nombre del archivo descargado: 15082022_062045+-+pliegoabsolutorio+-+convocatoria+-+700300_20220815_182045_629.pdf
+[2026-09-29 10:34:10]       Archivo guardado: 834703.pdf
+[2026-09-29 10:34:10]       Verificando contenido del PDF...
+[2026-09-29 10:34:10]       OK - PDF verificado y guardado: 834703.pdf (tipo: PLIEGO)
+[2026-09-29 10:34:10]    <<< Resultado anio 2022: OK
+[2026-09-29 10:34:13] 
+[37/137] Codigo: 849061 (anio base 2022)
+[2026-09-29 10:34:13]    >>> Probando anio 2022
+[2026-09-29 10:34:13]    [Intento] Codigo=849061, Anio=2022
+[2026-09-29 10:34:36]       Hay resultados. Buscando fila...
+[2026-09-29 10:34:36]       Fila encontrada en indice 36
+[2026-09-29 10:34:43]       Esperando que cargue la ficha...
+[2026-09-29 10:34:47]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:34:47]       *** ENCONTRADO PLIEGO en fila 85 ***
+[2026-09-29 10:34:47]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:34:47]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:34:47]       Enlace de descarga encontrado
+[2026-09-29 10:34:49]       Nombre del archivo descargado: 21102022_112726+-+pliegoabsolutorio+-+convocatoria+-+721648_20221021_232726_231.pdf
+[2026-09-29 10:34:49]       Archivo guardado: 849061.pdf
+[2026-09-29 10:34:49]       Verificando contenido del PDF...
+[2026-09-29 10:34:49]       OK - PDF verificado y guardado: 849061.pdf (tipo: PLIEGO)
+[2026-09-29 10:34:49]    <<< Resultado anio 2022: OK
+[2026-09-29 10:34:52] 
+[38/137] Codigo: 817913 (anio base 2022)
+[2026-09-29 10:34:52]    >>> Probando anio 2022
+[2026-09-29 10:34:52]    [Intento] Codigo=817913, Anio=2022
+[2026-09-29 10:35:15]       Hay resultados. Buscando fila...
+[2026-09-29 10:35:15]       Fila encontrada en indice 36
+[2026-09-29 10:35:23]       Esperando que cargue la ficha...
+[2026-09-29 10:35:27]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:35:27]       *** ENCONTRADO PLIEGO en fila 77 ***
+[2026-09-29 10:35:27]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:35:27]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:35:27]       Enlace de descarga encontrado
+[2026-09-29 10:35:29]       Nombre del archivo descargado: 07072022_063131+-+pliegoabsolutorio+-+convocatoria+-+696406_20220707_183131_050.pdf
+[2026-09-29 10:35:29]       Archivo guardado: 817913.pdf
+[2026-09-29 10:35:29]       Verificando contenido del PDF...
+[2026-09-29 10:35:29]       OK - PDF verificado y guardado: 817913.pdf (tipo: PLIEGO)
+[2026-09-29 10:35:29]    <<< Resultado anio 2022: OK
+[2026-09-29 10:35:32] 
+[39/137] Codigo: 777969 (anio base 2022)
+[2026-09-29 10:35:32]    >>> Probando anio 2022
+[2026-09-29 10:35:32]    [Intento] Codigo=777969, Anio=2022
+[2026-09-29 10:35:55]       Hay resultados. Buscando fila...
+[2026-09-29 10:35:55]       Fila encontrada en indice 36
+[2026-09-29 10:36:02]       Esperando que cargue la ficha...
+[2026-09-29 10:36:06]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:36:07]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:36:07]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:36:07]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:36:07]       Enlace de descarga encontrado
+[2026-09-29 10:36:10]       Nombre del archivo descargado: 12042022_114735+-+pliegoabsolutorio+-+convocatoria+-+664853_20220412_234735_074.pdf
+[2026-09-29 10:36:14]       Archivo guardado: 777969.pdf
+[2026-09-29 10:36:14]       Verificando contenido del PDF...
+[2026-09-29 10:36:15]       OK - PDF verificado y guardado: 777969.pdf (tipo: PLIEGO)
+[2026-09-29 10:36:15]    <<< Resultado anio 2022: OK
+[2026-09-29 10:36:18] 
+[40/137] Codigo: 830593 (anio base 2022)
+[2026-09-29 10:36:18]    >>> Probando anio 2022
+[2026-09-29 10:36:18]    [Intento] Codigo=830593, Anio=2022
+[2026-09-29 10:36:41]       Hay resultados. Buscando fila...
+[2026-09-29 10:36:41]       Fila encontrada en indice 36
+[2026-09-29 10:36:48]       Esperando que cargue la ficha...
+[2026-09-29 10:36:52]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:36:53]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:36:53]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:36:53]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:36:53]       Enlace de descarga encontrado
+[2026-09-29 10:36:54]       Nombre del archivo descargado: 24082022_063932+-+pliegoabsolutorio+-+convocatoria+-+706593_20220824_183932_272.pdf
+[2026-09-29 10:36:54]       Archivo guardado: 830593.pdf
+[2026-09-29 10:36:54]       Verificando contenido del PDF...
+[2026-09-29 10:36:54]       OK - PDF verificado y guardado: 830593.pdf (tipo: PLIEGO)
+[2026-09-29 10:36:54]    <<< Resultado anio 2022: OK
+[2026-09-29 10:36:57] 
+[41/137] Codigo: 825955 (anio base 2022)
+[2026-09-29 10:36:57]    >>> Probando anio 2022
+[2026-09-29 10:36:57]    [Intento] Codigo=825955, Anio=2022
+[2026-09-29 10:37:21]       Hay resultados. Buscando fila...
+[2026-09-29 10:37:21]       Fila encontrada en indice 36
+[2026-09-29 10:37:28]       Esperando que cargue la ficha...
+[2026-09-29 10:37:32]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:37:32]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:37:32]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:37:32]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:37:32]       Enlace de descarga encontrado
+[2026-09-29 10:37:34]       Nombre del archivo descargado: 15072022_031643+-+pliegoabsolutorio+-+convocatoria+-+696604_20220715_151643_024.pdf
+[2026-09-29 10:37:34]       Archivo guardado: 825955.pdf
+[2026-09-29 10:37:34]       Verificando contenido del PDF...
+[2026-09-29 10:37:34]       OK - PDF verificado y guardado: 825955.pdf (tipo: PLIEGO)
+[2026-09-29 10:37:34]    <<< Resultado anio 2022: OK
+[2026-09-29 10:37:37] 
+[42/137] Codigo: 803065 (anio base 2022)
+[2026-09-29 10:37:37]    >>> Probando anio 2022
+[2026-09-29 10:37:37]    [Intento] Codigo=803065, Anio=2022
+[2026-09-29 10:38:01]       Hay resultados. Buscando fila...
+[2026-09-29 10:38:01]       Fila encontrada en indice 36
+[2026-09-29 10:38:08]       Esperando que cargue la ficha...
+[2026-09-29 10:38:12]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:38:12]       *** ENCONTRADO PLIEGO en fila 88 ***
+[2026-09-29 10:38:12]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:38:12]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:38:12]       Enlace de descarga encontrado
+[2026-09-29 10:38:14]       Nombre del archivo descargado: 24052022_085033+-+pliegoabsolutorio+-+convocatoria+-+684373_20220524_205033_798.pdf
+[2026-09-29 10:38:14]       Archivo guardado: 803065.pdf
+[2026-09-29 10:38:14]       Verificando contenido del PDF...
+[2026-09-29 10:38:14]       OK - PDF verificado y guardado: 803065.pdf (tipo: PLIEGO)
+[2026-09-29 10:38:14]    <<< Resultado anio 2022: OK
+[2026-09-29 10:38:17] 
+[43/137] Codigo: 854797 (anio base 2022)
+[2026-09-29 10:38:17]    >>> Probando anio 2022
+[2026-09-29 10:38:17]    [Intento] Codigo=854797, Anio=2022
+[2026-09-29 10:38:40]       Hay resultados. Buscando fila...
+[2026-09-29 10:38:40]       Fila encontrada en indice 36
+[2026-09-29 10:38:47]       Esperando que cargue la ficha...
+[2026-09-29 10:38:51]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:38:52]       *** ENCONTRADO PLIEGO en fila 91 ***
+[2026-09-29 10:38:52]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:38:52]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:38:52]       Enlace de descarga encontrado
+[2026-09-29 10:38:53]       Nombre del archivo descargado: 21112022_093557+-+pliegoabsolutorio+-+convocatoria+-+726767_20221121_213557_856.pdf
+[2026-09-29 10:38:53]       Archivo guardado: 854797.pdf
+[2026-09-29 10:38:53]       Verificando contenido del PDF...
+[2026-09-29 10:38:53]       OK - PDF verificado y guardado: 854797.pdf (tipo: PLIEGO)
+[2026-09-29 10:38:53]    <<< Resultado anio 2022: OK
+[2026-09-29 10:38:56] 
+[44/137] Codigo: 826002 (anio base 2022)
+[2026-09-29 10:38:56]    >>> Probando anio 2022
+[2026-09-29 10:38:56]    [Intento] Codigo=826002, Anio=2022
+[2026-09-29 10:39:20]       Hay resultados. Buscando fila...
+[2026-09-29 10:39:20]       Fila encontrada en indice 36
+[2026-09-29 10:39:27]       Esperando que cargue la ficha...
+[2026-09-29 10:39:31]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:39:31]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:39:31]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:39:31]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:39:31]       Enlace de descarga encontrado
+[2026-09-29 10:39:33]       Nombre del archivo descargado: 15072022_043021+-+pliegoabsolutorio+-+convocatoria+-+696605_20220715_163021_107.pdf
+[2026-09-29 10:39:33]       Archivo guardado: 826002.pdf
+[2026-09-29 10:39:33]       Verificando contenido del PDF...
+[2026-09-29 10:39:33]       OK - PDF verificado y guardado: 826002.pdf (tipo: PLIEGO)
+[2026-09-29 10:39:33]    <<< Resultado anio 2022: OK
+[2026-09-29 10:39:36] 
+[45/137] Codigo: 847802 (anio base 2022)
+[2026-09-29 10:39:36]    >>> Probando anio 2022
+[2026-09-29 10:39:36]    [Intento] Codigo=847802, Anio=2022
+[2026-09-29 10:39:59]       Hay resultados. Buscando fila...
+[2026-09-29 10:40:00]       Fila encontrada en indice 36
+[2026-09-29 10:40:07]       Esperando que cargue la ficha...
+[2026-09-29 10:40:11]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:40:11]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:40:11]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:40:11]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:40:11]       Enlace de descarga encontrado
+[2026-09-29 10:40:13]       Nombre del archivo descargado: 07112022_102826+-+pliegoabsolutorio+-+convocatoria+-+720448_20221107_222826_628.pdf
+[2026-09-29 10:40:13]       Archivo guardado: 847802.pdf
+[2026-09-29 10:40:13]       Verificando contenido del PDF...
+[2026-09-29 10:40:13]       OK - PDF verificado y guardado: 847802.pdf (tipo: PLIEGO)
+[2026-09-29 10:40:13]    <<< Resultado anio 2022: OK
+[2026-09-29 10:40:16] 
+[46/137] Codigo: 843857 (anio base 2022)
+[2026-09-29 10:40:16]    >>> Probando anio 2022
+[2026-09-29 10:40:16]    [Intento] Codigo=843857, Anio=2022
+[2026-09-29 10:40:39]       Hay resultados. Buscando fila...
+[2026-09-29 10:40:39]       Fila encontrada en indice 36
+[2026-09-29 10:40:46]       Esperando que cargue la ficha...
+[2026-09-29 10:40:50]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:40:51]       *** ENCONTRADO PLIEGO en fila 92 ***
+[2026-09-29 10:40:51]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:40:51]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:40:51]       Enlace de descarga encontrado
+[2026-09-29 10:40:53]       Nombre del archivo descargado: 21102022_115612+-+pliegoabsolutorio+-+convocatoria+-+717124_20221021_235612_418.pdf
+[2026-09-29 10:40:53]       Archivo guardado: 843857.pdf
+[2026-09-29 10:40:53]       Verificando contenido del PDF...
+[2026-09-29 10:40:53]       OK - PDF verificado y guardado: 843857.pdf (tipo: PLIEGO)
+[2026-09-29 10:40:53]    <<< Resultado anio 2022: OK
+[2026-09-29 10:40:56] 
+[47/137] Codigo: 815567 (anio base 2022)
+[2026-09-29 10:40:56]    >>> Probando anio 2022
+[2026-09-29 10:40:56]    [Intento] Codigo=815567, Anio=2022
+[2026-09-29 10:41:19]       Hay resultados. Buscando fila...
+[2026-09-29 10:41:19]       Fila encontrada en indice 36
+[2026-09-29 10:41:26]       Esperando que cargue la ficha...
+[2026-09-29 10:41:31]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:41:31]       *** ENCONTRADO PLIEGO en fila 86 ***
+[2026-09-29 10:41:31]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:41:31]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:41:31]       Enlace de descarga encontrado
+[2026-09-29 10:41:32]       Nombre del archivo descargado: 14072022_062753+-+pliegoabsolutorio+-+convocatoria+-+694521_20220714_182753_032.pdf
+[2026-09-29 10:41:32]       Archivo guardado: 815567.pdf
+[2026-09-29 10:41:32]       Verificando contenido del PDF...
+[2026-09-29 10:41:32]       OK - PDF verificado y guardado: 815567.pdf (tipo: PLIEGO)
+[2026-09-29 10:41:32]    <<< Resultado anio 2022: OK
+[2026-09-29 10:41:35] 
+[48/137] Codigo: 861965 (anio base 2022)
+[2026-09-29 10:41:35]    >>> Probando anio 2022
+[2026-09-29 10:41:35]    [Intento] Codigo=861965, Anio=2022
+[2026-09-29 10:41:58]       Hay resultados. Buscando fila...
+[2026-09-29 10:41:59]       Fila encontrada en indice 36
+[2026-09-29 10:42:06]       Esperando que cargue la ficha...
+[2026-09-29 10:42:10]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:42:10]       *** ENCONTRADO PLIEGO en fila 88 ***
+[2026-09-29 10:42:10]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:42:10]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:42:10]       Enlace de descarga encontrado
+[2026-09-29 10:42:12]       Nombre del archivo descargado: 09112022_033828+-+pliegoabsolutorio+-+convocatoria+-+726113_20221109_153828_059.pdf
+[2026-09-29 10:42:12]       Archivo guardado: 861965.pdf
+[2026-09-29 10:42:12]       Verificando contenido del PDF...
+[2026-09-29 10:42:12]       OK - PDF verificado y guardado: 861965.pdf (tipo: PLIEGO)
+[2026-09-29 10:42:12]    <<< Resultado anio 2022: OK
+[2026-09-29 10:42:15] 
+[49/137] Codigo: 796480 (anio base 2022)
+[2026-09-29 10:42:15]    >>> Probando anio 2022
+[2026-09-29 10:42:15]    [Intento] Codigo=796480, Anio=2022
+[2026-09-29 10:42:39]       Hay resultados. Buscando fila...
+[2026-09-29 10:42:39]       Fila encontrada en indice 36
+[2026-09-29 10:42:46]       Esperando que cargue la ficha...
+[2026-09-29 10:42:50]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:42:50]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:42:50]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:42:50]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:42:50]       Enlace de descarga encontrado
+[2026-09-29 10:42:52]       Nombre del archivo descargado: 13042022_111705+-+pliegoabsolutorio+-+convocatoria+-+672191_20220413_231705_901.pdf
+[2026-09-29 10:42:52]       Archivo guardado: 796480.pdf
+[2026-09-29 10:42:52]       Verificando contenido del PDF...
+[2026-09-29 10:42:52]       OK - PDF verificado y guardado: 796480.pdf (tipo: PLIEGO)
+[2026-09-29 10:42:52]    <<< Resultado anio 2022: OK
+[2026-09-29 10:42:55] 
+[50/137] Codigo: 926055 (anio base 2023)
+[2026-09-29 10:42:55]    >>> Probando anio 2023
+[2026-09-29 10:42:55]    [Intento] Codigo=926055, Anio=2023
+[2026-09-29 10:43:18]       Hay resultados. Buscando fila...
+[2026-09-29 10:43:18]       Fila encontrada en indice 36
+[2026-09-29 10:43:25]       Esperando que cargue la ficha...
+[2026-09-29 10:43:29]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:43:29]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:43:29]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:43:29]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:43:30]       Enlace de descarga encontrado
+[2026-09-29 10:43:31]       Nombre del archivo descargado: 23082023_080855+-+pliegoabsolutorio+-+convocatoria+-+781887_20230823_200855_730.pdf
+[2026-09-29 10:43:31]       Archivo guardado: 926055.pdf
+[2026-09-29 10:43:31]       Verificando contenido del PDF...
+[2026-09-29 10:43:31]       OK - PDF verificado y guardado: 926055.pdf (tipo: PLIEGO)
+[2026-09-29 10:43:31]    <<< Resultado anio 2023: OK
+[2026-09-29 10:43:34] 
+[51/137] Codigo: 935232 (anio base 2023)
+[2026-09-29 10:43:34]    >>> Probando anio 2023
+[2026-09-29 10:43:34]    [Intento] Codigo=935232, Anio=2023
+[2026-09-29 10:43:57]       Hay resultados. Buscando fila...
+[2026-09-29 10:43:57]       Fila encontrada en indice 36
+[2026-09-29 10:44:04]       Esperando que cargue la ficha...
+[2026-09-29 10:44:09]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:44:09]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:44:09]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:44:09]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:44:09]       Enlace de descarga encontrado
+[2026-09-29 10:44:10]       Nombre del archivo descargado: 19092023_084351+-+pliegoabsolutorio+-+convocatoria+-+788794_20230919_204351_010.pdf
+[2026-09-29 10:44:10]       Archivo guardado: 935232.pdf
+[2026-09-29 10:44:10]       Verificando contenido del PDF...
+[2026-09-29 10:44:10]       OK - PDF verificado y guardado: 935232.pdf (tipo: PLIEGO)
+[2026-09-29 10:44:10]    <<< Resultado anio 2023: OK
+[2026-09-29 10:44:13] 
+[52/137] Codigo: 929914 (anio base 2023)
+[2026-09-29 10:44:13]    >>> Probando anio 2023
+[2026-09-29 10:44:13]    [Intento] Codigo=929914, Anio=2023
+[2026-09-29 10:44:36]       Hay resultados. Buscando fila...
+[2026-09-29 10:44:36]       Fila encontrada en indice 36
+[2026-09-29 10:44:43]       Esperando que cargue la ficha...
+[2026-09-29 10:44:47]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:44:47]       *** ENCONTRADO PLIEGO en fila 77 ***
+[2026-09-29 10:44:47]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:44:47]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:44:47]       Enlace de descarga encontrado
+[2026-09-29 10:44:48]       Nombre del archivo descargado: 05092023_052804+-+pliegoabsolutorio+-+convocatoria+-+786351_20230905_172804_641.pdf
+[2026-09-29 10:44:48]       Archivo guardado: 929914.pdf
+[2026-09-29 10:44:48]       Verificando contenido del PDF...
+[2026-09-29 10:44:48]       OK - PDF verificado y guardado: 929914.pdf (tipo: PLIEGO)
+[2026-09-29 10:44:48]    <<< Resultado anio 2023: OK
+[2026-09-29 10:44:51] 
+[53/137] Codigo: 961210 (anio base 2023)
+[2026-09-29 10:44:51]    >>> Probando anio 2023
+[2026-09-29 10:44:51]    [Intento] Codigo=961210, Anio=2023
+[2026-09-29 10:45:15]       Hay resultados. Buscando fila...
+[2026-09-29 10:45:15]       Fila encontrada en indice 36
+[2026-09-29 10:45:22]       Esperando que cargue la ficha...
+[2026-09-29 10:45:26]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:45:26]       *** ENCONTRADO ACTA en fila 89 ***
+[2026-09-29 10:45:26]       Enlace de descarga encontrado
+[2026-09-29 10:45:27]       Nombre del archivo descargado: 02122023_125404_acta_no_formulacion_convocatoria_810958.pdf
+[2026-09-29 10:45:27]       Archivo guardado: 961210_ACTA.pdf
+[2026-09-29 10:45:27]       Verificando contenido del PDF...
+[2026-09-29 10:45:27]       *** ERROR: El PDF no es un Pliego ***
+[2026-09-29 10:45:27]    <<< Resultado anio 2023: PDF_INCORRECTO_CONTENIDO
+[2026-09-29 10:45:27]    >>> Probando anio 2024
+[2026-09-29 10:45:27]    [Intento] Codigo=961210, Anio=2024
+[2026-09-29 10:45:50]    <<< Resultado anio 2024: SIN_FICHA
+[2026-09-29 10:45:50]    >>> Probando anio 2022
+[2026-09-29 10:45:50]    [Intento] Codigo=961210, Anio=2022
+[2026-09-29 10:46:14]    <<< Resultado anio 2022: SIN_FICHA
+[2026-09-29 10:46:14]    >>> Probando anio 2025
+[2026-09-29 10:46:14]    [Intento] Codigo=961210, Anio=2025
+[2026-09-29 10:46:37]    <<< Resultado anio 2025: SIN_FICHA
+[2026-09-29 10:46:37]    >>> Probando anio 2021
+[2026-09-29 10:46:37]    [Intento] Codigo=961210, Anio=2021
+[2026-09-29 10:47:01]    <<< Resultado anio 2021: SIN_FICHA
+[2026-09-29 10:47:04] 
+[54/137] Codigo: 925975 (anio base 2023)
+[2026-09-29 10:47:04]    >>> Probando anio 2023
+[2026-09-29 10:47:04]    [Intento] Codigo=925975, Anio=2023
+[2026-09-29 10:47:27]       Hay resultados. Buscando fila...
+[2026-09-29 10:47:27]       Fila encontrada en indice 36
+[2026-09-29 10:47:35]       Esperando que cargue la ficha...
+[2026-09-29 10:47:39]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:47:39]       *** ENCONTRADO PLIEGO en fila 77 ***
+[2026-09-29 10:47:39]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:47:39]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:47:39]       Enlace de descarga encontrado
+[2026-09-29 10:47:40]       Nombre del archivo descargado: 18082023_043124+-+pliegoabsolutorio+-+convocatoria+-+781819_20230818_163124_312.pdf
+[2026-09-29 10:47:41]       Archivo guardado: 925975.pdf
+[2026-09-29 10:47:41]       Verificando contenido del PDF...
+[2026-09-29 10:47:41]       OK - PDF verificado y guardado: 925975.pdf (tipo: PLIEGO)
+[2026-09-29 10:47:41]    <<< Resultado anio 2023: OK
+[2026-09-29 10:47:44] 
+[55/137] Codigo: 941264 (anio base 2023)
+[2026-09-29 10:47:44]    >>> Probando anio 2023
+[2026-09-29 10:47:44]    [Intento] Codigo=941264, Anio=2023
+[2026-09-29 10:48:07]       Hay resultados. Buscando fila...
+[2026-09-29 10:48:07]       Fila encontrada en indice 36
+[2026-09-29 10:48:14]       Esperando que cargue la ficha...
+[2026-09-29 10:48:18]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:48:18]       *** ENCONTRADO PLIEGO en fila 77 ***
+[2026-09-29 10:48:18]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:48:18]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:48:18]       Enlace de descarga encontrado
+[2026-09-29 10:48:19]       Nombre del archivo descargado: 05102023_055745+-+pliegoabsolutorio+-+convocatoria+-+793793.pdf
+[2026-09-29 10:48:19]       Archivo guardado: 941264.pdf
+[2026-09-29 10:48:19]       Verificando contenido del PDF...
+[2026-09-29 10:48:19]       OK - PDF verificado y guardado: 941264.pdf (tipo: PLIEGO)
+[2026-09-29 10:48:19]    <<< Resultado anio 2023: OK
+[2026-09-29 10:48:22] 
+[56/137] Codigo: 1025563 (anio base 2023)
+[2026-09-29 10:48:22]    >>> Probando anio 2023
+[2026-09-29 10:48:22]    [Intento] Codigo=1025563, Anio=2023
+[2026-09-29 10:48:46]       Hay resultados. Buscando fila...
+[2026-09-29 10:48:46]       Fila encontrada en indice 36
+[2026-09-29 10:48:53]       Esperando que cargue la ficha...
+[2026-09-29 10:48:57]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:48:57]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:48:57]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:48:57]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:48:57]       Enlace de descarga encontrado
+[2026-09-29 10:48:58]       Nombre del archivo descargado: 17062024_072406+-+pliegoabsolutorio+-+convocatoria+-+858501.pdf
+[2026-09-29 10:48:58]       Archivo guardado: 1025563.pdf
+[2026-09-29 10:48:58]       Verificando contenido del PDF...
+[2026-09-29 10:48:58]       OK - PDF verificado y guardado: 1025563.pdf (tipo: PLIEGO)
+[2026-09-29 10:48:58]    <<< Resultado anio 2023: OK
+[2026-09-29 10:49:01] 
+[57/137] Codigo: 948752 (anio base 2023)
+[2026-09-29 10:49:01]    >>> Probando anio 2023
+[2026-09-29 10:49:01]    [Intento] Codigo=948752, Anio=2023
+[2026-09-29 10:49:25]       Hay resultados. Buscando fila...
+[2026-09-29 10:49:25]       Fila encontrada en indice 36
+[2026-09-29 10:49:32]       Esperando que cargue la ficha...
+[2026-09-29 10:49:36]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:49:37]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:49:37]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:49:37]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:49:37]       Enlace de descarga encontrado
+[2026-09-29 10:49:38]       Nombre del archivo descargado: 15112023_074042+-+pliegoabsolutorio+-+convocatoria+-+799353.pdf
+[2026-09-29 10:49:38]       Archivo guardado: 948752.pdf
+[2026-09-29 10:49:38]       Verificando contenido del PDF...
+[2026-09-29 10:49:38]       OK - PDF verificado y guardado: 948752.pdf (tipo: PLIEGO)
+[2026-09-29 10:49:38]    <<< Resultado anio 2023: OK
+[2026-09-29 10:49:41] 
+[58/137] Codigo: 961402 (anio base 2023)
+[2026-09-29 10:49:41]    >>> Probando anio 2023
+[2026-09-29 10:49:41]    [Intento] Codigo=961402, Anio=2023
+[2026-09-29 10:50:04]       Hay resultados. Buscando fila...
+[2026-09-29 10:50:04]       Fila encontrada en indice 36
+[2026-09-29 10:50:11]       Esperando que cargue la ficha...
+[2026-09-29 10:50:15]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:50:16]       *** ENCONTRADO PLIEGO en fila 93 ***
+[2026-09-29 10:50:16]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:50:16]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:50:16]       Enlace de descarga encontrado
+[2026-09-29 10:50:17]       Nombre del archivo descargado: 15112023_060006+-+pliegoabsolutorio+-+convocatoria+-+804524.pdf
+[2026-09-29 10:50:17]       Archivo guardado: 961402.pdf
+[2026-09-29 10:50:17]       Verificando contenido del PDF...
+[2026-09-29 10:50:17]       OK - PDF verificado y guardado: 961402.pdf (tipo: PLIEGO)
+[2026-09-29 10:50:17]    <<< Resultado anio 2023: OK
+[2026-09-29 10:50:20] 
+[59/137] Codigo: 930869 (anio base 2023)
+[2026-09-29 10:50:20]    >>> Probando anio 2023
+[2026-09-29 10:50:20]    [Intento] Codigo=930869, Anio=2023
+[2026-09-29 10:50:44]       Hay resultados. Buscando fila...
+[2026-09-29 10:50:44]       Fila encontrada en indice 36
+[2026-09-29 10:50:51]       Esperando que cargue la ficha...
+[2026-09-29 10:50:55]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:50:55]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:50:55]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:50:55]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:50:55]       Enlace de descarga encontrado
+[2026-09-29 10:50:57]       Nombre del archivo descargado: 14082023_063650+-+pliegoabsolutorio+-+convocatoria+-+753877_20230814_183650_224.pdf
+[2026-09-29 10:50:57]       Archivo guardado: 930869.pdf
+[2026-09-29 10:50:57]       Verificando contenido del PDF...
+[2026-09-29 10:50:57]       OK - PDF verificado y guardado: 930869.pdf (tipo: PLIEGO)
+[2026-09-29 10:50:57]    <<< Resultado anio 2023: OK
+[2026-09-29 10:51:00] 
+[60/137] Codigo: 929009 (anio base 2023)
+[2026-09-29 10:51:00]    >>> Probando anio 2023
+[2026-09-29 10:51:00]    [Intento] Codigo=929009, Anio=2023
+[2026-09-29 10:51:23]       Hay resultados. Buscando fila...
+[2026-09-29 10:51:23]       Fila encontrada en indice 36
+[2026-09-29 10:51:30]       Esperando que cargue la ficha...
+[2026-09-29 10:51:34]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:51:35]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:51:35]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:51:35]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:51:35]       Enlace de descarga encontrado
+[2026-09-29 10:51:36]       Nombre del archivo descargado: 31082023_074606+-+pliegoabsolutorio+-+convocatoria+-+783943_20230831_194606_203.pdf
+[2026-09-29 10:51:36]       Archivo guardado: 929009.pdf
+[2026-09-29 10:51:36]       Verificando contenido del PDF...
+[2026-09-29 10:51:36]       OK - PDF verificado y guardado: 929009.pdf (tipo: PLIEGO)
+[2026-09-29 10:51:36]    <<< Resultado anio 2023: OK
+[2026-09-29 10:51:39] 
+[61/137] Codigo: 938651 (anio base 2023)
+[2026-09-29 10:51:39]    >>> Probando anio 2023
+[2026-09-29 10:51:39]    [Intento] Codigo=938651, Anio=2023
+[2026-09-29 10:52:02]       Hay resultados. Buscando fila...
+[2026-09-29 10:52:02]       Fila encontrada en indice 36
+[2026-09-29 10:52:09]       Esperando que cargue la ficha...
+[2026-09-29 10:52:14]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:52:14]       *** ENCONTRADO PLIEGO en fila 85 ***
+[2026-09-29 10:52:14]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:52:14]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:52:14]       Enlace de descarga encontrado
+[2026-09-29 10:52:15]       Nombre del archivo descargado: 03102023_103603+-+pliegoabsolutorio+-+convocatoria+-+791495.pdf
+[2026-09-29 10:52:15]       Archivo guardado: 938651.pdf
+[2026-09-29 10:52:15]       Verificando contenido del PDF...
+[2026-09-29 10:52:15]       OK - PDF verificado y guardado: 938651.pdf (tipo: PLIEGO)
+[2026-09-29 10:52:15]    <<< Resultado anio 2023: OK
+[2026-09-29 10:52:18] 
+[62/137] Codigo: 893721 (anio base 2023)
+[2026-09-29 10:52:18]    >>> Probando anio 2023
+[2026-09-29 10:52:18]    [Intento] Codigo=893721, Anio=2023
+[2026-09-29 10:52:42]       Hay resultados. Buscando fila...
+[2026-09-29 10:52:42]       Fila encontrada en indice 36
+[2026-09-29 10:52:49]       Esperando que cargue la ficha...
+[2026-09-29 10:52:53]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:52:53]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 10:52:53]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:52:53]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:52:53]       Enlace de descarga encontrado
+[2026-09-29 10:52:54]       Nombre del archivo descargado: 03052023_085617+-+pliegoabsolutorio+-+convocatoria+-+755880_20230503_205617_547.pdf
+[2026-09-29 10:52:54]       Archivo guardado: 893721.pdf
+[2026-09-29 10:52:54]       Verificando contenido del PDF...
+[2026-09-29 10:52:54]       OK - PDF verificado y guardado: 893721.pdf (tipo: PLIEGO)
+[2026-09-29 10:52:54]    <<< Resultado anio 2023: OK
+[2026-09-29 10:52:57] 
+[63/137] Codigo: 934991 (anio base 2023)
+[2026-09-29 10:52:57]    >>> Probando anio 2023
+[2026-09-29 10:52:57]    [Intento] Codigo=934991, Anio=2023
+[2026-09-29 10:53:21]       Hay resultados. Buscando fila...
+[2026-09-29 10:53:21]       Fila encontrada en indice 36
+[2026-09-29 10:53:28]       Esperando que cargue la ficha...
+[2026-09-29 10:53:32]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:53:33]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:53:33]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:53:33]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:53:33]       Enlace de descarga encontrado
+[2026-09-29 10:53:34]       Nombre del archivo descargado: 25082023_091713+-+pliegoabsolutorio+-+convocatoria+-+759632_20230825_211713_669.pdf
+[2026-09-29 10:53:34]       Archivo guardado: 934991.pdf
+[2026-09-29 10:53:34]       Verificando contenido del PDF...
+[2026-09-29 10:53:34]       OK - PDF verificado y guardado: 934991.pdf (tipo: PLIEGO)
+[2026-09-29 10:53:34]    <<< Resultado anio 2023: OK
+[2026-09-29 10:53:37] 
+[64/137] Codigo: 923189 (anio base 2023)
+[2026-09-29 10:53:37]    >>> Probando anio 2023
+[2026-09-29 10:53:37]    [Intento] Codigo=923189, Anio=2023
+[2026-09-29 10:54:01]       Hay resultados. Buscando fila...
+[2026-09-29 10:54:01]       Fila encontrada en indice 36
+[2026-09-29 10:54:08]       Esperando que cargue la ficha...
+[2026-09-29 10:54:12]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:54:12]       *** ENCONTRADO PLIEGO en fila 92 ***
+[2026-09-29 10:54:12]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:54:12]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:54:12]       Enlace de descarga encontrado
+[2026-09-29 10:54:13]       Nombre del archivo descargado: 21082023_090344+-+pliegoabsolutorio+-+convocatoria+-+779371_20230821_210344_959.pdf
+[2026-09-29 10:54:14]       Archivo guardado: 923189.pdf
+[2026-09-29 10:54:14]       Verificando contenido del PDF...
+[2026-09-29 10:54:14]       OK - PDF verificado y guardado: 923189.pdf (tipo: PLIEGO)
+[2026-09-29 10:54:14]    <<< Resultado anio 2023: OK
+[2026-09-29 10:54:17] 
+[65/137] Codigo: 994457 (anio base 2023)
+[2026-09-29 10:54:17]    >>> Probando anio 2023
+[2026-09-29 10:54:17]    [Intento] Codigo=994457, Anio=2023
+[2026-09-29 10:54:41]       Hay resultados. Buscando fila...
+[2026-09-29 10:54:41]       Fila encontrada en indice 36
+[2026-09-29 10:54:48]       Esperando que cargue la ficha...
+[2026-09-29 10:54:52]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:54:52]       *** ENCONTRADO PLIEGO en fila 91 ***
+[2026-09-29 10:54:52]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:54:52]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:54:52]       Enlace de descarga encontrado
+[2026-09-29 10:54:53]       Nombre del archivo descargado: 11032024_084618+-+pliegoabsolutorio+-+convocatoria+-+832935.pdf
+[2026-09-29 10:54:53]       Archivo guardado: 994457.pdf
+[2026-09-29 10:54:53]       Verificando contenido del PDF...
+[2026-09-29 10:54:53]       OK - PDF verificado y guardado: 994457.pdf (tipo: PLIEGO)
+[2026-09-29 10:54:53]    <<< Resultado anio 2023: OK
+[2026-09-29 10:54:56] 
+[66/137] Codigo: 968247 (anio base 2023)
+[2026-09-29 10:54:56]    >>> Probando anio 2023
+[2026-09-29 10:54:56]    [Intento] Codigo=968247, Anio=2023
+[2026-09-29 10:55:20]       Hay resultados. Buscando fila...
+[2026-09-29 10:55:20]       Fila encontrada en indice 36
+[2026-09-29 10:55:27]       Esperando que cargue la ficha...
+[2026-09-29 10:55:31]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:55:31]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:55:31]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:55:31]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:55:31]       Enlace de descarga encontrado
+[2026-09-29 10:55:33]       Nombre del archivo descargado: 01122023_112355+-+pliegoabsolutorio+-+convocatoria+-+789292.pdf
+[2026-09-29 10:55:33]       Archivo guardado: 968247.pdf
+[2026-09-29 10:55:33]       Verificando contenido del PDF...
+[2026-09-29 10:55:33]       OK - PDF verificado y guardado: 968247.pdf (tipo: PLIEGO)
+[2026-09-29 10:55:33]    <<< Resultado anio 2023: OK
+[2026-09-29 10:55:36] 
+[67/137] Codigo: 952653 (anio base 2023)
+[2026-09-29 10:55:36]    >>> Probando anio 2023
+[2026-09-29 10:55:36]    [Intento] Codigo=952653, Anio=2023
+[2026-09-29 10:56:00]       Hay resultados. Buscando fila...
+[2026-09-29 10:56:00]       Fila encontrada en indice 36
+[2026-09-29 10:56:08]       Esperando que cargue la ficha...
+[2026-09-29 10:56:12]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:56:12]       *** ENCONTRADO PLIEGO en fila 87 ***
+[2026-09-29 10:56:12]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:56:12]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:56:12]       Enlace de descarga encontrado
+[2026-09-29 10:56:13]       Nombre del archivo descargado: 19102023_070448+-+pliegoabsolutorio+-+convocatoria+-+795875.pdf
+[2026-09-29 10:56:13]       Archivo guardado: 952653.pdf
+[2026-09-29 10:56:13]       Verificando contenido del PDF...
+[2026-09-29 10:56:13]       OK - PDF verificado y guardado: 952653.pdf (tipo: PLIEGO)
+[2026-09-29 10:56:13]    <<< Resultado anio 2023: OK
+[2026-09-29 10:56:16] 
+[68/137] Codigo: 954697 (anio base 2023)
+[2026-09-29 10:56:16]    >>> Probando anio 2023
+[2026-09-29 10:56:16]    [Intento] Codigo=954697, Anio=2023
+[2026-09-29 10:56:39]       Hay resultados. Buscando fila...
+[2026-09-29 10:56:39]       Fila encontrada en indice 36
+[2026-09-29 10:56:46]       Esperando que cargue la ficha...
+[2026-09-29 10:56:50]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:56:51]       *** ENCONTRADO PLIEGO en fila 92 ***
+[2026-09-29 10:56:51]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:56:51]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:56:51]       Enlace de descarga encontrado
+[2026-09-29 10:56:52]       Nombre del archivo descargado: 25102023_111520+-+pliegoabsolutorio+-+convocatoria+-+788534.pdf
+[2026-09-29 10:56:52]       Archivo guardado: 954697.pdf
+[2026-09-29 10:56:52]       Verificando contenido del PDF...
+[2026-09-29 10:56:52]       OK - PDF verificado y guardado: 954697.pdf (tipo: PLIEGO)
+[2026-09-29 10:56:52]    <<< Resultado anio 2023: OK
+[2026-09-29 10:56:55] 
+[69/137] Codigo: 948338 (anio base 2023)
+[2026-09-29 10:56:55]    >>> Probando anio 2023
+[2026-09-29 10:56:55]    [Intento] Codigo=948338, Anio=2023
+[2026-09-29 10:57:19]       Hay resultados. Buscando fila...
+[2026-09-29 10:57:19]       Fila encontrada en indice 36
+[2026-09-29 10:57:26]       Esperando que cargue la ficha...
+[2026-09-29 10:57:30]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:57:30]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 10:57:30]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:57:30]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:57:30]       Enlace de descarga encontrado
+[2026-09-29 10:57:31]       Nombre del archivo descargado: 06102023_073818+-+pliegoabsolutorio+-+convocatoria+-+790949.pdf
+[2026-09-29 10:57:31]       Archivo guardado: 948338.pdf
+[2026-09-29 10:57:31]       Verificando contenido del PDF...
+[2026-09-29 10:57:31]       OK - PDF verificado y guardado: 948338.pdf (tipo: PLIEGO)
+[2026-09-29 10:57:31]    <<< Resultado anio 2023: OK
+[2026-09-29 10:57:34] 
+[70/137] Codigo: 1051789 (anio base 2024)
+[2026-09-29 10:57:34]    >>> Probando anio 2024
+[2026-09-29 10:57:34]    [Intento] Codigo=1051789, Anio=2024
+[2026-09-29 10:57:58]       Hay resultados. Buscando fila...
+[2026-09-29 10:57:58]       Fila encontrada en indice 36
+[2026-09-29 10:58:05]       Esperando que cargue la ficha...
+[2026-09-29 10:58:09]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:58:09]       *** ENCONTRADO PLIEGO en fila 76 ***
+[2026-09-29 10:58:09]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:58:09]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:58:09]       Enlace de descarga encontrado
+[2026-09-29 10:58:11]       Nombre del archivo descargado: 17012025_082628+-+pliegoabsolutorio+-+convocatoria+-+880619.pdf
+[2026-09-29 10:58:11]       Archivo guardado: 1051789.pdf
+[2026-09-29 10:58:11]       Verificando contenido del PDF...
+[2026-09-29 10:58:11]       OK - PDF verificado y guardado: 1051789.pdf (tipo: PLIEGO)
+[2026-09-29 10:58:11]    <<< Resultado anio 2024: OK
+[2026-09-29 10:58:14] 
+[71/137] Codigo: 1027610 (anio base 2024)
+[2026-09-29 10:58:14]    >>> Probando anio 2024
+[2026-09-29 10:58:14]    [Intento] Codigo=1027610, Anio=2024
+[2026-09-29 10:58:38]       Hay resultados. Buscando fila...
+[2026-09-29 10:58:39]       Fila encontrada en indice 36
+[2026-09-29 10:58:46]       Esperando que cargue la ficha...
+[2026-09-29 10:58:50]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:58:50]       *** ENCONTRADO PLIEGO en fila 88 ***
+[2026-09-29 10:58:50]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:58:50]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:58:50]       Enlace de descarga encontrado
+[2026-09-29 10:58:52]       Nombre del archivo descargado: 21062024_074606+-+pliegoabsolutorio+-+convocatoria+-+850059.pdf
+[2026-09-29 10:58:52]       Archivo guardado: 1027610.pdf
+[2026-09-29 10:58:52]       Verificando contenido del PDF...
+[2026-09-29 10:58:52]       OK - PDF verificado y guardado: 1027610.pdf (tipo: PLIEGO)
+[2026-09-29 10:58:52]    <<< Resultado anio 2024: OK
+[2026-09-29 10:58:55] 
+[72/137] Codigo: 1079530 (anio base 2024)
+[2026-09-29 10:58:55]    >>> Probando anio 2024
+[2026-09-29 10:58:55]    [Intento] Codigo=1079530, Anio=2024
+[2026-09-29 10:59:19]       Hay resultados. Buscando fila...
+[2026-09-29 10:59:19]       Fila encontrada en indice 36
+[2026-09-29 10:59:26]       Esperando que cargue la ficha...
+[2026-09-29 10:59:30]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 10:59:31]       *** ENCONTRADO PLIEGO en fila 81 ***
+[2026-09-29 10:59:31]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 10:59:31]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 10:59:31]       Enlace de descarga encontrado
+[2026-09-29 10:59:34]       Nombre del archivo descargado: 16012025_023047+-+pliegoabsolutorio+-+convocatoria+-+903052.pdf
+[2026-09-29 10:59:34]       Archivo guardado: 1079530.pdf
+[2026-09-29 10:59:34]       Verificando contenido del PDF...
+[2026-09-29 10:59:34]       OK - PDF verificado y guardado: 1079530.pdf (tipo: PLIEGO)
+[2026-09-29 10:59:34]    <<< Resultado anio 2024: OK
+[2026-09-29 10:59:37] 
+[73/137] Codigo: 1019132 (anio base 2024)
+[2026-09-29 10:59:37]    >>> Probando anio 2024
+[2026-09-29 10:59:37]    [Intento] Codigo=1019132, Anio=2024
+[2026-09-29 11:00:01]       Hay resultados. Buscando fila...
+[2026-09-29 11:00:01]       Fila encontrada en indice 36
+[2026-09-29 11:00:08]       Esperando que cargue la ficha...
+[2026-09-29 11:00:12]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:00:12]       *** ENCONTRADO PLIEGO en fila 77 ***
+[2026-09-29 11:00:12]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:00:12]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:00:12]       Enlace de descarga encontrado
+[2026-09-29 11:00:13]       Nombre del archivo descargado: 12082024_030524+-+pliegoabsolutorio+-+convocatoria+-+853343.pdf
+[2026-09-29 11:00:13]       Archivo guardado: 1019132.pdf
+[2026-09-29 11:00:13]       Verificando contenido del PDF...
+[2026-09-29 11:00:13]       OK - PDF verificado y guardado: 1019132.pdf (tipo: PLIEGO)
+[2026-09-29 11:00:13]    <<< Resultado anio 2024: OK
+[2026-09-29 11:00:16] 
+[74/137] Codigo: 1073981 (anio base 2024)
+[2026-09-29 11:00:16]    >>> Probando anio 2024
+[2026-09-29 11:00:16]    [Intento] Codigo=1073981, Anio=2024
+[2026-09-29 11:00:41]       Hay resultados. Buscando fila...
+[2026-09-29 11:00:41]       Fila encontrada en indice 36
+[2026-09-29 11:00:48]       Esperando que cargue la ficha...
+[2026-09-29 11:00:52]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:00:52]       *** ENCONTRADO PLIEGO en fila 76 ***
+[2026-09-29 11:00:52]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:00:52]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:00:52]       Enlace de descarga encontrado
+[2026-09-29 11:00:54]       Nombre del archivo descargado: 03022025_111042+-+pliegoabsolutorio+-+convocatoria+-+898495.pdf
+[2026-09-29 11:00:54]       Archivo guardado: 1073981.pdf
+[2026-09-29 11:00:54]       Verificando contenido del PDF...
+[2026-09-29 11:00:54]       OK - PDF verificado y guardado: 1073981.pdf (tipo: PLIEGO)
+[2026-09-29 11:00:54]    <<< Resultado anio 2024: OK
+[2026-09-29 11:00:57] 
+[75/137] Codigo: 1084469 (anio base 2024)
+[2026-09-29 11:00:57]    >>> Probando anio 2024
+[2026-09-29 11:00:57]    [Intento] Codigo=1084469, Anio=2024
+[2026-09-29 11:01:21]       Hay resultados. Buscando fila...
+[2026-09-29 11:01:21]       Fila encontrada en indice 36
+[2026-09-29 11:01:28]       Esperando que cargue la ficha...
+[2026-09-29 11:01:32]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:01:32]       *** ENCONTRADO PLIEGO en fila 81 ***
+[2026-09-29 11:01:32]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:01:32]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:01:32]       Enlace de descarga encontrado
+[2026-09-29 11:01:34]       Nombre del archivo descargado: 17022025_045419+-+pliegoabsolutorio+-+convocatoria+-+907233.pdf
+[2026-09-29 11:01:34]       Archivo guardado: 1084469.pdf
+[2026-09-29 11:01:34]       Verificando contenido del PDF...
+[2026-09-29 11:01:34]       OK - PDF verificado y guardado: 1084469.pdf (tipo: PLIEGO)
+[2026-09-29 11:01:34]    <<< Resultado anio 2024: OK
+[2026-09-29 11:01:37] 
+[76/137] Codigo: 1054931 (anio base 2024)
+[2026-09-29 11:01:37]    >>> Probando anio 2024
+[2026-09-29 11:01:37]    [Intento] Codigo=1054931, Anio=2024
+[2026-09-29 11:02:00]       Hay resultados. Buscando fila...
+[2026-09-29 11:02:00]       Fila encontrada en indice 36
+[2026-09-29 11:02:07]       Esperando que cargue la ficha...
+[2026-09-29 11:02:11]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:02:12]       *** ENCONTRADO PLIEGO en fila 92 ***
+[2026-09-29 11:02:12]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:02:12]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:02:12]       Enlace de descarga encontrado
+[2026-09-29 11:02:13]       Nombre del archivo descargado: 24092024_105028+-+pliegoabsolutorio+-+convocatoria+-+858701.pdf
+[2026-09-29 11:02:13]       Archivo guardado: 1054931.pdf
+[2026-09-29 11:02:13]       Verificando contenido del PDF...
+[2026-09-29 11:02:14]       OK - PDF verificado y guardado: 1054931.pdf (tipo: PLIEGO)
+[2026-09-29 11:02:14]    <<< Resultado anio 2024: OK
+[2026-09-29 11:02:17] 
+[77/137] Codigo: 1056298 (anio base 2024)
+[2026-09-29 11:02:17]    >>> Probando anio 2024
+[2026-09-29 11:02:17]    [Intento] Codigo=1056298, Anio=2024
+[2026-09-29 11:02:40]       Hay resultados. Buscando fila...
+[2026-09-29 11:02:40]       Fila encontrada en indice 36
+[2026-09-29 11:02:47]       Esperando que cargue la ficha...
+[2026-09-29 11:02:51]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:02:51]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 11:02:51]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:02:51]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:02:51]       Enlace de descarga encontrado
+[2026-09-29 11:02:52]       Nombre del archivo descargado: 25102024_110920+-+pliegoabsolutorio+-+convocatoria+-+884651.pdf
+[2026-09-29 11:02:53]       Archivo guardado: 1056298.pdf
+[2026-09-29 11:02:53]       Verificando contenido del PDF...
+[2026-09-29 11:02:53]       OK - PDF verificado y guardado: 1056298.pdf (tipo: PLIEGO)
+[2026-09-29 11:02:53]    <<< Resultado anio 2024: OK
+[2026-09-29 11:02:56] 
+[78/137] Codigo: 1050941 (anio base 2024)
+[2026-09-29 11:02:56]    >>> Probando anio 2024
+[2026-09-29 11:02:56]    [Intento] Codigo=1050941, Anio=2024
+[2026-09-29 11:03:19]       Hay resultados. Buscando fila...
+[2026-09-29 11:03:19]       Fila encontrada en indice 36
+[2026-09-29 11:03:26]       Esperando que cargue la ficha...
+[2026-09-29 11:03:30]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:03:30]       *** ENCONTRADO PLIEGO en fila 86 ***
+[2026-09-29 11:03:30]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:03:30]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:03:30]       Enlace de descarga encontrado
+[2026-09-29 11:03:32]       Nombre del archivo descargado: 30092024_110522+-+pliegoabsolutorio+-+convocatoria+-+880016.pdf
+[2026-09-29 11:03:32]       Archivo guardado: 1050941.pdf
+[2026-09-29 11:03:32]       Verificando contenido del PDF...
+[2026-09-29 11:03:32]       OK - PDF verificado y guardado: 1050941.pdf (tipo: PLIEGO)
+[2026-09-29 11:03:32]    <<< Resultado anio 2024: OK
+[2026-09-29 11:03:35] 
+[79/137] Codigo: 1064958 (anio base 2024)
+[2026-09-29 11:03:35]    >>> Probando anio 2024
+[2026-09-29 11:03:35]    [Intento] Codigo=1064958, Anio=2024
+[2026-09-29 11:03:59]       Hay resultados. Buscando fila...
+[2026-09-29 11:03:59]       Fila encontrada en indice 36
+[2026-09-29 11:04:06]       Esperando que cargue la ficha...
+[2026-09-29 11:04:10]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:04:10]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 11:04:10]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:04:10]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:04:10]       Enlace de descarga encontrado
+[2026-09-29 11:04:12]       Nombre del archivo descargado: 28102024_125905+-+pliegoabsolutorio+-+convocatoria+-+825277.pdf
+[2026-09-29 11:04:12]       Archivo guardado: 1064958.pdf
+[2026-09-29 11:04:12]       Verificando contenido del PDF...
+[2026-09-29 11:04:12]       OK - PDF verificado y guardado: 1064958.pdf (tipo: PLIEGO)
+[2026-09-29 11:04:12]    <<< Resultado anio 2024: OK
+[2026-09-29 11:04:15] 
+[80/137] Codigo: 1084805 (anio base 2024)
+[2026-09-29 11:04:15]    >>> Probando anio 2024
+[2026-09-29 11:04:15]    [Intento] Codigo=1084805, Anio=2024
+[2026-09-29 11:04:38]       Hay resultados. Buscando fila...
+[2026-09-29 11:04:38]       Fila encontrada en indice 36
+[2026-09-29 11:04:45]       Esperando que cargue la ficha...
+[2026-09-29 11:04:49]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:04:50]       *** ENCONTRADO PLIEGO en fila 81 ***
+[2026-09-29 11:04:50]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:04:50]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:04:50]       Enlace de descarga encontrado
+[2026-09-29 11:04:52]       Nombre del archivo descargado: 07022025_094939+-+pliegoabsolutorio+-+convocatoria+-+907701.pdf
+[2026-09-29 11:04:52]       Archivo guardado: 1084805.pdf
+[2026-09-29 11:04:52]       Verificando contenido del PDF...
+[2026-09-29 11:04:52]       OK - PDF verificado y guardado: 1084805.pdf (tipo: PLIEGO)
+[2026-09-29 11:04:52]    <<< Resultado anio 2024: OK
+[2026-09-29 11:04:55] 
+[81/137] Codigo: 1037657 (anio base 2024)
+[2026-09-29 11:04:55]    >>> Probando anio 2024
+[2026-09-29 11:04:55]    [Intento] Codigo=1037657, Anio=2024
+[2026-09-29 11:05:19]       Hay resultados. Buscando fila...
+[2026-09-29 11:05:19]       Fila encontrada en indice 36
+[2026-09-29 11:05:26]       Esperando que cargue la ficha...
+[2026-09-29 11:05:30]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:05:30]       *** ENCONTRADO PLIEGO en fila 92 ***
+[2026-09-29 11:05:30]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:05:30]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:05:30]       Enlace de descarga encontrado
+[2026-09-29 11:05:31]       Nombre del archivo descargado: 25072024_061150+-+pliegoabsolutorio+-+convocatoria+-+854371.pdf
+[2026-09-29 11:05:32]       Archivo guardado: 1037657.pdf
+[2026-09-29 11:05:32]       Verificando contenido del PDF...
+[2026-09-29 11:05:32]       OK - PDF verificado y guardado: 1037657.pdf (tipo: PLIEGO)
+[2026-09-29 11:05:32]    <<< Resultado anio 2024: OK
+[2026-09-29 11:05:35] 
+[82/137] Codigo: 1059825 (anio base 2024)
+[2026-09-29 11:05:35]    >>> Probando anio 2024
+[2026-09-29 11:05:35]    [Intento] Codigo=1059825, Anio=2024
+[2026-09-29 11:05:58]       Hay resultados. Buscando fila...
+[2026-09-29 11:05:59]       Fila encontrada en indice 36
+[2026-09-29 11:06:06]       Esperando que cargue la ficha...
+[2026-09-29 11:06:10]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:06:10]       *** ENCONTRADO PLIEGO en fila 76 ***
+[2026-09-29 11:06:10]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:06:10]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:06:10]       Enlace de descarga encontrado
+[2026-09-29 11:06:12]       Nombre del archivo descargado: 26112024_045523+-+pliegoabsolutorio+-+convocatoria+-+886787.pdf
+[2026-09-29 11:06:12]       Archivo guardado: 1059825.pdf
+[2026-09-29 11:06:12]       Verificando contenido del PDF...
+[2026-09-29 11:06:12]       OK - PDF verificado y guardado: 1059825.pdf (tipo: PLIEGO)
+[2026-09-29 11:06:12]    <<< Resultado anio 2024: OK
+[2026-09-29 11:06:15] 
+[83/137] Codigo: 1017551 (anio base 2024)
+[2026-09-29 11:06:15]    >>> Probando anio 2024
+[2026-09-29 11:06:15]    [Intento] Codigo=1017551, Anio=2024
+[2026-09-29 11:06:39]       Hay resultados. Buscando fila...
+[2026-09-29 11:06:39]       Fila encontrada en indice 36
+[2026-09-29 11:06:46]       Esperando que cargue la ficha...
+[2026-09-29 11:06:50]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:06:50]       *** ENCONTRADO PLIEGO en fila 77 ***
+[2026-09-29 11:06:50]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:06:50]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:06:51]       Enlace de descarga encontrado
+[2026-09-29 11:06:51]       Nombre del archivo descargado: 25062024_123336+-+pliegoabsolutorio+-+convocatoria+-+852023.pdf
+[2026-09-29 11:06:52]       Archivo guardado: 1017551.pdf
+[2026-09-29 11:06:52]       Verificando contenido del PDF...
+[2026-09-29 11:06:52]       OK - PDF verificado y guardado: 1017551.pdf (tipo: PLIEGO)
+[2026-09-29 11:06:52]    <<< Resultado anio 2024: OK
+[2026-09-29 11:06:55] 
+[84/137] Codigo: 999833 (anio base 2024)
+[2026-09-29 11:06:55]    >>> Probando anio 2024
+[2026-09-29 11:06:55]    [Intento] Codigo=999833, Anio=2024
+[2026-09-29 11:07:18]       Hay resultados. Buscando fila...
+[2026-09-29 11:07:18]       Fila encontrada en indice 36
+[2026-09-29 11:07:25]       Esperando que cargue la ficha...
+[2026-09-29 11:07:29]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:07:30]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 11:07:30]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:07:30]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:07:30]       Enlace de descarga encontrado
+[2026-09-29 11:07:31]       Nombre del archivo descargado: 17042024_091001+-+pliegoabsolutorio+-+convocatoria+-+837873.pdf
+[2026-09-29 11:07:31]       Archivo guardado: 999833.pdf
+[2026-09-29 11:07:31]       Verificando contenido del PDF...
+[2026-09-29 11:07:31]       OK - PDF verificado y guardado: 999833.pdf (tipo: PLIEGO)
+[2026-09-29 11:07:31]    <<< Resultado anio 2024: OK
+[2026-09-29 11:07:34] 
+[85/137] Codigo: 1104804 (anio base 2024)
+[2026-09-29 11:07:34]    >>> Probando anio 2024
+[2026-09-29 11:07:34]    [Intento] Codigo=1104804, Anio=2024
+[2026-09-29 11:08:01]       Hay resultados. Buscando fila...
+[2026-09-29 11:08:01]       Fila encontrada en indice 36
+[2026-09-29 11:08:08]       Esperando que cargue la ficha...
+[2026-09-29 11:08:12]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:08:12]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 11:08:12]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:08:12]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:08:12]       Enlace de descarga encontrado
+[2026-09-29 11:08:13]       Nombre del archivo descargado: 01042025_112149+-+pliegoabsolutorio+-+convocatoria+-+902485.pdf
+[2026-09-29 11:08:13]       Archivo guardado: 1104804.pdf
+[2026-09-29 11:08:13]       Verificando contenido del PDF...
+[2026-09-29 11:08:13]       OK - PDF verificado y guardado: 1104804.pdf (tipo: PLIEGO)
+[2026-09-29 11:08:13]    <<< Resultado anio 2024: OK
+[2026-09-29 11:08:16] 
+[86/137] Codigo: 1073362 (anio base 2024)
+[2026-09-29 11:08:16]    >>> Probando anio 2024
+[2026-09-29 11:08:16]    [Intento] Codigo=1073362, Anio=2024
+[2026-09-29 11:08:40]       Hay resultados. Buscando fila...
+[2026-09-29 11:08:40]       Fila encontrada en indice 36
+[2026-09-29 11:08:47]       Esperando que cargue la ficha...
+[2026-09-29 11:08:51]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:08:51]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 11:08:51]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:08:51]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:08:51]       Enlace de descarga encontrado
+[2026-09-29 11:08:52]       Nombre del archivo descargado: 26032025_051953+-+pliegoabsolutorio+-+convocatoria+-+897920.pdf
+[2026-09-29 11:08:52]       Archivo guardado: 1073362.pdf
+[2026-09-29 11:08:52]       Verificando contenido del PDF...
+[2026-09-29 11:08:52]       OK - PDF verificado y guardado: 1073362.pdf (tipo: PLIEGO)
+[2026-09-29 11:08:52]    <<< Resultado anio 2024: OK
+[2026-09-29 11:08:55] 
+[87/137] Codigo: 1090093 (anio base 2024)
+[2026-09-29 11:08:55]    >>> Probando anio 2024
+[2026-09-29 11:08:55]    [Intento] Codigo=1090093, Anio=2024
+[2026-09-29 11:09:19]       Hay resultados. Buscando fila...
+[2026-09-29 11:09:19]       Fila encontrada en indice 36
+[2026-09-29 11:09:26]       Esperando que cargue la ficha...
+[2026-09-29 11:09:30]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:09:30]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 11:09:30]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:09:30]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:09:30]       Enlace de descarga encontrado
+[2026-09-29 11:09:32]       Nombre del archivo descargado: 20112024_055930+-+pliegoabsolutorio+-+convocatoria+-+885392.pdf
+[2026-09-29 11:09:32]       Archivo guardado: 1090093.pdf
+[2026-09-29 11:09:32]       Verificando contenido del PDF...
+[2026-09-29 11:09:32]       OK - PDF verificado y guardado: 1090093.pdf (tipo: PLIEGO)
+[2026-09-29 11:09:32]    <<< Resultado anio 2024: OK
+[2026-09-29 11:09:35] 
+[88/137] Codigo: 1103374 (anio base 2024)
+[2026-09-29 11:09:35]    >>> Probando anio 2024
+[2026-09-29 11:09:35]    [Intento] Codigo=1103374, Anio=2024
+[2026-09-29 11:09:59]       Hay resultados. Buscando fila...
+[2026-09-29 11:09:59]       Fila encontrada en indice 36
+[2026-09-29 11:10:06]       Esperando que cargue la ficha...
+[2026-09-29 11:10:10]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:10:10]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 11:10:10]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:10:10]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:10:10]       Enlace de descarga encontrado
+[2026-09-29 11:10:11]       Nombre del archivo descargado: 01042025_080557+-+pliegoabsolutorio+-+convocatoria+-+922360.pdf
+[2026-09-29 11:10:11]       Archivo guardado: 1103374.pdf
+[2026-09-29 11:10:11]       Verificando contenido del PDF...
+[2026-09-29 11:10:11]       OK - PDF verificado y guardado: 1103374.pdf (tipo: PLIEGO)
+[2026-09-29 11:10:11]    <<< Resultado anio 2024: OK
+[2026-09-29 11:10:14] 
+[89/137] Codigo: 1068898 (anio base 2024)
+[2026-09-29 11:10:14]    >>> Probando anio 2024
+[2026-09-29 11:10:14]    [Intento] Codigo=1068898, Anio=2024
+[2026-09-29 11:10:40]       Hay resultados. Buscando fila...
+[2026-09-29 11:10:40]       Fila encontrada en indice 36
+[2026-09-29 11:10:47]       Esperando que cargue la ficha...
+[2026-09-29 11:10:52]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:10:52]       *** ENCONTRADO PLIEGO en fila 77 ***
+[2026-09-29 11:10:52]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:10:52]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:10:52]       Enlace de descarga encontrado
+[2026-09-29 11:10:53]       Nombre del archivo descargado: 27112024_091845+-+pliegoabsolutorio+-+convocatoria+-+894266.pdf
+[2026-09-29 11:10:53]       Archivo guardado: 1068898.pdf
+[2026-09-29 11:10:53]       Verificando contenido del PDF...
+[2026-09-29 11:10:53]       OK - PDF verificado y guardado: 1068898.pdf (tipo: PLIEGO)
+[2026-09-29 11:10:53]    <<< Resultado anio 2024: OK
+[2026-09-29 11:10:56] 
+[90/137] Codigo: 1039800 (anio base 2024)
+[2026-09-29 11:10:56]    >>> Probando anio 2024
+[2026-09-29 11:10:56]    [Intento] Codigo=1039800, Anio=2024
+[2026-09-29 11:11:20]       Hay resultados. Buscando fila...
+[2026-09-29 11:11:20]       Fila encontrada en indice 36
+[2026-09-29 11:11:27]       Esperando que cargue la ficha...
+[2026-09-29 11:11:31]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:11:31]       *** ENCONTRADO PLIEGO en fila 92 ***
+[2026-09-29 11:11:31]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:11:31]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:11:31]       Enlace de descarga encontrado
+[2026-09-29 11:11:33]       Nombre del archivo descargado: 11092024_084855+-+pliegoabsolutorio+-+convocatoria+-+870442.pdf
+[2026-09-29 11:11:33]       Archivo guardado: 1039800.pdf
+[2026-09-29 11:11:33]       Verificando contenido del PDF...
+[2026-09-29 11:11:33]       OK - PDF verificado y guardado: 1039800.pdf (tipo: PLIEGO)
+[2026-09-29 11:11:33]    <<< Resultado anio 2024: OK
+[2026-09-29 11:11:36] 
+[91/137] Codigo: 1007182 (anio base 2024)
+[2026-09-29 11:11:36]    >>> Probando anio 2024
+[2026-09-29 11:11:36]    [Intento] Codigo=1007182, Anio=2024
+[2026-09-29 11:12:00]       Hay resultados. Buscando fila...
+[2026-09-29 11:12:00]       Fila encontrada en indice 36
+[2026-09-29 11:12:08]       Esperando que cargue la ficha...
+[2026-09-29 11:12:12]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:12:12]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 11:12:12]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:12:12]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:12:12]       Enlace de descarga encontrado
+[2026-09-29 11:12:13]       Nombre del archivo descargado: 24052024_035059+-+pliegoabsolutorio+-+convocatoria+-+843409.pdf
+[2026-09-29 11:12:13]       Archivo guardado: 1007182.pdf
+[2026-09-29 11:12:13]       Verificando contenido del PDF...
+[2026-09-29 11:12:13]       OK - PDF verificado y guardado: 1007182.pdf (tipo: PLIEGO)
+[2026-09-29 11:12:13]    <<< Resultado anio 2024: OK
+[2026-09-29 11:12:16] 
+[92/137] Codigo: 1084610 (anio base 2024)
+[2026-09-29 11:12:16]    >>> Probando anio 2024
+[2026-09-29 11:12:16]    [Intento] Codigo=1084610, Anio=2024
+[2026-09-29 11:12:40]       Hay resultados. Buscando fila...
+[2026-09-29 11:12:40]       Fila encontrada en indice 36
+[2026-09-29 11:12:47]       Esperando que cargue la ficha...
+[2026-09-29 11:12:51]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:12:52]       *** ENCONTRADO PLIEGO en fila 76 ***
+[2026-09-29 11:12:52]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:12:52]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:12:52]       Enlace de descarga encontrado
+[2026-09-29 11:12:53]       Nombre del archivo descargado: 31012025_073524+-+pliegoabsolutorio+-+convocatoria+-+907478.pdf
+[2026-09-29 11:12:53]       Archivo guardado: 1084610.pdf
+[2026-09-29 11:12:53]       Verificando contenido del PDF...
+[2026-09-29 11:12:53]       OK - PDF verificado y guardado: 1084610.pdf (tipo: PLIEGO)
+[2026-09-29 11:12:53]    <<< Resultado anio 2024: OK
+[2026-09-29 11:12:56] 
+[93/137] Codigo: 1108567 (anio base 2024)
+[2026-09-29 11:12:56]    >>> Probando anio 2024
+[2026-09-29 11:12:56]    [Intento] Codigo=1108567, Anio=2024
+[2026-09-29 11:13:20]       Hay resultados. Buscando fila...
+[2026-09-29 11:13:20]       Fila encontrada en indice 36
+[2026-09-29 11:13:27]       Esperando que cargue la ficha...
+[2026-09-29 11:13:31]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:13:32]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 11:13:32]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:13:32]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:13:32]       Enlace de descarga encontrado
+[2026-09-29 11:13:33]       Nombre del archivo descargado: 11042025_081024+-+pliegoabsolutorio+-+convocatoria+-+890700.pdf
+[2026-09-29 11:13:34]       Archivo guardado: 1108567.pdf
+[2026-09-29 11:13:34]       Verificando contenido del PDF...
+[2026-09-29 11:13:34]       OK - PDF verificado y guardado: 1108567.pdf (tipo: PLIEGO)
+[2026-09-29 11:13:34]    <<< Resultado anio 2024: OK
+[2026-09-29 11:13:37] 
+[94/137] Codigo: 1084480 (anio base 2024)
+[2026-09-29 11:13:37]    >>> Probando anio 2024
+[2026-09-29 11:13:37]    [Intento] Codigo=1084480, Anio=2024
+[2026-09-29 11:14:00]       Hay resultados. Buscando fila...
+[2026-09-29 11:14:00]       Fila encontrada en indice 36
+[2026-09-29 11:14:08]       Esperando que cargue la ficha...
+[2026-09-29 11:14:12]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:14:12]       *** ENCONTRADO PLIEGO en fila 83 ***
+[2026-09-29 11:14:12]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:14:12]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:14:12]       Enlace de descarga encontrado
+[2026-09-29 11:14:13]       Nombre del archivo descargado: 11022025_050622+-+pliegoabsolutorio+-+convocatoria+-+907819.pdf
+[2026-09-29 11:14:14]       Archivo guardado: 1084480.pdf
+[2026-09-29 11:14:14]       Verificando contenido del PDF...
+[2026-09-29 11:14:14]       OK - PDF verificado y guardado: 1084480.pdf (tipo: PLIEGO)
+[2026-09-29 11:14:14]    <<< Resultado anio 2024: OK
+[2026-09-29 11:14:17] 
+[95/137] Codigo: 1067332 (anio base 2024)
+[2026-09-29 11:14:17]    >>> Probando anio 2024
+[2026-09-29 11:14:17]    [Intento] Codigo=1067332, Anio=2024
+[2026-09-29 11:14:40]       Hay resultados. Buscando fila...
+[2026-09-29 11:14:40]       Fila encontrada en indice 36
+[2026-09-29 11:14:47]       Esperando que cargue la ficha...
+[2026-09-29 11:14:52]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:14:52]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 11:14:52]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:14:52]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:14:52]       Enlace de descarga encontrado
+[2026-09-29 11:14:53]       Nombre del archivo descargado: 15102024_074419+-+pliegoabsolutorio+-+convocatoria+-+880390.pdf
+[2026-09-29 11:14:53]       Archivo guardado: 1067332.pdf
+[2026-09-29 11:14:53]       Verificando contenido del PDF...
+[2026-09-29 11:14:53]       OK - PDF verificado y guardado: 1067332.pdf (tipo: PLIEGO)
+[2026-09-29 11:14:53]    <<< Resultado anio 2024: OK
+[2026-09-29 11:14:56] 
+[96/137] Codigo: 1073059 (anio base 2024)
+[2026-09-29 11:14:56]    >>> Probando anio 2024
+[2026-09-29 11:14:56]    [Intento] Codigo=1073059, Anio=2024
+[2026-09-29 11:15:19]       Hay resultados. Buscando fila...
+[2026-09-29 11:15:19]       Fila encontrada en indice 36
+[2026-09-29 11:15:26]       Esperando que cargue la ficha...
+[2026-09-29 11:15:30]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:15:31]       *** ENCONTRADO PLIEGO en fila 92 ***
+[2026-09-29 11:15:31]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:15:31]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:15:31]       Enlace de descarga encontrado
+[2026-09-29 11:15:32]       Nombre del archivo descargado: 19122024_052221+-+pliegoabsolutorio+-+convocatoria+-+897653.pdf
+[2026-09-29 11:15:32]       Archivo guardado: 1073059.pdf
+[2026-09-29 11:15:32]       Verificando contenido del PDF...
+[2026-09-29 11:15:32]       OK - PDF verificado y guardado: 1073059.pdf (tipo: PLIEGO)
+[2026-09-29 11:15:32]    <<< Resultado anio 2024: OK
+[2026-09-29 11:15:35] 
+[97/137] Codigo: 1083769 (anio base 2024)
+[2026-09-29 11:15:35]    >>> Probando anio 2024
+[2026-09-29 11:15:35]    [Intento] Codigo=1083769, Anio=2024
+[2026-09-29 11:15:59]       Hay resultados. Buscando fila...
+[2026-09-29 11:15:59]       Fila encontrada en indice 36
+[2026-09-29 11:16:06]       Esperando que cargue la ficha...
+[2026-09-29 11:16:10]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:16:10]       *** ENCONTRADO PLIEGO en fila 76 ***
+[2026-09-29 11:16:10]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:16:10]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:16:10]       Enlace de descarga encontrado
+[2026-09-29 11:16:11]       Nombre del archivo descargado: 29012025_081152+-+pliegoabsolutorio+-+convocatoria+-+907874.pdf
+[2026-09-29 11:16:11]       Archivo guardado: 1083769.pdf
+[2026-09-29 11:16:11]       Verificando contenido del PDF...
+[2026-09-29 11:16:11]       OK - PDF verificado y guardado: 1083769.pdf (tipo: PLIEGO)
+[2026-09-29 11:16:11]    <<< Resultado anio 2024: OK
+[2026-09-29 11:16:14] 
+[98/137] Codigo: 1103284 (anio base 2024)
+[2026-09-29 11:16:14]    >>> Probando anio 2024
+[2026-09-29 11:16:14]    [Intento] Codigo=1103284, Anio=2024
+[2026-09-29 11:16:38]       Hay resultados. Buscando fila...
+[2026-09-29 11:16:38]       Fila encontrada en indice 36
+[2026-09-29 11:16:45]       Esperando que cargue la ficha...
+[2026-09-29 11:16:49]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:16:50]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 11:16:50]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:16:50]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:16:50]       Enlace de descarga encontrado
+[2026-09-29 11:16:51]       Nombre del archivo descargado: 31032025_042934+-+pliegoabsolutorio+-+convocatoria+-+920976.pdf
+[2026-09-29 11:16:51]       Archivo guardado: 1103284.pdf
+[2026-09-29 11:16:51]       Verificando contenido del PDF...
+[2026-09-29 11:16:51]       OK - PDF verificado y guardado: 1103284.pdf (tipo: PLIEGO)
+[2026-09-29 11:16:51]    <<< Resultado anio 2024: OK
+[2026-09-29 11:16:54] 
+[99/137] Codigo: 1112851 (anio base 2024)
+[2026-09-29 11:16:54]    >>> Probando anio 2024
+[2026-09-29 11:16:54]    [Intento] Codigo=1112851, Anio=2024
+[2026-09-29 11:17:18]       Hay resultados. Buscando fila...
+[2026-09-29 11:17:18]       Fila encontrada en indice 36
+[2026-09-29 11:17:25]       Esperando que cargue la ficha...
+[2026-09-29 11:17:29]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:17:29]       *** ENCONTRADO PLIEGO en fila 76 ***
+[2026-09-29 11:17:29]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:17:29]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:17:29]       Enlace de descarga encontrado
+[2026-09-29 11:17:31]       Nombre del archivo descargado: 24042025_053700+-+pliegoabsolutorio+-+convocatoria+-+905882.pdf
+[2026-09-29 11:17:31]       Archivo guardado: 1112851.pdf
+[2026-09-29 11:17:31]       Verificando contenido del PDF...
+[2026-09-29 11:17:31]       OK - PDF verificado y guardado: 1112851.pdf (tipo: PLIEGO)
+[2026-09-29 11:17:31]    <<< Resultado anio 2024: OK
+[2026-09-29 11:17:34] 
+[100/137] Codigo: 1050622 (anio base 2024)
+[2026-09-29 11:17:34]    >>> Probando anio 2024
+[2026-09-29 11:17:34]    [Intento] Codigo=1050622, Anio=2024
+[2026-09-29 11:17:58]       Hay resultados. Buscando fila...
+[2026-09-29 11:17:58]       Fila encontrada en indice 36
+[2026-09-29 11:18:05]       Esperando que cargue la ficha...
+[2026-09-29 11:18:09]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:18:09]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 11:18:09]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:18:09]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:18:10]       Enlace de descarga encontrado
+[2026-09-29 11:18:11]       Nombre del archivo descargado: 10122024_033424+-+pliegoabsolutorio+-+convocatoria+-+879246.pdf
+[2026-09-29 11:18:11]       Archivo guardado: 1050622.pdf
+[2026-09-29 11:18:11]       Verificando contenido del PDF...
+[2026-09-29 11:18:11]       OK - PDF verificado y guardado: 1050622.pdf (tipo: PLIEGO)
+[2026-09-29 11:18:11]    <<< Resultado anio 2024: OK
+[2026-09-29 11:18:14] 
+[101/137] Codigo: 1080304 (anio base 2024)
+[2026-09-29 11:18:14]    >>> Probando anio 2024
+[2026-09-29 11:18:14]    [Intento] Codigo=1080304, Anio=2024
+[2026-09-29 11:18:38]       Hay resultados. Buscando fila...
+[2026-09-29 11:18:38]       Fila encontrada en indice 36
+[2026-09-29 11:18:45]       Esperando que cargue la ficha...
+[2026-09-29 11:18:49]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:18:50]       *** ENCONTRADO PLIEGO en fila 78 ***
+[2026-09-29 11:18:50]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:18:50]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:18:50]       Enlace de descarga encontrado
+[2026-09-29 11:18:51]       Nombre del archivo descargado: 04072024_053655+-+pliegoabsolutorio+-+convocatoria+-+845782.pdf
+[2026-09-29 11:18:51]       Archivo guardado: 1080304.pdf
+[2026-09-29 11:18:51]       Verificando contenido del PDF...
+[2026-09-29 11:18:51]       OK - PDF verificado y guardado: 1080304.pdf (tipo: PLIEGO)
+[2026-09-29 11:18:51]    <<< Resultado anio 2024: OK
+[2026-09-29 11:18:54] 
+[102/137] Codigo: 1102853 (anio base 2024)
+[2026-09-29 11:18:54]    >>> Probando anio 2024
+[2026-09-29 11:18:54]    [Intento] Codigo=1102853, Anio=2024
+[2026-09-29 11:19:18]       Hay resultados. Buscando fila...
+[2026-09-29 11:19:18]       Fila encontrada en indice 36
+[2026-09-29 11:19:25]       Esperando que cargue la ficha...
+[2026-09-29 11:19:29]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:19:29]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 11:19:29]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:19:29]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:19:29]       Enlace de descarga encontrado
+[2026-09-29 11:19:30]       Nombre del archivo descargado: 27032025_074744+-+pliegoabsolutorio+-+convocatoria+-+920015.pdf
+[2026-09-29 11:19:30]       Archivo guardado: 1102853.pdf
+[2026-09-29 11:19:30]       Verificando contenido del PDF...
+[2026-09-29 11:19:30]       OK - PDF verificado y guardado: 1102853.pdf (tipo: PLIEGO)
+[2026-09-29 11:19:30]    <<< Resultado anio 2024: OK
+[2026-09-29 11:19:33] 
+[103/137] Codigo: 1058860 (anio base 2024)
+[2026-09-29 11:19:33]    >>> Probando anio 2024
+[2026-09-29 11:19:33]    [Intento] Codigo=1058860, Anio=2024
+[2026-09-29 11:19:58]       Hay resultados. Buscando fila...
+[2026-09-29 11:19:58]       Fila encontrada en indice 36
+[2026-09-29 11:20:05]       Esperando que cargue la ficha...
+[2026-09-29 11:20:09]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:20:09]       *** ENCONTRADO PLIEGO en fila 86 ***
+[2026-09-29 11:20:09]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:20:09]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:20:09]       Enlace de descarga encontrado
+[2026-09-29 11:20:11]       Nombre del archivo descargado: 09102024_062747+-+pliegoabsolutorio+-+convocatoria+-+881518.pdf
+[2026-09-29 11:20:11]       Archivo guardado: 1058860.pdf
+[2026-09-29 11:20:11]       Verificando contenido del PDF...
+[2026-09-29 11:20:11]       OK - PDF verificado y guardado: 1058860.pdf (tipo: PLIEGO)
+[2026-09-29 11:20:11]    <<< Resultado anio 2024: OK
+[2026-09-29 11:20:14] 
+[104/137] Codigo: 985624 (anio base 2024)
+[2026-09-29 11:20:14]    >>> Probando anio 2024
+[2026-09-29 11:20:14]    [Intento] Codigo=985624, Anio=2024
+[2026-09-29 11:20:37]       Hay resultados. Buscando fila...
+[2026-09-29 11:20:37]       Fila encontrada en indice 36
+[2026-09-29 11:20:44]       Esperando que cargue la ficha...
+[2026-09-29 11:20:49]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:20:49]       *** ENCONTRADO PLIEGO en fila 80 ***
+[2026-09-29 11:20:49]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:20:49]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:20:49]       Enlace de descarga encontrado
+[2026-09-29 11:20:50]       Nombre del archivo descargado: 01042024_083507+-+pliegoabsolutorio+-+convocatoria+-+825998.pdf
+[2026-09-29 11:20:50]       Archivo guardado: 985624.pdf
+[2026-09-29 11:20:50]       Verificando contenido del PDF...
+[2026-09-29 11:20:50]       OK - PDF verificado y guardado: 985624.pdf (tipo: PLIEGO)
+[2026-09-29 11:20:50]    <<< Resultado anio 2024: OK
+[2026-09-29 11:20:53] 
+[105/137] Codigo: 1117340 (anio base 2025)
+[2026-09-29 11:20:53]    >>> Probando anio 2025
+[2026-09-29 11:20:53]    [Intento] Codigo=1117340, Anio=2025
+[2026-09-29 11:21:17]       Hay resultados. Buscando fila...
+[2026-09-29 11:21:17]       Fila encontrada en indice 36
+[2026-09-29 11:21:24]       Esperando que cargue la ficha...
+[2026-09-29 11:21:28]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:21:29]       *** ENCONTRADO PLIEGO en fila 81 ***
+[2026-09-29 11:21:29]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:21:29]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:21:29]       Enlace de descarga encontrado
+[2026-09-29 11:21:30]       Nombre del archivo descargado: 09052025_092615+-+pliegoabsolutorio+-+convocatoria+-+926077.pdf
+[2026-09-29 11:21:30]       Archivo guardado: 1117340.pdf
+[2026-09-29 11:21:30]       Verificando contenido del PDF...
+[2026-09-29 11:21:30]       OK - PDF verificado y guardado: 1117340.pdf (tipo: PLIEGO)
+[2026-09-29 11:21:30]    <<< Resultado anio 2025: OK
+[2026-09-29 11:21:33] 
+[106/137] Codigo: 1156672 (anio base 2025)
+[2026-09-29 11:21:33]    >>> Probando anio 2025
+[2026-09-29 11:21:33]    [Intento] Codigo=1156672, Anio=2025
+[2026-09-29 11:21:58]       Hay resultados. Buscando fila...
+[2026-09-29 11:21:58]       Fila encontrada en indice 36
+[2026-09-29 11:22:05]       Esperando que cargue la ficha...
+[2026-09-29 11:22:09]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:22:09]       *** ENCONTRADO PLIEGO en fila 86 ***
+[2026-09-29 11:22:09]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:22:09]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:22:09]       Enlace de descarga encontrado
+[2026-09-29 11:22:10]       Nombre del archivo descargado: 01102025_115746+-+pliegoabsolutorio+-+convocatoria+-+958000.pdf
+[2026-09-29 11:22:10]       Archivo guardado: 1156672.pdf
+[2026-09-29 11:22:10]       Verificando contenido del PDF...
+[2026-09-29 11:22:10]       OK - PDF verificado y guardado: 1156672.pdf (tipo: PLIEGO)
+[2026-09-29 11:22:10]    <<< Resultado anio 2025: OK
+[2026-09-29 11:22:13] 
+[107/137] Codigo: 1125456 (anio base 2025)
+[2026-09-29 11:22:13]    >>> Probando anio 2025
+[2026-09-29 11:22:13]    [Intento] Codigo=1125456, Anio=2025
+[2026-09-29 11:22:37]       Hay resultados. Buscando fila...
+[2026-09-29 11:22:37]       Fila encontrada en indice 36
+[2026-09-29 11:22:45]       Esperando que cargue la ficha...
+[2026-09-29 11:22:49]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:22:49]       *** ENCONTRADO PLIEGO en fila 85 ***
+[2026-09-29 11:22:49]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:22:49]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:22:49]       Enlace de descarga encontrado
+[2026-09-29 11:22:50]       Nombre del archivo descargado: 03072025_062052+-+pliegoabsolutorio+-+convocatoria+-+939486.pdf
+[2026-09-29 11:22:50]       Archivo guardado: 1125456.pdf
+[2026-09-29 11:22:50]       Verificando contenido del PDF...
+[2026-09-29 11:22:50]       OK - PDF verificado y guardado: 1125456.pdf (tipo: PLIEGO)
+[2026-09-29 11:22:50]    <<< Resultado anio 2025: OK
+[2026-09-29 11:22:53] 
+[108/137] Codigo: 1106896 (anio base 2025)
+[2026-09-29 11:22:53]    >>> Probando anio 2025
+[2026-09-29 11:22:53]    [Intento] Codigo=1106896, Anio=2025
+[2026-09-29 11:23:17]       Hay resultados. Buscando fila...
+[2026-09-29 11:23:17]       Fila encontrada en indice 36
+[2026-09-29 11:23:24]       Esperando que cargue la ficha...
+[2026-09-29 11:23:28]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:23:29]       *** ENCONTRADO PLIEGO en fila 87 ***
+[2026-09-29 11:23:29]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:23:29]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:23:29]       Enlace de descarga encontrado
+[2026-09-29 11:23:31]       Nombre del archivo descargado: 29042025_050918+-+pliegoabsolutorio+-+convocatoria+-+925381.pdf
+[2026-09-29 11:23:31]       Archivo guardado: 1106896.pdf
+[2026-09-29 11:23:31]       Verificando contenido del PDF...
+[2026-09-29 11:23:31]       OK - PDF verificado y guardado: 1106896.pdf (tipo: PLIEGO)
+[2026-09-29 11:23:31]    <<< Resultado anio 2025: OK
+[2026-09-29 11:23:34] 
+[109/137] Codigo: 1163486 (anio base 2025)
+[2026-09-29 11:23:34]    >>> Probando anio 2025
+[2026-09-29 11:23:34]    [Intento] Codigo=1163486, Anio=2025
+[2026-09-29 11:23:59]       Hay resultados. Buscando fila...
+[2026-09-29 11:23:59]       Fila encontrada en indice 36
+[2026-09-29 11:24:06]       Esperando que cargue la ficha...
+[2026-09-29 11:24:10]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:24:11]       *** ENCONTRADO PLIEGO en fila 87 ***
+[2026-09-29 11:24:11]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:24:11]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:24:11]       Enlace de descarga encontrado
+[2026-09-29 11:24:13]       Nombre del archivo descargado: 27102025_030557+-+pliegoabsolutorio+-+convocatoria+-+947825.pdf
+[2026-09-29 11:24:13]       Archivo guardado: 1163486.pdf
+[2026-09-29 11:24:13]       Verificando contenido del PDF...
+[2026-09-29 11:24:13]       OK - PDF verificado y guardado: 1163486.pdf (tipo: PLIEGO)
+[2026-09-29 11:24:13]    <<< Resultado anio 2025: OK
+[2026-09-29 11:24:16] 
+[110/137] Codigo: 1160206 (anio base 2025)
+[2026-09-29 11:24:16]    >>> Probando anio 2025
+[2026-09-29 11:24:16]    [Intento] Codigo=1160206, Anio=2025
+[2026-09-29 11:24:40]       Hay resultados. Buscando fila...
+[2026-09-29 11:24:40]       Fila encontrada en indice 36
+[2026-09-29 11:24:47]       Esperando que cargue la ficha...
+[2026-09-29 11:25:01]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:25:01]       *** ENCONTRADO PLIEGO en fila 72 ***
+[2026-09-29 11:25:01]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:25:01]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:25:01]       Enlace de descarga encontrado
+[2026-09-29 11:25:04]       Nombre del archivo descargado: 22102025_101343+-+pliegoabsolutorio+-+convocatoria+-+967597.pdf
+[2026-09-29 11:25:05]       Archivo guardado: 1160206.pdf
+[2026-09-29 11:25:05]       Verificando contenido del PDF...
+[2026-09-29 11:25:05]       OK - PDF verificado y guardado: 1160206.pdf (tipo: PLIEGO)
+[2026-09-29 11:25:05]    <<< Resultado anio 2025: OK
+[2026-09-29 11:25:08] 
+[111/137] Codigo: 1165514 (anio base 2025)
+[2026-09-29 11:25:08]    >>> Probando anio 2025
+[2026-09-29 11:25:08]    [Intento] Codigo=1165514, Anio=2025
+[2026-09-29 11:25:33]       Hay resultados. Buscando fila...
+[2026-09-29 11:25:34]       Fila encontrada en indice 36
+[2026-09-29 11:25:41]       Esperando que cargue la ficha...
+[2026-09-29 11:25:45]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:25:45]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 11:25:45]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:25:45]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:25:45]       Enlace de descarga encontrado
+[2026-09-29 11:25:48]       Nombre del archivo descargado: 21112025_060526+-+pliegoabsolutorio+-+convocatoria+-+972185.pdf
+[2026-09-29 11:25:48]       Archivo guardado: 1165514.pdf
+[2026-09-29 11:25:48]       Verificando contenido del PDF...
+[2026-09-29 11:25:48]       OK - PDF verificado y guardado: 1165514.pdf (tipo: PLIEGO)
+[2026-09-29 11:25:48]    <<< Resultado anio 2025: OK
+[2026-09-29 11:25:51] 
+[112/137] Codigo: 1145168 (anio base 2025)
+[2026-09-29 11:25:51]    >>> Probando anio 2025
+[2026-09-29 11:25:51]    [Intento] Codigo=1145168, Anio=2025
+[2026-09-29 11:26:16]       Hay resultados. Buscando fila...
+[2026-09-29 11:26:16]       Fila encontrada en indice 36
+[2026-09-29 11:26:25]       Esperando que cargue la ficha...
+[2026-09-29 11:26:29]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:26:29]       *** ENCONTRADO PLIEGO en fila 87 ***
+[2026-09-29 11:26:29]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:26:29]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:26:29]       Enlace de descarga encontrado
+[2026-09-29 11:26:35]       Nombre del archivo descargado: 19092025_062107+-+pliegoabsolutorio+-+convocatoria+-+955382.pdf
+[2026-09-29 11:26:35]       Archivo guardado: 1145168.pdf
+[2026-09-29 11:26:35]       Verificando contenido del PDF...
+[2026-09-29 11:26:35]       OK - PDF verificado y guardado: 1145168.pdf (tipo: PLIEGO)
+[2026-09-29 11:26:35]    <<< Resultado anio 2025: OK
+[2026-09-29 11:26:38] 
+[113/137] Codigo: 1178754 (anio base 2025)
+[2026-09-29 11:26:38]    >>> Probando anio 2025
+[2026-09-29 11:26:38]    [Intento] Codigo=1178754, Anio=2025
+[2026-09-29 11:27:02]       Hay resultados. Buscando fila...
+[2026-09-29 11:27:02]       Fila encontrada en indice 36
+[2026-09-29 11:27:09]       Esperando que cargue la ficha...
+[2026-09-29 11:27:13]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:27:13]       *** ENCONTRADO PLIEGO en fila 77 ***
+[2026-09-29 11:27:13]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:27:13]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:27:13]       Enlace de descarga encontrado
+[2026-09-29 11:27:15]       Nombre del archivo descargado: 21112025_043155+-+pliegoabsolutorio+-+convocatoria+-+977210.pdf
+[2026-09-29 11:27:16]       Archivo guardado: 1178754.pdf
+[2026-09-29 11:27:16]       Verificando contenido del PDF...
+[2026-09-29 11:27:16]       OK - PDF verificado y guardado: 1178754.pdf (tipo: PLIEGO)
+[2026-09-29 11:27:16]    <<< Resultado anio 2025: OK
+[2026-09-29 11:27:19] 
+[114/137] Codigo: 1108635 (anio base 2025)
+[2026-09-29 11:27:19]    >>> Probando anio 2025
+[2026-09-29 11:27:19]    [Intento] Codigo=1108635, Anio=2025
+[2026-09-29 11:27:43]       Hay resultados. Buscando fila...
+[2026-09-29 11:27:43]       Fila encontrada en indice 36
+[2026-09-29 11:27:50]       Esperando que cargue la ficha...
+[2026-09-29 11:27:54]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:27:54]       *** ENCONTRADO PLIEGO en fila 77 ***
+[2026-09-29 11:27:54]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:27:54]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:27:54]       Enlace de descarga encontrado
+[2026-09-29 11:27:56]       Nombre del archivo descargado: 20052025_114031+-+pliegoabsolutorio+-+convocatoria+-+928415.pdf
+[2026-09-29 11:27:56]       Archivo guardado: 1108635.pdf
+[2026-09-29 11:27:56]       Verificando contenido del PDF...
+[2026-09-29 11:27:56]       OK - PDF verificado y guardado: 1108635.pdf (tipo: PLIEGO)
+[2026-09-29 11:27:56]    <<< Resultado anio 2025: OK
+[2026-09-29 11:27:59] 
+[115/137] Codigo: 1151950 (anio base 2025)
+[2026-09-29 11:27:59]    >>> Probando anio 2025
+[2026-09-29 11:27:59]    [Intento] Codigo=1151950, Anio=2025
+[2026-09-29 11:28:23]       Hay resultados. Buscando fila...
+[2026-09-29 11:28:23]       Fila encontrada en indice 36
+[2026-09-29 11:28:30]       Esperando que cargue la ficha...
+[2026-09-29 11:28:35]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:28:35]       *** ENCONTRADO PLIEGO en fila 86 ***
+[2026-09-29 11:28:35]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:28:35]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:28:35]       Enlace de descarga encontrado
+[2026-09-29 11:28:36]       Nombre del archivo descargado: 17092025_121912+-+pliegoabsolutorio+-+convocatoria+-+952754.pdf
+[2026-09-29 11:28:36]       Archivo guardado: 1151950.pdf
+[2026-09-29 11:28:36]       Verificando contenido del PDF...
+[2026-09-29 11:28:36]       OK - PDF verificado y guardado: 1151950.pdf (tipo: PLIEGO)
+[2026-09-29 11:28:36]    <<< Resultado anio 2025: OK
+[2026-09-29 11:28:39] 
+[116/137] Codigo: 1150722 (anio base 2025)
+[2026-09-29 11:28:39]    >>> Probando anio 2025
+[2026-09-29 11:28:39]    [Intento] Codigo=1150722, Anio=2025
+[2026-09-29 11:29:03]       Hay resultados. Buscando fila...
+[2026-09-29 11:29:03]       Fila encontrada en indice 36
+[2026-09-29 11:29:10]       Esperando que cargue la ficha...
+[2026-09-29 11:29:14]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:29:14]       *** ENCONTRADO PLIEGO en fila 85 ***
+[2026-09-29 11:29:14]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:29:14]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:29:14]       Enlace de descarga encontrado
+[2026-09-29 11:29:15]       Nombre del archivo descargado: 03102025_074007+-+pliegoabsolutorio+-+convocatoria+-+959923.pdf
+[2026-09-29 11:29:15]       Archivo guardado: 1150722.pdf
+[2026-09-29 11:29:15]       Verificando contenido del PDF...
+[2026-09-29 11:29:15]       OK - PDF verificado y guardado: 1150722.pdf (tipo: PLIEGO)
+[2026-09-29 11:29:15]    <<< Resultado anio 2025: OK
+[2026-09-29 11:29:18] 
+[117/137] Codigo: 1152891 (anio base 2025)
+[2026-09-29 11:29:18]    >>> Probando anio 2025
+[2026-09-29 11:29:18]    [Intento] Codigo=1152891, Anio=2025
+[2026-09-29 11:29:42]       Hay resultados. Buscando fila...
+[2026-09-29 11:29:42]       Fila encontrada en indice 36
+[2026-09-29 11:29:49]       Esperando que cargue la ficha...
+[2026-09-29 11:29:53]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:29:53]       *** ENCONTRADO PLIEGO en fila 86 ***
+[2026-09-29 11:29:53]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:29:53]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:29:53]       Enlace de descarga encontrado
+[2026-09-29 11:29:54]       Nombre del archivo descargado: 07102025_092206+-+pliegoabsolutorio+-+convocatoria+-+961603.pdf
+[2026-09-29 11:29:54]       Archivo guardado: 1152891.pdf
+[2026-09-29 11:29:54]       Verificando contenido del PDF...
+[2026-09-29 11:29:54]       OK - PDF verificado y guardado: 1152891.pdf (tipo: PLIEGO)
+[2026-09-29 11:29:54]    <<< Resultado anio 2025: OK
+[2026-09-29 11:29:57] 
+[118/137] Codigo: 1111801 (anio base 2025)
+[2026-09-29 11:29:57]    >>> Probando anio 2025
+[2026-09-29 11:29:57]    [Intento] Codigo=1111801, Anio=2025
+[2026-09-29 11:30:21]       Hay resultados. Buscando fila...
+[2026-09-29 11:30:21]       Fila encontrada en indice 36
+[2026-09-29 11:30:28]       Esperando que cargue la ficha...
+[2026-09-29 11:30:32]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:30:33]       *** ENCONTRADO PLIEGO en fila 81 ***
+[2026-09-29 11:30:33]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:30:33]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:30:33]       Enlace de descarga encontrado
+[2026-09-29 11:30:34]       Nombre del archivo descargado: 22052025_085807+-+pliegoabsolutorio+-+convocatoria+-+929410.pdf
+[2026-09-29 11:30:36]       Archivo guardado: 1111801.pdf
+[2026-09-29 11:30:36]       Verificando contenido del PDF...
+[2026-09-29 11:30:36]       OK - PDF verificado y guardado: 1111801.pdf (tipo: PLIEGO)
+[2026-09-29 11:30:36]    <<< Resultado anio 2025: OK
+[2026-09-29 11:30:39] 
+[119/137] Codigo: 1226867 (anio base 2025)
+[2026-09-29 11:30:39]    >>> Probando anio 2025
+[2026-09-29 11:30:39]    [Intento] Codigo=1226867, Anio=2025
+[2026-09-29 11:31:03]       Hay resultados. Buscando fila...
+[2026-09-29 11:31:04]       Fila encontrada en indice 36
+[2026-09-29 11:31:11]       Esperando que cargue la ficha...
+[2026-09-29 11:31:15]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:31:15]       *** ENCONTRADO PLIEGO en fila 85 ***
+[2026-09-29 11:31:15]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:31:15]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:31:15]       Enlace de descarga encontrado
+[2026-09-29 11:31:17]       Nombre del archivo descargado: 09042026_041459+-+pliegoabsolutorio+-+convocatoria+-+1003684.pdf
+[2026-09-29 11:31:17]       Archivo guardado: 1226867.pdf
+[2026-09-29 11:31:17]       Verificando contenido del PDF...
+[2026-09-29 11:31:17]       OK - PDF verificado y guardado: 1226867.pdf (tipo: PLIEGO)
+[2026-09-29 11:31:17]    <<< Resultado anio 2025: OK
+[2026-09-29 11:31:20] 
+[120/137] Codigo: 1117336 (anio base 2025)
+[2026-09-29 11:31:20]    >>> Probando anio 2025
+[2026-09-29 11:31:20]    [Intento] Codigo=1117336, Anio=2025
+[2026-09-29 11:31:43]       Hay resultados. Buscando fila...
+[2026-09-29 11:31:44]       Fila encontrada en indice 36
+[2026-09-29 11:31:51]       Esperando que cargue la ficha...
+[2026-09-29 11:31:55]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:31:55]       *** ENCONTRADO PLIEGO en fila 91 ***
+[2026-09-29 11:31:55]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:31:55]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:31:55]       Enlace de descarga encontrado
+[2026-09-29 11:31:56]       Nombre del archivo descargado: 09052025_110147+-+pliegoabsolutorio+-+convocatoria+-+926067.pdf
+[2026-09-29 11:31:56]       Archivo guardado: 1117336.pdf
+[2026-09-29 11:31:56]       Verificando contenido del PDF...
+[2026-09-29 11:31:56]       OK - PDF verificado y guardado: 1117336.pdf (tipo: PLIEGO)
+[2026-09-29 11:31:56]    <<< Resultado anio 2025: OK
+[2026-09-29 11:31:59] 
+[121/137] Codigo: 1162940 (anio base 2025)
+[2026-09-29 11:31:59]    >>> Probando anio 2025
+[2026-09-29 11:31:59]    [Intento] Codigo=1162940, Anio=2025
+[2026-09-29 11:32:23]       Hay resultados. Buscando fila...
+[2026-09-29 11:32:23]       Fila encontrada en indice 36
+[2026-09-29 11:32:30]       Esperando que cargue la ficha...
+[2026-09-29 11:32:35]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:32:35]       *** ENCONTRADO PLIEGO en fila 84 ***
+[2026-09-29 11:32:35]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:32:35]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:32:35]       Enlace de descarga encontrado
+[2026-09-29 11:32:36]       Nombre del archivo descargado: 10112025_052302+-+pliegoabsolutorio+-+convocatoria+-+969877.pdf
+[2026-09-29 11:32:36]       Archivo guardado: 1162940.pdf
+[2026-09-29 11:32:36]       Verificando contenido del PDF...
+[2026-09-29 11:32:36]       OK - PDF verificado y guardado: 1162940.pdf (tipo: PLIEGO)
+[2026-09-29 11:32:36]    <<< Resultado anio 2025: OK
+[2026-09-29 11:32:39] 
+[122/137] Codigo: 1129578 (anio base 2025)
+[2026-09-29 11:32:39]    >>> Probando anio 2025
+[2026-09-29 11:32:39]    [Intento] Codigo=1129578, Anio=2025
+[2026-09-29 11:33:03]       Hay resultados. Buscando fila...
+[2026-09-29 11:33:03]       Fila encontrada en indice 36
+[2026-09-29 11:33:10]       Esperando que cargue la ficha...
+[2026-09-29 11:33:14]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:33:15]       *** ENCONTRADO PLIEGO en fila 93 ***
+[2026-09-29 11:33:15]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:33:15]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:33:15]       Enlace de descarga encontrado
+[2026-09-29 11:33:17]       Nombre del archivo descargado: 02072025_115642+-+pliegoabsolutorio+-+convocatoria+-+918459.pdf
+[2026-09-29 11:33:17]       Archivo guardado: 1129578.pdf
+[2026-09-29 11:33:17]       Verificando contenido del PDF...
+[2026-09-29 11:33:17]       OK - PDF verificado y guardado: 1129578.pdf (tipo: PLIEGO)
+[2026-09-29 11:33:17]    <<< Resultado anio 2025: OK
+[2026-09-29 11:33:20] 
+[123/137] Codigo: 1183731 (anio base 2025)
+[2026-09-29 11:33:20]    >>> Probando anio 2025
+[2026-09-29 11:33:20]    [Intento] Codigo=1183731, Anio=2025
+[2026-09-29 11:33:45]       Hay resultados. Buscando fila...
+[2026-09-29 11:33:45]       Fila encontrada en indice 36
+[2026-09-29 11:33:52]       Esperando que cargue la ficha...
+[2026-09-29 11:33:56]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:33:56]       *** ENCONTRADO PLIEGO en fila 82 ***
+[2026-09-29 11:33:56]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:33:56]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:33:56]       Enlace de descarga encontrado
+[2026-09-29 11:33:57]       Nombre del archivo descargado: 15012026_054448+-+pliegoabsolutorio+-+convocatoria+-+987201.pdf
+[2026-09-29 11:33:57]       Archivo guardado: 1183731.pdf
+[2026-09-29 11:33:57]       Verificando contenido del PDF...
+[2026-09-29 11:33:57]       OK - PDF verificado y guardado: 1183731.pdf (tipo: PLIEGO)
+[2026-09-29 11:33:57]    <<< Resultado anio 2025: OK
+[2026-09-29 11:34:00] 
+[124/137] Codigo: 1089336 (anio base 2025)
+[2026-09-29 11:34:00]    >>> Probando anio 2025
+[2026-09-29 11:34:00]    [Intento] Codigo=1089336, Anio=2025
+[2026-09-29 11:34:24]       Hay resultados. Buscando fila...
+[2026-09-29 11:34:24]       Fila encontrada en indice 36
+[2026-09-29 11:34:31]       Esperando que cargue la ficha...
+[2026-09-29 11:34:35]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:34:36]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 11:34:36]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:34:36]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:34:36]       Enlace de descarga encontrado
+[2026-09-29 11:34:37]       Nombre del archivo descargado: 24032025_053320+-+pliegoabsolutorio+-+convocatoria+-+910997.pdf
+[2026-09-29 11:34:37]       Archivo guardado: 1089336.pdf
+[2026-09-29 11:34:37]       Verificando contenido del PDF...
+[2026-09-29 11:34:37]       OK - PDF verificado y guardado: 1089336.pdf (tipo: PLIEGO)
+[2026-09-29 11:34:37]    <<< Resultado anio 2025: OK
+[2026-09-29 11:34:40] 
+[125/137] Codigo: 1108743 (anio base 2025)
+[2026-09-29 11:34:40]    >>> Probando anio 2025
+[2026-09-29 11:34:40]    [Intento] Codigo=1108743, Anio=2025
+[2026-09-29 11:35:04]       Hay resultados. Buscando fila...
+[2026-09-29 11:35:04]       Fila encontrada en indice 36
+[2026-09-29 11:35:11]       Esperando que cargue la ficha...
+[2026-09-29 11:35:15]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:35:16]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 11:35:16]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:35:16]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:35:16]       Enlace de descarga encontrado
+[2026-09-29 11:35:17]       Nombre del archivo descargado: 22052025_112515+-+pliegoabsolutorio+-+convocatoria+-+926840.pdf
+[2026-09-29 11:35:17]       Archivo guardado: 1108743.pdf
+[2026-09-29 11:35:17]       Verificando contenido del PDF...
+[2026-09-29 11:35:17]       OK - PDF verificado y guardado: 1108743.pdf (tipo: PLIEGO)
+[2026-09-29 11:35:17]    <<< Resultado anio 2025: OK
+[2026-09-29 11:35:20] 
+[126/137] Codigo: 1096154 (anio base 2025)
+[2026-09-29 11:35:20]    >>> Probando anio 2025
+[2026-09-29 11:35:20]    [Intento] Codigo=1096154, Anio=2025
+[2026-09-29 11:35:44]       Hay resultados. Buscando fila...
+[2026-09-29 11:35:44]       Fila encontrada en indice 36
+[2026-09-29 11:35:51]       Esperando que cargue la ficha...
+[2026-09-29 11:35:55]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:35:56]       *** ENCONTRADO PLIEGO en fila 81 ***
+[2026-09-29 11:35:56]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:35:56]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:35:56]       Enlace de descarga encontrado
+[2026-09-29 11:35:57]       Nombre del archivo descargado: 31032025_031313+-+pliegoabsolutorio+-+convocatoria+-+916386.pdf
+[2026-09-29 11:35:57]       Archivo guardado: 1096154.pdf
+[2026-09-29 11:35:57]       Verificando contenido del PDF...
+[2026-09-29 11:35:57]       OK - PDF verificado y guardado: 1096154.pdf (tipo: PLIEGO)
+[2026-09-29 11:35:57]    <<< Resultado anio 2025: OK
+[2026-09-29 11:36:00] 
+[127/137] Codigo: 1132122 (anio base 2025)
+[2026-09-29 11:36:00]    >>> Probando anio 2025
+[2026-09-29 11:36:00]    [Intento] Codigo=1132122, Anio=2025
+[2026-09-29 11:36:24]       Hay resultados. Buscando fila...
+[2026-09-29 11:36:24]       Fila encontrada en indice 36
+[2026-09-29 11:36:31]       Esperando que cargue la ficha...
+[2026-09-29 11:36:35]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:36:36]       *** ENCONTRADO PLIEGO en fila 87 ***
+[2026-09-29 11:36:36]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:36:36]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:36:36]       Enlace de descarga encontrado
+[2026-09-29 11:36:36]       Nombre del archivo descargado: 09072025_075114+-+pliegoabsolutorio+-+convocatoria+-+944528.pdf
+[2026-09-29 11:36:36]       Archivo guardado: 1132122.pdf
+[2026-09-29 11:36:36]       Verificando contenido del PDF...
+[2026-09-29 11:36:36]       OK - PDF verificado y guardado: 1132122.pdf (tipo: PLIEGO)
+[2026-09-29 11:36:36]    <<< Resultado anio 2025: OK
+[2026-09-29 11:36:39] 
+[128/137] Codigo: 1139311 (anio base 2025)
+[2026-09-29 11:36:39]    >>> Probando anio 2025
+[2026-09-29 11:36:39]    [Intento] Codigo=1139311, Anio=2025
+[2026-09-29 11:37:03]       Hay resultados. Buscando fila...
+[2026-09-29 11:37:04]       Fila encontrada en indice 36
+[2026-09-29 11:37:11]       Esperando que cargue la ficha...
+[2026-09-29 11:37:15]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:37:15]       *** ENCONTRADO PLIEGO en fila 83 ***
+[2026-09-29 11:37:15]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:37:15]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:37:15]       Enlace de descarga encontrado
+[2026-09-29 11:37:16]       Nombre del archivo descargado: 25082025_060358+-+pliegoabsolutorio+-+convocatoria+-+950591.pdf
+[2026-09-29 11:37:16]       Archivo guardado: 1139311.pdf
+[2026-09-29 11:37:16]       Verificando contenido del PDF...
+[2026-09-29 11:37:16]       OK - PDF verificado y guardado: 1139311.pdf (tipo: PLIEGO)
+[2026-09-29 11:37:16]    <<< Resultado anio 2025: OK
+[2026-09-29 11:37:19] 
+[129/137] Codigo: 1108096 (anio base 2025)
+[2026-09-29 11:37:19]    >>> Probando anio 2025
+[2026-09-29 11:37:19]    [Intento] Codigo=1108096, Anio=2025
+[2026-09-29 11:37:43]       Hay resultados. Buscando fila...
+[2026-09-29 11:37:43]       Fila encontrada en indice 36
+[2026-09-29 11:37:50]       Esperando que cargue la ficha...
+[2026-09-29 11:37:54]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:37:54]       *** ENCONTRADO PLIEGO en fila 89 ***
+[2026-09-29 11:37:54]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:37:54]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:37:55]       Enlace de descarga encontrado
+[2026-09-29 11:37:56]       Nombre del archivo descargado: 05052025_113501+-+pliegoabsolutorio+-+convocatoria+-+927301.pdf
+[2026-09-29 11:37:56]       Archivo guardado: 1108096.pdf
+[2026-09-29 11:37:56]       Verificando contenido del PDF...
+[2026-09-29 11:37:56]       OK - PDF verificado y guardado: 1108096.pdf (tipo: PLIEGO)
+[2026-09-29 11:37:56]    <<< Resultado anio 2025: OK
+[2026-09-29 11:37:59] 
+[130/137] Codigo: 1109493 (anio base 2025)
+[2026-09-29 11:37:59]    >>> Probando anio 2025
+[2026-09-29 11:37:59]    [Intento] Codigo=1109493, Anio=2025
+[2026-09-29 11:38:22]       Hay resultados. Buscando fila...
+[2026-09-29 11:38:23]       Fila encontrada en indice 36
+[2026-09-29 11:38:30]       Esperando que cargue la ficha...
+[2026-09-29 11:38:34]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:38:34]       *** ENCONTRADO PLIEGO en fila 92 ***
+[2026-09-29 11:38:34]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:38:34]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:38:34]       Enlace de descarga encontrado
+[2026-09-29 11:38:35]       Nombre del archivo descargado: 14052025_093929+-+pliegoabsolutorio+-+convocatoria+-+928198.pdf
+[2026-09-29 11:38:36]       Archivo guardado: 1109493.pdf
+[2026-09-29 11:38:36]       Verificando contenido del PDF...
+[2026-09-29 11:38:36]       OK - PDF verificado y guardado: 1109493.pdf (tipo: PLIEGO)
+[2026-09-29 11:38:36]    <<< Resultado anio 2025: OK
+[2026-09-29 11:38:39] 
+[131/137] Codigo: 1108164 (anio base 2025)
+[2026-09-29 11:38:39]    >>> Probando anio 2025
+[2026-09-29 11:38:39]    [Intento] Codigo=1108164, Anio=2025
+[2026-09-29 11:39:03]       Hay resultados. Buscando fila...
+[2026-09-29 11:39:03]       Fila encontrada en indice 36
+[2026-09-29 11:39:10]       Esperando que cargue la ficha...
+[2026-09-29 11:39:14]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:39:15]       *** ENCONTRADO PLIEGO en fila 92 ***
+[2026-09-29 11:39:15]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:39:15]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:39:15]       Enlace de descarga encontrado
+[2026-09-29 11:39:16]       Nombre del archivo descargado: 02062025_111951+-+pliegoabsolutorio+-+convocatoria+-+927052.pdf
+[2026-09-29 11:39:16]       Archivo guardado: 1108164.pdf
+[2026-09-29 11:39:16]       Verificando contenido del PDF...
+[2026-09-29 11:39:16]       OK - PDF verificado y guardado: 1108164.pdf (tipo: PLIEGO)
+[2026-09-29 11:39:16]    <<< Resultado anio 2025: OK
+[2026-09-29 11:39:19] 
+[132/137] Codigo: 1149224 (anio base 2025)
+[2026-09-29 11:39:19]    >>> Probando anio 2025
+[2026-09-29 11:39:19]    [Intento] Codigo=1149224, Anio=2025
+[2026-09-29 11:39:43]       Hay resultados. Buscando fila...
+[2026-09-29 11:39:43]       Fila encontrada en indice 36
+[2026-09-29 11:39:50]       Esperando que cargue la ficha...
+[2026-09-29 11:39:54]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:39:55]       *** ENCONTRADO PLIEGO en fila 71 ***
+[2026-09-29 11:39:55]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:39:55]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:39:55]       Enlace de descarga encontrado
+[2026-09-29 11:39:56]       Nombre del archivo descargado: 07102025_055159+-+pliegoabsolutorio+-+convocatoria+-+958809.pdf
+[2026-09-29 11:39:56]       Archivo guardado: 1149224.pdf
+[2026-09-29 11:39:56]       Verificando contenido del PDF...
+[2026-09-29 11:39:56]       OK - PDF verificado y guardado: 1149224.pdf (tipo: PLIEGO)
+[2026-09-29 11:39:56]    <<< Resultado anio 2025: OK
+[2026-09-29 11:39:59] 
+[133/137] Codigo: 1113382 (anio base 2025)
+[2026-09-29 11:39:59]    >>> Probando anio 2025
+[2026-09-29 11:39:59]    [Intento] Codigo=1113382, Anio=2025
+[2026-09-29 11:40:23]       Hay resultados. Buscando fila...
+[2026-09-29 11:40:23]       Fila encontrada en indice 36
+[2026-09-29 11:40:30]       Esperando que cargue la ficha...
+[2026-09-29 11:40:34]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:40:35]       *** ENCONTRADO PLIEGO en fila 81 ***
+[2026-09-29 11:40:35]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:40:35]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:40:35]       Enlace de descarga encontrado
+[2026-09-29 11:40:36]       Nombre del archivo descargado: 28052025_073142+-+pliegoabsolutorio+-+convocatoria+-+930399.pdf
+[2026-09-29 11:40:37]       Archivo guardado: 1113382.pdf
+[2026-09-29 11:40:37]       Verificando contenido del PDF...
+[2026-09-29 11:40:37]       OK - PDF verificado y guardado: 1113382.pdf (tipo: PLIEGO)
+[2026-09-29 11:40:37]    <<< Resultado anio 2025: OK
+[2026-09-29 11:40:40] 
+[134/137] Codigo: 1121088 (anio base 2025)
+[2026-09-29 11:40:40]    >>> Probando anio 2025
+[2026-09-29 11:40:40]    [Intento] Codigo=1121088, Anio=2025
+[2026-09-29 11:41:04]       Hay resultados. Buscando fila...
+[2026-09-29 11:41:04]       Fila encontrada en indice 36
+[2026-09-29 11:41:13]       Esperando que cargue la ficha...
+[2026-09-29 11:41:17]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:41:17]       *** ENCONTRADO PLIEGO en fila 90 ***
+[2026-09-29 11:41:17]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:41:17]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:41:17]       Enlace de descarga encontrado
+[2026-09-29 11:41:18]       Nombre del archivo descargado: 28052025_073530+-+pliegoabsolutorio+-+convocatoria+-+935972.pdf
+[2026-09-29 11:41:18]       Archivo guardado: 1121088.pdf
+[2026-09-29 11:41:18]       Verificando contenido del PDF...
+[2026-09-29 11:41:18]       OK - PDF verificado y guardado: 1121088.pdf (tipo: PLIEGO)
+[2026-09-29 11:41:18]    <<< Resultado anio 2025: OK
+[2026-09-29 11:41:21] 
+[135/137] Codigo: 1168338 (anio base 2025)
+[2026-09-29 11:41:21]    >>> Probando anio 2025
+[2026-09-29 11:41:21]    [Intento] Codigo=1168338, Anio=2025
+[2026-09-29 11:41:46]       Hay resultados. Buscando fila...
+[2026-09-29 11:41:46]       Fila encontrada en indice 36
+[2026-09-29 11:41:55]       Esperando que cargue la ficha...
+[2026-09-29 11:41:59]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:41:59]       *** ENCONTRADO PLIEGO en fila 81 ***
+[2026-09-29 11:41:59]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:41:59]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:41:59]       Enlace de descarga encontrado
+[2026-09-29 11:42:01]       Nombre del archivo descargado: 10112025_102932+-+pliegoabsolutorio+-+convocatoria+-+969895.pdf
+[2026-09-29 11:42:01]       Archivo guardado: 1168338.pdf
+[2026-09-29 11:42:01]       Verificando contenido del PDF...
+[2026-09-29 11:42:01]       OK - PDF verificado y guardado: 1168338.pdf (tipo: PLIEGO)
+[2026-09-29 11:42:01]    <<< Resultado anio 2025: OK
+[2026-09-29 11:42:04] 
+[136/137] Codigo: 1186382 (anio base 2025)
+[2026-09-29 11:42:04]    >>> Probando anio 2025
+[2026-09-29 11:42:04]    [Intento] Codigo=1186382, Anio=2025
+[2026-09-29 11:42:28]       Hay resultados. Buscando fila...
+[2026-09-29 11:42:29]       Fila encontrada en indice 36
+[2026-09-29 11:42:36]       Esperando que cargue la ficha...
+[2026-09-29 11:42:40]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:42:40]       *** ENCONTRADO PLIEGO en fila 87 ***
+[2026-09-29 11:42:40]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:42:40]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:42:40]       Enlace de descarga encontrado
+[2026-09-29 11:42:41]       Nombre del archivo descargado: 03022026_101323+-+pliegoabsolutorio+-+convocatoria+-+984724.pdf
+[2026-09-29 11:42:41]       Archivo guardado: 1186382.pdf
+[2026-09-29 11:42:41]       Verificando contenido del PDF...
+[2026-09-29 11:42:41]       OK - PDF verificado y guardado: 1186382.pdf (tipo: PLIEGO)
+[2026-09-29 11:42:41]    <<< Resultado anio 2025: OK
+[2026-09-29 11:42:44] 
+[137/137] Codigo: 1201165 (anio base 2025)
+[2026-09-29 11:42:44]    >>> Probando anio 2025
+[2026-09-29 11:42:44]    [Intento] Codigo=1201165, Anio=2025
+[2026-09-29 11:43:08]       Hay resultados. Buscando fila...
+[2026-09-29 11:43:08]       Fila encontrada en indice 36
+[2026-09-29 11:43:15]       Esperando que cargue la ficha...
+[2026-09-29 11:43:19]       Buscando fila de Pliego de Absolucion...
+[2026-09-29 11:43:19]       *** ENCONTRADO PLIEGO en fila 84 ***
+[2026-09-29 11:43:19]       Etapa: Absolución de consultas y observaciones
+[2026-09-29 11:43:19]       Documento: Pliego de absolución de consultas y observaciones
+[2026-09-29 11:43:19]       Enlace de descarga encontrado
+[2026-09-29 11:43:21]       Nombre del archivo descargado: 31032026_093749+-+pliegoabsolutorio+-+convocatoria+-+971558.pdf
+[2026-09-29 11:43:22]       Archivo guardado: 1201165.pdf
+[2026-09-29 11:43:22]       Verificando contenido del PDF...
+[2026-09-29 11:43:22]       OK - PDF verificado y guardado: 1201165.pdf (tipo: PLIEGO)
+[2026-09-29 11:43:22]    <<< Resultado anio 2025: OK
+[2026-09-29 11:43:23] 
+Estado guardado en: D:\00_THESIS_ALAN_BRUCE\CORRER CÓDIGO PARA CONSULTAS Y OBSERVACIONES\03_resultados\estado_descargas.xlsx
+[2026-09-29 11:43:23] 
+============================================================
+[2026-09-29 11:43:23]  RESUMEN
+[2026-09-29 11:43:23] ============================================================
+[2026-09-29 11:43:23]   OK: 136
+[2026-09-29 11:43:23]   SIN_FICHA_EN_NINGUN_ANIO: 1
+[2026-09-29 11:43:23] 
+Total PDFs en carpeta: 136
+[2026-09-29 11:43:23] Total descartados: 1
+[2026-09-29 11:43:23] FIN
