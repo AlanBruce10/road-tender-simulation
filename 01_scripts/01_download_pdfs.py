@@ -1,7 +1,6 @@
 import sys
 import time
 import unicodedata
-from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
@@ -40,9 +39,10 @@ PAUSE_BETWEEN_PROCEDURES = 3
 DOWNLOAD_TIMEOUT_MS = 30000
 PAGE_TIMEOUT_MS = 60000
 
+# Script 00 standardized analytical schema
 EXPECTED_INPUT_COLUMNS = {
-    "codigoconvocatoria",
-    "fecha_convocatoria",
+    "procedure_code",
+    "notice_date",
 }
 
 
@@ -62,7 +62,7 @@ def log(message=""):
 def save_log():
     LOG_FILE.write_text(
         "\n".join(log_lines) + "\n",
-        encoding="utf-8"
+        encoding="utf-8",
     )
 
 
@@ -73,6 +73,7 @@ def save_log():
 def normalize_text(text):
     text = str(text).lower()
     text = unicodedata.normalize("NFKD", text)
+
     return "".join(
         character
         for character in text
@@ -100,14 +101,16 @@ def validate_input_file():
             + ", ".join(sorted(missing_columns))
         )
 
-    if dataframe["codigoconvocatoria"].isna().any():
+    if dataframe["procedure_code"].isna().any():
         raise ValueError(
             "Input dataset contains missing procurement procedure codes."
         )
 
-    duplicated_codes = dataframe[
-        "codigoconvocatoria"
-    ].duplicated().sum()
+    duplicated_codes = (
+        dataframe["procedure_code"]
+        .duplicated()
+        .sum()
+    )
 
     if duplicated_codes > 0:
         raise ValueError(
@@ -115,12 +118,12 @@ def validate_input_file():
             f"{duplicated_codes}"
         )
 
-    dataframe["fecha_convocatoria"] = pd.to_datetime(
-        dataframe["fecha_convocatoria"],
-        errors="coerce"
+    dataframe["notice_date"] = pd.to_datetime(
+        dataframe["notice_date"],
+        errors="coerce",
     )
 
-    missing_dates = dataframe["fecha_convocatoria"].isna().sum()
+    missing_dates = dataframe["notice_date"].isna().sum()
 
     if missing_dates > 0:
         raise ValueError(
@@ -129,7 +132,9 @@ def validate_input_file():
         )
 
     dataframe["search_year"] = (
-        dataframe["fecha_convocatoria"].dt.year.astype(int)
+        dataframe["notice_date"]
+        .dt.year
+        .astype(int)
     )
 
     return dataframe
@@ -187,7 +192,7 @@ def validate_pdf_content(pdf_path, expected_document_type):
 
     except Exception as error:
         return False, (
-            f"PDF_VALIDATION_ERROR: "
+            "PDF_VALIDATION_ERROR: "
             f"{type(error).__name__}: {str(error)[:100]}"
         )
 
@@ -199,7 +204,10 @@ def validate_pdf_content(pdf_path, expected_document_type):
 def wait_for_text(page, text, max_attempts=15, wait_seconds=1):
     for _ in range(max_attempts):
         try:
-            element = page.get_by_text(text, exact=False)
+            element = page.get_by_text(
+                text,
+                exact=False,
+            )
 
             if element.count() > 0:
                 return element
@@ -232,14 +240,14 @@ def search_document_in_year(page, code, year):
         page.goto(
             SEACE_URL,
             wait_until="domcontentloaded",
-            timeout=PAGE_TIMEOUT_MS
+            timeout=PAGE_TIMEOUT_MS,
         )
 
         page.wait_for_timeout(4000)
 
         page.get_by_text(
             "Buscador de Procedimientos de Selección",
-            exact=True
+            exact=True,
         ).click()
 
         page.wait_for_timeout(2500)
@@ -267,10 +275,14 @@ def search_document_in_year(page, code, year):
 
         page.wait_for_timeout(2500)
 
+        # ---------------------------------------------------------------------
+        # SELECT YEAR
+        # ---------------------------------------------------------------------
+
         try:
             year_label = page.get_by_text(
                 "Año de la Convocatoria",
-                exact=False
+                exact=False,
             ).first
 
             year_row = year_label.locator(
@@ -315,6 +327,10 @@ def search_document_in_year(page, code, year):
                 "source_filename": None,
             }
 
+        # ---------------------------------------------------------------------
+        # ENTER PROCEDURE CODE
+        # ---------------------------------------------------------------------
+
         try:
             code_field = page.locator(
                 "#tbBuscador\\:idFormBuscarProceso\\:"
@@ -334,9 +350,13 @@ def search_document_in_year(page, code, year):
                 "source_filename": None,
             }
 
+        # ---------------------------------------------------------------------
+        # SEARCH
+        # ---------------------------------------------------------------------
+
         search_buttons = page.get_by_text(
             "Buscar",
-            exact=True
+            exact=True,
         )
 
         search_button = None
@@ -372,6 +392,10 @@ def search_document_in_year(page, code, year):
                 "validation": None,
                 "source_filename": None,
             }
+
+        # ---------------------------------------------------------------------
+        # FIND RESULT ROW
+        # ---------------------------------------------------------------------
 
         rows = page.locator("tr")
 
@@ -411,6 +435,10 @@ def search_document_in_year(page, code, year):
                 "validation": None,
                 "source_filename": None,
             }
+
+        # ---------------------------------------------------------------------
+        # OPEN PROCEDURE DETAILS
+        # ---------------------------------------------------------------------
 
         candidates = result_row.locator(
             "img, input[type='image']"
@@ -455,11 +483,15 @@ def search_document_in_year(page, code, year):
         if pages_after > pages_before:
             detail_page = page.context.pages[-1]
 
+        # ---------------------------------------------------------------------
+        # OPEN DOCUMENT SECTION
+        # ---------------------------------------------------------------------
+
         documents_button = wait_for_text(
             detail_page,
             "Ver documentos por Etapa",
             max_attempts=15,
-            wait_seconds=1
+            wait_seconds=1,
         )
 
         if documents_button is None:
@@ -495,6 +527,10 @@ def search_document_in_year(page, code, year):
                 "validation": None,
                 "source_filename": None,
             }
+
+        # ---------------------------------------------------------------------
+        # IDENTIFY TARGET DOCUMENT
+        # ---------------------------------------------------------------------
 
         document_rows = detail_page.locator("tr")
 
@@ -551,6 +587,10 @@ def search_document_in_year(page, code, year):
                 "source_filename": None,
             }
 
+        # ---------------------------------------------------------------------
+        # IDENTIFY DOWNLOAD LINK
+        # ---------------------------------------------------------------------
+
         links = target_row.locator("a")
 
         download_link = None
@@ -586,6 +626,10 @@ def search_document_in_year(page, code, year):
                 "source_filename": None,
             }
 
+        # ---------------------------------------------------------------------
+        # DOWNLOAD
+        # ---------------------------------------------------------------------
+
         suffix = (
             ""
             if document_type == "PLIEGO"
@@ -613,7 +657,7 @@ def search_document_in_year(page, code, year):
                         }
                     }
                     """,
-                    link_id
+                    link_id,
                 )
 
             download = download_info.value
@@ -662,9 +706,13 @@ def search_document_in_year(page, code, year):
                 "source_filename": None,
             }
 
+        # ---------------------------------------------------------------------
+        # VALIDATE DOWNLOADED PDF
+        # ---------------------------------------------------------------------
+
         is_valid, validation_status = validate_pdf_content(
             output_path,
-            document_type
+            document_type,
         )
 
         if not is_valid:
@@ -731,7 +779,7 @@ def download_with_year_search(page, code, base_year):
         result = search_document_in_year(
             page,
             code,
-            year
+            year,
         )
 
         attempts.append(
@@ -766,7 +814,7 @@ def download_with_year_search(page, code, base_year):
             retry_result = search_document_in_year(
                 page,
                 code,
-                year
+                year,
             )
 
             attempts.append(
@@ -786,7 +834,7 @@ def download_with_year_search(page, code, base_year):
                 return retry_result
 
         # If the procedure was found but the target document
-        # could not be retrieved, keep the evidence and stop
+        # could not be retrieved, preserve the evidence and stop
         # searching unrelated years.
         if result["status"] in {
             "TARGET_DOCUMENT_NOT_FOUND",
@@ -824,7 +872,7 @@ def save_status(results):
 
     dataframe.to_excel(
         STATUS_FILE,
-        index=False
+        index=False,
     )
 
 
@@ -890,7 +938,7 @@ def print_final_summary(results, expected_count):
 
         for _, row in failed.iterrows():
             log(
-                f"  {row['codigoconvocatoria']} | "
+                f"  {row['procedure_code']} | "
                 f"{row['download_status']} | "
                 f"{row['search_attempts']}"
             )
@@ -963,22 +1011,24 @@ def main():
         context = browser.new_context(
             viewport={
                 "width": 1600,
-                "height": 950
+                "height": 950,
             },
-            accept_downloads=True
+            accept_downloads=True,
         )
 
         page = context.new_page()
 
         for position, (_, row) in enumerate(
             sample.iterrows(),
-            start=1
+            start=1,
         ):
             code = str(
-                int(row["codigoconvocatoria"])
+                int(row["procedure_code"])
             )
 
-            base_year = int(row["search_year"])
+            base_year = int(
+                row["search_year"]
+            )
 
             log()
             log(
@@ -987,8 +1037,13 @@ def main():
                 f"(base year {base_year})"
             )
 
-            existing_pliego = PDFS_DIR / f"{code}.pdf"
-            existing_acta = PDFS_DIR / f"{code}_ACTA.pdf"
+            existing_pliego = (
+                PDFS_DIR / f"{code}.pdf"
+            )
+
+            existing_acta = (
+                PDFS_DIR / f"{code}_ACTA.pdf"
+            )
 
             existing_path = None
             existing_type = None
@@ -1004,7 +1059,7 @@ def main():
             if existing_path is not None:
                 valid, validation = validate_pdf_content(
                     existing_path,
-                    existing_type
+                    existing_type,
                 )
 
                 if valid:
@@ -1014,7 +1069,7 @@ def main():
                     )
 
                     results.append({
-                        "codigoconvocatoria": code,
+                        "procedure_code": code,
                         "base_year": base_year,
                         "year_found": "",
                         "document_type": existing_type,
@@ -1039,7 +1094,7 @@ def main():
             result = download_with_year_search(
                 page,
                 code,
-                base_year
+                base_year,
             )
 
             output_filename = ""
@@ -1048,7 +1103,7 @@ def main():
                 output_filename = result["path"].name
 
             results.append({
-                "codigoconvocatoria": code,
+                "procedure_code": code,
                 "base_year": base_year,
                 "year_found": (
                     result["year_found"]
@@ -1076,11 +1131,13 @@ def main():
                 "search_attempts": result["attempts"],
             })
 
+            # Save after every procedure so progress is preserved
+            # if SEACE or the local execution is interrupted.
             save_status(results)
 
             close_extra_pages(
                 context,
-                page
+                page,
             )
 
             if position < expected_count:
@@ -1107,7 +1164,7 @@ def main():
 
     print_final_summary(
         results,
-        expected_count
+        expected_count,
     )
 
     save_log()
@@ -1126,6 +1183,7 @@ if __name__ == "__main__":
         log("=" * 78)
         log("PIPELINE FAILED")
         log("=" * 78)
+
         log(
             f"{type(error).__name__}: "
             f"{error}"
