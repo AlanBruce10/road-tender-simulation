@@ -216,3 +216,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ============================================================
+# Research data
+# ============================================================
+
+# Raw OECE-SEACE datasets are publicly available from the
+# official source and are not stored in this repository.
+# See 00_data/README.md for acquisition instructions.
+00_data/*.xlsx
+
+# Temporary Microsoft Excel files
+~$*.xlsx
