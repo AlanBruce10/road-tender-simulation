@@ -17,8 +17,8 @@ LOGS_DIR = PROJECT_ROOT / "03_logs"
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
-SAMPLE_FILE = RESULTS_DIR / "sample_selection.xlsx"
-FLOW_FILE = RESULTS_DIR / "sample_selection_flow.xlsx"
+SAMPLE_FILE = RESULTS_DIR / "00_1_sample_selection.xlsx"
+FLOW_FILE = RESULTS_DIR / "00_2_sample_selection_flow.xlsx"
 LOG_FILE = LOGS_DIR / "00_sample_selection.log"
 
 
