@@ -52,8 +52,9 @@ log_lines = []
 
 
 def log(message=""):
-    print(message)
-    log_lines.append(str(message))
+    text = str(message)
+    print(text)
+    log_lines.append(text)
 
 
 def save_log():
@@ -64,42 +65,26 @@ def save_log():
 
 
 # ============================================================
-# SAMPLE-SELECTION FLOW
-# ============================================================
-
-selection_flow = []
-
-
-def add_stage(stage, count):
-    count = int(count)
-
-    selection_flow.append(
-        {
-            "stage": stage,
-            "count": count
-        }
-    )
-
-    log(f"  -> {stage}: {count:,}")
-
-
-# ============================================================
-# SOURCE FILE DISCOVERY
+# FILE DISCOVERY
 # ============================================================
 
 def find_source_file(prefix, year):
-    pattern = f"{prefix}{year}_*.xlsx"
-    matches = sorted(DATA_DIR.glob(pattern))
+    matches = sorted(
+        DATA_DIR.glob(f"{prefix}{year}_*.xlsx")
+    )
 
     if len(matches) == 0:
         raise FileNotFoundError(
-            f"No source file found for {year}: {pattern}"
+            f"No source file found for pattern: "
+            f"{prefix}{year}_*.xlsx"
         )
 
     if len(matches) > 1:
+        names = ", ".join(file.name for file in matches)
+
         raise RuntimeError(
-            f"Multiple source files found for {year}: {pattern}\n"
-            + "\n".join(f"  - {file.name}" for file in matches)
+            f"Multiple source files found for {prefix}{year}: "
+            f"{names}"
         )
 
     return matches[0]
@@ -119,8 +104,167 @@ def require_columns(dataframe, columns, dataset_name):
     if missing:
         raise KeyError(
             f"{dataset_name} is missing required columns: "
-            + ", ".join(missing)
+            f"{', '.join(missing)}"
         )
+
+
+# ============================================================
+# RECORD-LINKAGE FUNCTIONS
+# ============================================================
+
+LINKAGE_KEYS = [
+    "codigoconvocatoria",
+    "n_item"
+]
+
+
+def unique_keys(dataframe):
+    return (
+        dataframe[LINKAGE_KEYS]
+        .dropna()
+        .drop_duplicates()
+        .copy()
+    )
+
+
+def count_key_duplicates(dataframe):
+    valid = dataframe.dropna(
+        subset=LINKAGE_KEYS
+    )
+
+    return int(
+        valid.duplicated(
+            subset=LINKAGE_KEYS,
+            keep=False
+        ).sum()
+    )
+
+
+def build_linkage_audit(
+    procurement_notices,
+    contract_awards
+):
+    notice_keys = unique_keys(procurement_notices)
+    award_keys = unique_keys(contract_awards)
+
+    common_keys = pd.merge(
+        notice_keys,
+        award_keys,
+        on=LINKAGE_KEYS,
+        how="inner"
+    )
+
+    notice_only = pd.merge(
+        notice_keys,
+        award_keys,
+        on=LINKAGE_KEYS,
+        how="left",
+        indicator=True
+    )
+
+    notice_only = notice_only[
+        notice_only["_merge"] == "left_only"
+    ][LINKAGE_KEYS]
+
+    award_only = pd.merge(
+        award_keys,
+        notice_keys,
+        on=LINKAGE_KEYS,
+        how="left",
+        indicator=True
+    )
+
+    award_only = award_only[
+        award_only["_merge"] == "left_only"
+    ][LINKAGE_KEYS]
+
+    notice_unique_count = len(notice_keys)
+    award_unique_count = len(award_keys)
+    common_count = len(common_keys)
+
+    notice_linkage_rate = (
+        common_count / notice_unique_count * 100
+        if notice_unique_count
+        else 0
+    )
+
+    award_linkage_rate = (
+        common_count / award_unique_count * 100
+        if award_unique_count
+        else 0
+    )
+
+    audit = pd.DataFrame(
+        [
+            {
+                "metric": "Procurement-notice records",
+                "value": len(procurement_notices),
+                "unit": "records"
+            },
+            {
+                "metric": "Contract-award records",
+                "value": len(contract_awards),
+                "unit": "records"
+            },
+            {
+                "metric": "Unique procurement-notice keys",
+                "value": notice_unique_count,
+                "unit": "keys"
+            },
+            {
+                "metric": "Unique contract-award keys",
+                "value": award_unique_count,
+                "unit": "keys"
+            },
+            {
+                "metric": "Keys present in both sources",
+                "value": common_count,
+                "unit": "keys"
+            },
+            {
+                "metric": "Procurement-notice-only keys",
+                "value": len(notice_only),
+                "unit": "keys"
+            },
+            {
+                "metric": "Contract-award-only keys",
+                "value": len(award_only),
+                "unit": "keys"
+            },
+            {
+                "metric": "Procurement-notice linkage rate",
+                "value": notice_linkage_rate,
+                "unit": "percent"
+            },
+            {
+                "metric": "Contract-award linkage rate",
+                "value": award_linkage_rate,
+                "unit": "percent"
+            },
+            {
+                "metric": (
+                    "Procurement-notice rows belonging "
+                    "to duplicated keys"
+                ),
+                "value": count_key_duplicates(
+                    procurement_notices
+                ),
+                "unit": "records"
+            },
+            {
+                "metric": (
+                    "Contract-award rows belonging "
+                    "to duplicated keys"
+                ),
+                "value": count_key_duplicates(
+                    contract_awards
+                ),
+                "unit": "records"
+            }
+        ]
+    )
+
+    return audit, common_keys, notice_only, award_only
 
 
 # ============================================================
@@ -128,26 +272,26 @@ def require_columns(dataframe, columns, dataset_name):
 # ============================================================
 
 def main():
-
     log("=" * 72)
     log("SAMPLE SELECTION - ROAD INFRASTRUCTURE TENDERS")
     log("=" * 72)
     log("Source: OECE-SEACE Open Data Portal")
     log("Study period: 2020-2025")
-    log(f"Minimum reference amount: PEN {MIN_REFERENCE_AMOUNT:,.0f}")
     log()
 
     # --------------------------------------------------------
-    # 1. Load source datasets
+    # 1. SOURCE DATA
     # --------------------------------------------------------
 
     log("[1] Reading OECE-SEACE source datasets...")
+    log()
 
-    procurement_notice_frames = []
-    contract_award_frames = []
+    procurement_frames = []
+    award_frames = []
+
+    source_summary = []
 
     for year in YEARS:
-
         notice_file = find_source_file(
             "CONOSCE_CONVOCATORIAS",
             year
@@ -158,57 +302,56 @@ def main():
             year
         )
 
-        log()
-        log(f"  {year}")
-        log(f"    Procurement notices: {notice_file.name}")
-        log(f"    Contract awards:      {award_file.name}")
-
         notice = pd.read_excel(notice_file)
         award = pd.read_excel(award_file)
 
-        log(f"    Notice rows: {len(notice):,}")
-        log(f"    Award rows:  {len(award):,}")
+        notice["_source_year"] = year
+        award["_source_year"] = year
 
-        procurement_notice_frames.append(notice)
-        contract_award_frames.append(award)
+        procurement_frames.append(notice)
+        award_frames.append(award)
+
+        source_summary.append(
+            {
+                "year": year,
+                "procurement_notice_file": notice_file.name,
+                "procurement_notice_records": len(notice),
+                "contract_award_file": award_file.name,
+                "contract_award_records": len(award)
+            }
+        )
+
+        log(
+            f"  {year}: "
+            f"procurement notices={len(notice):,} | "
+            f"contract awards={len(award):,}"
+        )
 
     procurement_notices = pd.concat(
-        procurement_notice_frames,
+        procurement_frames,
         ignore_index=True
     )
 
     contract_awards = pd.concat(
-        contract_award_frames,
+        award_frames,
         ignore_index=True
     )
 
+    source_summary_df = pd.DataFrame(source_summary)
+
     log()
     log(
-        f"  Total procurement notices: "
+        "  Procurement-notice records, 2020-2025: "
         f"{len(procurement_notices):,}"
     )
-
     log(
-        f"  Total contract awards: "
+        "  Contract-award records, 2020-2025: "
         f"{len(contract_awards):,}"
     )
 
-    add_stage(
-        "Initial universe - Procurement notices 2020-2025",
-        len(procurement_notices)
-    )
-
-    add_stage(
-        "Initial universe - Contract awards 2020-2025",
-        len(contract_awards)
-    )
-
     # --------------------------------------------------------
-    # 2. Validate required source columns
+    # 2. REQUIRED COLUMNS
     # --------------------------------------------------------
-
-    log()
-    log("[2] Validating required source columns...")
 
     require_columns(
         procurement_notices,
@@ -217,11 +360,11 @@ def main():
             "n_item",
             "objetocontractual",
             "descripcion_proceso",
-            "monto_referencial_item",
             "tipoprocesoseleccion",
-            "fecha_convocatoria",
+            "monto_referencial_item",
+            "fecha_convocatoria"
         ],
-        "Procurement notice dataset"
+        "Procurement-notice dataset"
     )
 
     require_columns(
@@ -230,66 +373,138 @@ def main():
             "codigoconvocatoria",
             "n_item",
             "fechaintegracionbases",
-            "fecha_buenapro",
+            "fecha_buenapro"
         ],
-        "Contract award dataset"
+        "Contract-award dataset"
     )
 
-    log("  Required columns verified.")
-
     # --------------------------------------------------------
-    # 3. Merge procurement notices and contract awards
+    # 3. RECORD-LINKAGE AUDIT
     # --------------------------------------------------------
 
     log()
+    log("[2] Auditing record linkage...")
     log(
-        "[3] Merging procurement notices and contract awards "
-        "by codigoconvocatoria + n_item..."
+        "  Linkage key: codigoconvocatoria + n_item"
     )
+
+    (
+        linkage_audit,
+        common_keys,
+        notice_only_keys,
+        award_only_keys
+    ) = build_linkage_audit(
+        procurement_notices,
+        contract_awards
+    )
+
+    audit_lookup = dict(
+        zip(
+            linkage_audit["metric"],
+            linkage_audit["value"]
+        )
+    )
+
+    log()
+    log(
+        "  Unique procurement-notice keys: "
+        f"{int(audit_lookup['Unique procurement-notice keys']):,}"
+    )
+
+    log(
+        "  Unique contract-award keys: "
+        f"{int(audit_lookup['Unique contract-award keys']):,}"
+    )
+
+    log(
+        "  Keys present in both sources: "
+        f"{int(audit_lookup['Keys present in both sources']):,}"
+    )
+
+    log(
+        "  Procurement-notice-only keys: "
+        f"{int(audit_lookup['Procurement-notice-only keys']):,}"
+    )
+
+    log(
+        "  Contract-award-only keys: "
+        f"{int(audit_lookup['Contract-award-only keys']):,}"
+    )
+
+    log(
+        "  Procurement-notice linkage rate: "
+        f"{audit_lookup['Procurement-notice linkage rate']:.2f}%"
+    )
+
+    log(
+        "  Contract-award linkage rate: "
+        f"{audit_lookup['Contract-award linkage rate']:.2f}%"
+    )
+
+    # --------------------------------------------------------
+    # 4. RECORD LINKAGE
+    # --------------------------------------------------------
+
+    log()
+    log("[3] Linking procurement notices and contract awards...")
 
     merged = pd.merge(
         procurement_notices,
         contract_awards,
-        on=["codigoconvocatoria", "n_item"],
+        on=LINKAGE_KEYS,
         how="inner",
         suffixes=("_conv", "_adj")
     )
 
-    log(f"  Result: {len(merged):,} rows")
+    merged_records = len(merged)
 
-    add_stage(
-        "After merge (procurement notices + contract awards)",
-        len(merged)
+    log(
+        f"  Matched records after inner merge: "
+        f"{merged_records:,}"
     )
 
     # --------------------------------------------------------
-    # 4. Contractual object filter
+    # 5. SAMPLE-SELECTION FLOW
     # --------------------------------------------------------
 
-    log()
-    log("[4] Filtering contractual object = 'Obra'...")
+    selection_flow = []
 
+    def add_stage(stage, criterion, count):
+        selection_flow.append(
+            {
+                "stage": stage,
+                "criterion": criterion,
+                "count": int(count)
+            }
+        )
+
+        log(
+            f"  {stage}: {criterion}: "
+            f"{int(count):,}"
+        )
+
+    log()
+    log("[4] Applying sample-selection criteria...")
+    log()
+
+    # Filter 1
     works_filter = merged[
         merged["objetocontractual_conv"]
         .astype(str)
         .str.upper()
-        .str.contains("OBRA", na=False)
+        .str.contains(
+            "OBRA",
+            na=False
+        )
     ].copy()
 
-    log(f"  Result: {len(works_filter):,}")
-
     add_stage(
-        "Filter 1: Contractual object = 'Obra'",
+        "Filter 1",
+        "Contractual object = 'Obra'",
         len(works_filter)
     )
 
-    # --------------------------------------------------------
-    # 5. Road-infrastructure keyword filter
-    # --------------------------------------------------------
-
-    log()
-    log("[5] Filtering road-infrastructure keywords...")
-
+    # Filter 2
     road_filter = works_filter[
         works_filter["descripcion_proceso_conv"]
         .astype(str)
@@ -301,25 +516,18 @@ def main():
         )
     ].copy()
 
-    log(f"  Result: {len(road_filter):,}")
-
     add_stage(
-        "Filter 2: Road-infrastructure keywords",
+        "Filter 2",
+        "Road-infrastructure keywords",
         len(road_filter)
     )
 
-    # --------------------------------------------------------
-    # 6. Reference amount filter
-    # --------------------------------------------------------
-
-    log()
-    log(
-        "[6] Filtering reference amount > PEN 25,000,000..."
-    )
-
-    road_filter["monto_referencial_item"] = pd.to_numeric(
-        road_filter["monto_referencial_item"],
-        errors="coerce"
+    # Filter 3
+    road_filter["monto_referencial_item"] = (
+        pd.to_numeric(
+            road_filter["monto_referencial_item"],
+            errors="coerce"
+        )
     )
 
     amount_filter = road_filter[
@@ -327,23 +535,13 @@ def main():
         > MIN_REFERENCE_AMOUNT
     ].copy()
 
-    log(f"  Result: {len(amount_filter):,}")
-
     add_stage(
-        "Filter 3: Reference amount > PEN 25,000,000",
+        "Filter 3",
+        "Reference amount > PEN 25,000,000",
         len(amount_filter)
     )
 
-    # --------------------------------------------------------
-    # 7. Selection procedure filter
-    # --------------------------------------------------------
-
-    log()
-    log(
-        "[7] Filtering selection procedure = "
-        "'Licitación Pública'..."
-    )
-
+    # Filter 4
     public_tender_filter = amount_filter[
         amount_filter["tipoprocesoseleccion_conv"]
         .astype(str)
@@ -355,22 +553,17 @@ def main():
         )
     ].copy()
 
-    log(f"  Result: {len(public_tender_filter):,}")
-
     add_stage(
-        "Filter 4: Selection procedure = 'Licitación Pública'",
+        "Filter 4",
+        "Selection procedure = 'Licitación Pública'",
         len(public_tender_filter)
     )
 
-    # --------------------------------------------------------
-    # 8. Exclusion criteria
-    # --------------------------------------------------------
-
-    log()
-    log("[8] Applying exclusion criteria...")
-
+    # Filter 5
     exclusion_filter = public_tender_filter[
-        ~public_tender_filter["descripcion_proceso_conv"]
+        ~public_tender_filter[
+            "descripcion_proceso_conv"
+        ]
         .astype(str)
         .str.contains(
             EXCLUSION_KEYWORDS,
@@ -380,40 +573,30 @@ def main():
         )
     ].copy()
 
-    log(f"  Result: {len(exclusion_filter):,}")
-
     add_stage(
-        "Filter 5: Exclusion criteria",
+        "Filter 5",
+        "Exclusion criteria",
         len(exclusion_filter)
     )
 
-    # --------------------------------------------------------
-    # 9. Remove duplicate procurement procedures
-    # --------------------------------------------------------
-
-    log()
-    log(
-        "[9] Removing duplicate procurement procedures..."
-    )
-
+    # Filter 6
     filtered = exclusion_filter.drop_duplicates(
         subset=["codigoconvocatoria"],
         keep="first"
     ).copy()
 
-    log(f"  Result: {len(filtered):,}")
-
     add_stage(
-        "Filter 6: Unique procurement procedures",
+        "Filter 6",
+        "Unique procurement procedures",
         len(filtered)
     )
 
     # --------------------------------------------------------
-    # 10. Award-time variables
+    # 6. AWARD-TIME VARIABLES
     # --------------------------------------------------------
 
     log()
-    log("[10] Calculating award-time variables...")
+    log("[5] Calculating award-time variables...")
 
     filtered["fecha_convocatoria_conv"] = pd.to_datetime(
         filtered["fecha_convocatoria_conv"],
@@ -451,105 +634,207 @@ def main():
     log("  Award-time variables calculated.")
 
     # --------------------------------------------------------
-    # 11. Prepare reproducible output dataset
+    # 7. FINAL DATASET
     # --------------------------------------------------------
 
     log()
-    log("[11] Preparing output dataset...")
+    log("[6] Preparing output dataset...")
 
-    final_columns = [
+    preferred_columns = [
         "codigoconvocatoria",
         "descripcion_proceso_conv",
         "montoreferencial",
-        "monto_referencial_item",
         "monto_adjudicado_item_soles",
         "fecha_convocatoria_conv",
         "fechaintegracionbases",
         "fecha_buenapro",
         "duracion_etapa_consultas_dias",
         "duracion_etapa_evaluacion_dias",
-        "plazo_total_adjudicacion_dias",
+        "plazo_total_adjudicacion_dias"
     ]
 
-    available_columns = [
+    missing_output_columns = [
         column
-        for column in final_columns
-        if column in filtered.columns
+        for column in preferred_columns
+        if column not in filtered.columns
     ]
+
+    if missing_output_columns:
+        raise KeyError(
+            "Required output columns are missing after linkage: "
+            + ", ".join(missing_output_columns)
+        )
 
     final_dataset = filtered[
-        available_columns
+        preferred_columns
     ].copy()
 
     final_dataset.rename(
         columns={
-            "codigoconvocatoria":
-                "procedure_code",
             "descripcion_proceso_conv":
-                "procedure_description",
-            "montoreferencial":
-                "reference_amount",
-            "monto_referencial_item":
-                "item_reference_amount",
-            "monto_adjudicado_item_soles":
-                "awarded_amount_pen",
+                "descripcion_proceso",
             "fecha_convocatoria_conv":
-                "notice_date",
-            "fechaintegracionbases":
-                "integrated_terms_date",
-            "fecha_buenapro":
-                "award_date",
-            "duracion_etapa_consultas_dias":
-                "query_stage_duration_days",
-            "duracion_etapa_evaluacion_dias":
-                "evaluation_stage_duration_days",
-            "plazo_total_adjudicacion_dias":
-                "total_award_time_days",
+                "fecha_convocatoria"
         },
         inplace=True
     )
 
     final_dataset[
-        "queries_observations_count"
+        "cant_consultas_observaciones"
     ] = pd.NA
 
-    final_dataset.sort_values(
-        by="procedure_code",
-        inplace=True
-    )
-
-    final_dataset.reset_index(
-        drop=True,
-        inplace=True
-    )
-
     # --------------------------------------------------------
-    # 12. Save reproducible outputs
+    # 8. SAVE REPRODUCIBLE OUTPUTS
     # --------------------------------------------------------
 
     log()
-    log("[12] Saving reproducible outputs...")
+    log("[7] Saving reproducible outputs...")
 
     final_dataset.to_excel(
         SAMPLE_FILE,
         index=False
     )
 
-    selection_flow_dataframe = pd.DataFrame(
+    selection_flow_df = pd.DataFrame(
         selection_flow
     )
 
-    selection_flow_dataframe.to_excel(
-        FLOW_FILE,
-        index=False
+    linkage_summary_row = pd.DataFrame(
+        [
+            {
+                "stage": "Record linkage",
+                "criterion": (
+                    "Keys present in both sources "
+                    "(codigoconvocatoria + n_item)"
+                ),
+                "count": len(common_keys)
+            }
+        ]
     )
 
-    log(f"  Dataset: {SAMPLE_FILE.name}")
-    log(f"  Selection flow: {FLOW_FILE.name}")
+    methodological_flow = pd.concat(
+        [
+            pd.DataFrame(
+                [
+                    {
+                        "stage": "Source A",
+                        "criterion": (
+                            "Procurement-notice records, "
+                            "2020-2025"
+                        ),
+                        "count": len(
+                            procurement_notices
+                        )
+                    },
+                    {
+                        "stage": "Source B",
+                        "criterion": (
+                            "Contract-award records, "
+                            "2020-2025"
+                        ),
+                        "count": len(
+                            contract_awards
+                        )
+                    }
+                ]
+            ),
+            linkage_summary_row,
+            selection_flow_df
+        ],
+        ignore_index=True
+    )
+
+    with pd.ExcelWriter(
+        FLOW_FILE,
+        engine="openpyxl"
+    ) as writer:
+
+        methodological_flow.to_excel(
+            writer,
+            sheet_name="selection_flow",
+            index=False
+        )
+
+        linkage_audit.to_excel(
+            writer,
+            sheet_name="linkage_audit",
+            index=False
+        )
+
+        source_summary_df.to_excel(
+            writer,
+            sheet_name="source_files",
+            index=False
+        )
+
+        notice_only_keys.to_excel(
+            writer,
+            sheet_name="notice_only_keys",
+            index=False
+        )
+
+        award_only_keys.to_excel(
+            writer,
+            sheet_name="award_only_keys",
+            index=False
+        )
+
+    log(
+        f"  Dataset: {SAMPLE_FILE.name}"
+    )
+
+    log(
+        f"  Selection flow: {FLOW_FILE.name}"
+    )
 
     # --------------------------------------------------------
-    # 13. Final summary
+    # 9. FINAL SUMMARY
     # --------------------------------------------------------
+
+    log()
+    log("=" * 72)
+    log("RECORD LINKAGE")
+    log("=" * 72)
+
+    log(
+        "Procurement-notice records: "
+        f"{len(procurement_notices):,}"
+    )
+
+    log(
+        "Contract-award records: "
+        f"{len(contract_awards):,}"
+    )
+
+    log(
+        "Unique procurement-notice keys: "
+        f"{len(unique_keys(procurement_notices)):,}"
+    )
+
+    log(
+        "Unique contract-award keys: "
+        f"{len(unique_keys(contract_awards)):,}"
+    )
+
+    log(
+        "Keys present in both sources: "
+        f"{len(common_keys):,}"
+    )
+
+    log(
+        "Procurement-notice-only keys: "
+        f"{len(notice_only_keys):,}"
+    )
+
+    log(
+        "Contract-award-only keys: "
+        f"{len(award_only_keys):,}"
+    )
+
+    log(
+        "Matched records after inner merge: "
+        f"{merged_records:,}"
+    )
 
     log()
     log("=" * 72)
@@ -558,16 +843,19 @@ def main():
 
     for stage in selection_flow:
         log(
-            f"  {stage['stage']}: "
+            f"{stage['stage']}: "
+            f"{stage['criterion']}: "
             f"{stage['count']:,}"
         )
 
     log()
     log("=" * 72)
+
     log(
         f"FINAL SAMPLE: "
         f"{len(final_dataset):,} procedures"
     )
+
     log("=" * 72)
 
     save_log()
@@ -586,8 +874,9 @@ if __name__ == "__main__":
         log("=" * 72)
         log("PIPELINE FAILED")
         log("=" * 72)
-        log(f"{type(error).__name__}: {error}")
+        log(
+            f"{type(error).__name__}: {error}"
+        )
 
         save_log()
-
-        raise
+        sys.exit(1)
