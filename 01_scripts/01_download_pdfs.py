@@ -176,14 +176,49 @@ def validate_pdf_content(pdf_path, expected_document_type):
             return False, "PLIEGO_CONTENT_NOT_VERIFIED"
 
         if expected_document_type == "ACTA_NO_FORMULACION":
+            # SEACE actas are not fully standardized in their wording.
+            # Validate the document by combining evidence of:
+            #   (a) an acta/no-formulation statement, or
+            #   (b) an explicit statement that no queries/observations
+            #       were registered/formulated.
+            #
+            # Example observed in SEACE:
+            # "No se registraron Formulacion de consultas y observaciones
+            #  en el procedimiento"
             acta_patterns = (
                 "acta de no formulacion",
                 "no se formularon consultas",
                 "no se registraron consultas",
                 "no formulacion de consultas",
+                "no se registraron formulacion de consultas",
+                "no se registraron formulaciones de consultas",
+                "no se registraron consultas y observaciones",
+                "no se formularon consultas y observaciones",
             )
 
             if any(pattern in normalized for pattern in acta_patterns):
+                return True, "CONTENT_VERIFIED"
+
+            # Robust semantic fallback for minor wording/layout variations.
+            has_query_context = (
+                "consulta" in normalized
+                or "consultas" in normalized
+            )
+            has_observation_context = (
+                "observacion" in normalized
+                or "observaciones" in normalized
+            )
+            has_no_formulation = (
+                "no formulacion" in normalized
+                or "no se formularon" in normalized
+                or "no se registro" in normalized
+                or "no se registraron" in normalized
+            )
+
+            if (
+                has_no_formulation
+                and (has_query_context or has_observation_context)
+            ):
                 return True, "CONTENT_VERIFIED"
 
             return False, "ACTA_CONTENT_NOT_VERIFIED"
