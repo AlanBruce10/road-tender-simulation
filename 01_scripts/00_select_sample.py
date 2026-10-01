@@ -1,91 +1,148 @@
-import pandas as pd
-import numpy as np
+import sys
 from pathlib import Path
+
+import pandas as pd
+
 
 # ============================================================
 # PROJECT PATHS
 # ============================================================
-# The script automatically locates the repository root.
-# Expected repository structure:
-#
-# road-tender-simulation/
-# ├── 00_data/
-# ├── 01_scripts/
-# ├── 02_results/
-# ├── 03_logs/
-# └── 04_screenshots/
-#
-# Raw OECE-SEACE Excel files must be manually downloaded and
-# placed in 00_data/. See 00_data/README.md for instructions.
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-RAW_DATA = PROJECT_ROOT / "00_data"
-RESULTS = PROJECT_ROOT / "02_results"
+DATA_DIR = PROJECT_ROOT / "00_data"
+RESULTS_DIR = PROJECT_ROOT / "02_results"
+LOGS_DIR = PROJECT_ROOT / "03_logs"
 
-RESULTS.mkdir(parents=True, exist_ok=True)
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
-EXCEL_BASE = RESULTS / "BASE_FINAL_137_PROCESOS.xlsx"
-EXCEL_EMBUDO = RESULTS / "flujo_seleccion_muestra.xlsx"
-
-
-def log(message):
-    print(message)
+SAMPLE_FILE = RESULTS_DIR / "sample_selection.xlsx"
+FLOW_FILE = RESULTS_DIR / "sample_selection_flow.xlsx"
+LOG_FILE = LOGS_DIR / "00_sample_selection.log"
 
 
+# ============================================================
+# STUDY PARAMETERS
+# ============================================================
+
+YEARS = range(2020, 2026)
+MIN_REFERENCE_AMOUNT = 25_000_000
+
+ROAD_KEYWORDS = (
+    "VIAL|CARRETERA|PUENTE|CAMINO|PAVIMENT|"
+    "ASFALTO|TRÁNSITO|TRANSITO|AUTOPISTA"
+)
+
+EXCLUSION_KEYWORDS = (
+    "AGUA POTABLE|ALCANTARILLADO|SALUD|HOSPITAL|"
+    "ESTABLECIMIENTO DE SALUD|REDES COMPLEMENTARIAS|"
+    "MURO DE PROTECCIÓN|DRENAJE|FLUVIAL|"
+    "ADQUISICION|ADQUISICIÓN|PRESA|IRRIGACIÓN|"
+    "PUENTE PEATONAL"
+)
+
+
+# ============================================================
+# LOGGING
+# ============================================================
+
+log_lines = []
 selection_flow = []
 
 
+def log(message=""):
+    text = str(message)
+    print(text)
+    log_lines.append(text)
+
+
+def save_log():
+    LOG_FILE.write_text(
+        "\n".join(log_lines) + "\n",
+        encoding="utf-8"
+    )
+
+
 def add_stage(name, count):
-    selection_flow.append({"stage": name, "count": int(count)})
+    selection_flow.append(
+        {
+            "stage": name,
+            "count": int(count)
+        }
+    )
     log(f"  -> {name}: {count:,}")
 
 
-def main():
-    log("=" * 70)
-    log(" SAMPLE GENERATION - ROAD INFRASTRUCTURE TENDERS")
-    log("=" * 70)
+# ============================================================
+# SOURCE FILE DISCOVERY
+# ============================================================
 
-    log("\n[1] Reading OECE-SEACE files for 2020-2025...")
+def find_source_file(prefix, year):
+    pattern = f"{prefix}{year}_*.xlsx"
+    matches = sorted(DATA_DIR.glob(pattern))
 
-    procurement_notices = pd.DataFrame()
-    contract_awards = pd.DataFrame()
+    if not matches:
+        raise FileNotFoundError(
+            f"No source file found for pattern: {pattern}"
+        )
 
-    for year in range(2020, 2026):
-        try:
-            notice = pd.read_excel(
-                RAW_DATA / f"convocatoria_{year}.xlsx"
-            )
-            award = pd.read_excel(
-                RAW_DATA / f"adjudicacion_{year}.xlsx"
-            )
+    if len(matches) > 1:
+        names = ", ".join(file.name for file in matches)
+        raise RuntimeError(
+            f"Multiple source files found for {year}: {names}"
+        )
 
-            procurement_notices = pd.concat(
-                [procurement_notices, notice],
-                ignore_index=True
-            )
+    return matches[0]
 
-            contract_awards = pd.concat(
-                [contract_awards, award],
-                ignore_index=True
-            )
 
-            log(
-                f"  {year}: "
-                f"procurement notices={len(notice):,}, "
-                f"contract awards={len(award):,}"
-            )
+def load_source_data():
+    procurement_notices = []
+    contract_awards = []
 
-        except Exception as e:
-            log(f"  {year}: ERROR - {e}")
+    log("[1] Reading OECE-SEACE source datasets...")
+    log()
 
-    log(
-        f"\n  TOTAL PROCUREMENT NOTICES: "
-        f"{len(procurement_notices):,}"
+    for year in YEARS:
+        notice_file = find_source_file(
+            "CONOSCE_CONVOCATORIAS",
+            year
+        )
+
+        award_file = find_source_file(
+            "CONOSCE_ADJUDICACIONES",
+            year
+        )
+
+        notice = pd.read_excel(notice_file)
+        award = pd.read_excel(award_file)
+
+        procurement_notices.append(notice)
+        contract_awards.append(award)
+
+        log(
+            f"  {year}: "
+            f"procurement notices={len(notice):,} | "
+            f"contract awards={len(award):,}"
+        )
+
+    procurement_notices = pd.concat(
+        procurement_notices,
+        ignore_index=True
     )
 
+    contract_awards = pd.concat(
+        contract_awards,
+        ignore_index=True
+    )
+
+    log()
     log(
-        f"  TOTAL CONTRACT AWARDS: "
+        "  TOTAL PROCUREMENT NOTICES: "
+        f"{len(procurement_notices):,}"
+    )
+    log(
+        "  TOTAL CONTRACT AWARDS: "
         f"{len(contract_awards):,}"
     )
 
@@ -99,8 +156,18 @@ def main():
         len(contract_awards)
     )
 
+    return procurement_notices, contract_awards
+
+
+# ============================================================
+# SAMPLE SELECTION
+# ============================================================
+
+def select_sample(procurement_notices, contract_awards):
+
+    log()
     log(
-        "\n[2] Merging datasets by "
+        "[2] Merging datasets by "
         "codigoconvocatoria + n_item..."
     )
 
@@ -119,73 +186,84 @@ def main():
         len(merged)
     )
 
-    log("\n[3] Filtering contractual object = 'Obra'...")
+    log()
+    log("[3] Filtering contractual object = 'Obra'...")
 
-    if "objetocontractual_conv" in merged.columns:
-        works_filter = merged[
-            merged["objetocontractual_conv"]
-            .str.upper()
-            .str.contains("OBRA", na=False)
-        ].copy()
-    else:
-        works_filter = merged.copy()
+    if "objetocontractual_conv" not in merged.columns:
+        raise KeyError(
+            "Required column not found: objetocontractual_conv"
+        )
 
-    log(f"  Result: {len(works_filter):,}")
-
-    add_stage(
-        "Filter 1: Contractual object = 'Obra'",
-        len(works_filter)
-    )
-
-    log(
-        "\n[4] Filtering road infrastructure "
-        "(keywords)..."
-    )
-
-    road_keywords = (
-        "VIAL|CARRETERA|PUENTE|CAMINO|PAVIMENT|"
-        "ASFALTO|TRÁNSITO|TRANSITO|AUTOPISTA"
-    )
-
-    road_filter = works_filter[
-        works_filter["descripcion_proceso_conv"]
+    works = merged[
+        merged["objetocontractual_conv"]
+        .astype("string")
         .str.contains(
-            road_keywords,
+            "OBRA",
             case=False,
             na=False
         )
     ].copy()
 
-    log(f"  Result: {len(road_filter):,}")
+    log(f"  Result: {len(works):,}")
 
     add_stage(
-        "Filter 2: Description contains road-infrastructure keywords",
-        len(road_filter)
+        "Filter 1: Contractual object = 'Obra'",
+        len(works)
     )
 
-    log(
-        "\n[5] Filtering reference amount "
-        "> PEN 25 million..."
-    )
+    log()
+    log("[4] Filtering road-infrastructure keywords...")
 
-    amount_filter = road_filter[
-        road_filter["monto_referencial_item"] > 25000000
+    roads = works[
+        works["descripcion_proceso_conv"]
+        .astype("string")
+        .str.contains(
+            ROAD_KEYWORDS,
+            case=False,
+            na=False,
+            regex=True
+        )
     ].copy()
 
-    log(f"  Result: {len(amount_filter):,}")
+    log(f"  Result: {len(roads):,}")
+
+    add_stage(
+        "Filter 2: Road-infrastructure keywords",
+        len(roads)
+    )
+
+    log()
+    log(
+        "[5] Filtering reference amount "
+        "> PEN 25,000,000..."
+    )
+
+    roads["monto_referencial_item"] = pd.to_numeric(
+        roads["monto_referencial_item"],
+        errors="coerce"
+    )
+
+    amount = roads[
+        roads["monto_referencial_item"]
+        > MIN_REFERENCE_AMOUNT
+    ].copy()
+
+    log(f"  Result: {len(amount):,}")
 
     add_stage(
         "Filter 3: Reference amount > PEN 25,000,000",
-        len(amount_filter)
+        len(amount)
     )
 
+    log()
     log(
-        "\n[6] Filtering selection procedure = "
-        "Licitacion Publica..."
+        "[6] Filtering selection procedure = "
+        "'Licitación Pública'..."
     )
 
-    public_tender_filter = amount_filter[
-        amount_filter["tipoprocesoseleccion_conv"]
+    public_tenders = amount[
+        amount["tipoprocesoseleccion_conv"]
+        .astype("string")
         .str.contains(
             "LICITACIÓN PÚBLICA",
             case=False,
@@ -193,95 +271,104 @@ def main():
         )
     ].copy()
 
-    log(f"  Result: {len(public_tender_filter):,}")
+    log(f"  Result: {len(public_tenders):,}")
 
     add_stage(
-        "Filter 4: Selection procedure = 'Licitacion Publica'",
-        len(public_tender_filter)
+        "Filter 4: Selection procedure = 'Licitación Pública'",
+        len(public_tenders)
     )
 
-    log("\n[7] Applying exclusion criteria...")
+    log()
+    log("[7] Applying exclusion criteria...")
 
-    exclusion_keywords = (
-        "AGUA POTABLE|ALCANTARILLADO|SALUD|HOSPITAL|"
-        "ESTABLECIMIENTO DE SALUD|REDES COMPLEMENTARIAS|"
-        "MURO DE PROTECCIÓN|DRENAJE|FLUVIAL|"
-        "ADQUISICION|ADQUISICIÓN|PRESA|IRRIGACIÓN|"
-        "PUENTE PEATONAL"
-    )
-
-    exclusion_filter = public_tender_filter[
-        ~public_tender_filter[
-            "descripcion_proceso_conv"
-        ].str.contains(
-            exclusion_keywords,
+    eligible = public_tenders[
+        ~public_tenders["descripcion_proceso_conv"]
+        .astype("string")
+        .str.contains(
+            EXCLUSION_KEYWORDS,
             case=False,
-            na=False
+            na=False,
+            regex=True
         )
     ].copy()
 
-    log(f"  Result: {len(exclusion_filter):,}")
+    log(f"  Result: {len(eligible):,}")
 
     add_stage(
         "Filter 5: Exclusion criteria",
-        len(exclusion_filter)
+        len(eligible)
     )
 
+    log()
     log(
-        "\n[8] Removing duplicates by "
-        "procurement procedure code..."
+        "[8] Removing duplicate procurement procedures..."
     )
 
-    filtered = exclusion_filter.drop_duplicates(
+    sample = eligible.drop_duplicates(
         subset=["codigoconvocatoria"],
         keep="first"
     ).copy()
 
-    log(f"  Result: {len(filtered):,}")
+    log(f"  Result: {len(sample):,}")
 
     add_stage(
         "Filter 6: Unique procurement procedures",
-        len(filtered)
+        len(sample)
     )
 
-    log("\n[9] Calculating award-time variables...")
+    return sample
 
-    filtered["fecha_convocatoria_conv"] = pd.to_datetime(
-        filtered["fecha_convocatoria_conv"],
-        errors="coerce",
-        dayfirst=True
-    )
 
-    filtered["fechaintegracionbases"] = pd.to_datetime(
-        filtered["fechaintegracionbases"],
-        errors="coerce",
-        dayfirst=True
-    )
+# ============================================================
+# AWARD-TIME VARIABLES
+# ============================================================
 
-    filtered["fecha_buenapro"] = pd.to_datetime(
-        filtered["fecha_buenapro"],
-        errors="coerce",
-        dayfirst=True
-    )
+def calculate_award_times(sample):
 
-    filtered["duracion_etapa_consultas_dias"] = (
-        filtered["fechaintegracionbases"]
-        - filtered["fecha_convocatoria_conv"]
+    log()
+    log("[9] Calculating award-time variables...")
+
+    date_columns = [
+        "fecha_convocatoria_conv",
+        "fechaintegracionbases",
+        "fecha_buenapro"
+    ]
+
+    for column in date_columns:
+        sample[column] = pd.to_datetime(
+            sample[column],
+            errors="coerce",
+            dayfirst=True
+        )
+
+    sample["duracion_etapa_consultas_dias"] = (
+        sample["fechaintegracionbases"]
+        - sample["fecha_convocatoria_conv"]
     ).dt.days
 
-    filtered["duracion_etapa_evaluacion_dias"] = (
-        filtered["fecha_buenapro"]
-        - filtered["fechaintegracionbases"]
+    sample["duracion_etapa_evaluacion_dias"] = (
+        sample["fecha_buenapro"]
+        - sample["fechaintegracionbases"]
     ).dt.days
 
-    filtered["plazo_total_adjudicacion_dias"] = (
-        filtered["fecha_buenapro"]
-        - filtered["fecha_convocatoria_conv"]
+    sample["plazo_total_adjudicacion_dias"] = (
+        sample["fecha_buenapro"]
+        - sample["fecha_convocatoria_conv"]
     ).dt.days
 
     log("  Award-time variables calculated.")
 
-    log("\n[10] Preparing final columns...")
+    return sample
+
+
+# ============================================================
+# OUTPUT DATASET
+# ============================================================
+
+def prepare_output(sample):
+
+    log()
+    log("[10] Preparing output dataset...")
 
     final_columns = [
         "codigoconvocatoria",
@@ -296,9 +383,21 @@ def main():
         "plazo_total_adjudicacion_dias"
     ]
 
-    final_dataset = filtered[final_columns].copy()
+    missing = [
+        column
+        for column in final_columns
+        if column not in sample.columns
+    ]
 
-    final_dataset.rename(
+    if missing:
+        raise KeyError(
+            "Required output columns not found: "
+            + ", ".join(missing)
+        )
+
+    output = sample[final_columns].copy()
+
+    output.rename(
         columns={
             "descripcion_proceso_conv":
                 "descripcion_proceso",
@@ -308,32 +407,19 @@ def main():
         inplace=True
     )
 
-    final_dataset["cant_consultas_observaciones"] = None
+    output["cant_consultas_observaciones"] = pd.NA
 
-    log(
-        f"\n[11] Saving base dataset: "
-        f"{EXCEL_BASE.name}"
-    )
+    return output
 
-    final_dataset.to_excel(
-        EXCEL_BASE,
-        index=False
-    )
 
-    log(f"  Saved: {EXCEL_BASE}")
+# ============================================================
+# PILOT VERIFICATION
+# ============================================================
 
-    log("\n[12] Saving sample-selection flow...")
+def verify_pilot(final_dataset):
 
-    flow_dataframe = pd.DataFrame(selection_flow)
-
-    flow_dataframe.to_excel(
-        EXCEL_EMBUDO,
-        index=False
-    )
-
-    log(f"  Saved: {EXCEL_EMBUDO}")
-
-    log("\n[13] Running 2020 pilot verification...")
+    log()
+    log("[11] Running 2020 pilot verification...")
 
     pilot_codes = [
         664728,
@@ -352,18 +438,89 @@ def main():
         619659
     ]
 
-    present = final_dataset[
-        final_dataset[
+    present_codes = set(
+        final_dataset.loc[
+            final_dataset["codigoconvocatoria"]
+            .isin(pilot_codes),
             "codigoconvocatoria"
-        ].isin(pilot_codes)
+        ].tolist()
+    )
+
+    missing_codes = [
+        code
+        for code in pilot_codes
+        if code not in present_codes
     ]
 
     log(
         f"  Pilot codes found: "
-        f"{len(present)} of 14"
+        f"{len(present_codes)} of {len(pilot_codes)}"
     )
 
-    log("\n" + "=" * 70)
+    if missing_codes:
+        log(
+            "  Pilot codes not found: "
+            + ", ".join(map(str, missing_codes))
+        )
+
+
+# ============================================================
+# SAVE RESULTS
+# ============================================================
+
+def save_results(final_dataset):
+
+    log()
+    log("[12] Saving reproducible outputs...")
+
+    final_dataset.to_excel(
+        SAMPLE_FILE,
+        index=False
+    )
+
+    flow_dataframe = pd.DataFrame(selection_flow)
+
+    flow_dataframe.to_excel(
+        FLOW_FILE,
+        index=False
+    )
+
+    log(f"  Dataset: {SAMPLE_FILE.name}")
+    log(f"  Selection flow: {FLOW_FILE.name}")
+
+
+# ============================================================
+# MAIN
+# ============================================================
+
+def main():
+
+    log("=" * 70)
+    log(" SAMPLE SELECTION - ROAD INFRASTRUCTURE TENDERS")
+    log("=" * 70)
+    log("Source: OECE-SEACE Open Data Portal")
+    log("Study period: 2020-2025")
+    log()
+
+    procurement_notices, contract_awards = (
+        load_source_data()
+    )
+
+    sample = select_sample(
+        procurement_notices,
+        contract_awards
+    )
+
+    sample = calculate_award_times(sample)
+
+    final_dataset = prepare_output(sample)
+
+    verify_pilot(final_dataset)
+
+    save_results(final_dataset)
+
+    log()
+    log("=" * 70)
     log(" SAMPLE-SELECTION FLOW")
     log("=" * 70)
 
@@ -373,15 +530,29 @@ def main():
             f"{stage['count']:,}"
         )
 
-    log("\n" + "=" * 70)
-
+    log()
+    log("=" * 70)
     log(
         f" FINAL SAMPLE: "
-        f"{len(final_dataset)} procedures"
+        f"{len(final_dataset):,} procedures"
     )
-
     log("=" * 70)
+
+    save_log()
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+
+    except Exception as error:
+        log()
+        log("=" * 70)
+        log("EXECUTION FAILED")
+        log("=" * 70)
+        log(
+            f"{type(error).__name__}: {error}"
+        )
+
+        save_log()
+        sys.exit(1)
