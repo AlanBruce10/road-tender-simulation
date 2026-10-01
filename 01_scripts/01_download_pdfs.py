@@ -1,405 +1,1136 @@
-import re
+import sys
 import time
-from pathlib import Path
+import unicodedata
 from datetime import datetime
+from pathlib import Path
+
 import pandas as pd
 from playwright.sync_api import sync_playwright
 
-BASE_DIR = Path(r"D:\00_THESIS_ALAN_BRUCE\CORRER CÓDIGO PARA CONSULTAS Y OBSERVACIONES")
-PDFS_DIR = BASE_DIR / "02_pdfs_descargados"
-RESULTADOS_DIR = BASE_DIR / "03_resultados"
-LOGS_DIR = BASE_DIR / "04_logs"
-DESCARTADOS_DIR = PDFS_DIR / "descartados"
 
-PDFS_DIR.mkdir(parents=True, exist_ok=True)
+# =============================================================================
+# PROJECT PATHS
+# =============================================================================
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+RESULTS_DIR = PROJECT_ROOT / "02_results"
+LOGS_DIR = PROJECT_ROOT / "03_logs"
+PDFS_DIR = PROJECT_ROOT / "05_pdfs"
+
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
-DESCARTADOS_DIR.mkdir(parents=True, exist_ok=True)
+PDFS_DIR.mkdir(parents=True, exist_ok=True)
 
-EXCEL_BASE = RESULTADOS_DIR / "BASE_FINAL_137_PROCESOS.xlsx"
-EXCEL_SALIDA = RESULTADOS_DIR / "estado_descargas.xlsx"
+INPUT_FILE = RESULTS_DIR / "00_1_sample_selection.xlsx"
+STATUS_FILE = RESULTS_DIR / "01_1_download_status.xlsx"
+LOG_FILE = LOGS_DIR / "01_download_pdfs.log"
 
-URL_SEACE = "https://prod2.seace.gob.pe/seacebus-uiwd-pub/buscadorPublico/buscadorPublico.xhtml"
 
-LOG_FILE = LOGS_DIR / "log_descarga_masiva_v7.txt"
+# =============================================================================
+# SEACE CONFIGURATION
+# =============================================================================
 
-PAUSA_ENTRE_PROCESOS = 3
+SEACE_URL = (
+    "https://prod2.seace.gob.pe/seacebus-uiwd-pub/"
+    "buscadorPublico/buscadorPublico.xhtml"
+)
 
-MAX_PROCESOS = None
+PAUSE_BETWEEN_PROCEDURES = 3
+DOWNLOAD_TIMEOUT_MS = 30000
+PAGE_TIMEOUT_MS = 60000
 
-def log(mensaje):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    linea = f"[{timestamp}] {mensaje}"
-    print(linea)
-    with open(LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(linea + "\n")
+EXPECTED_INPUT_COLUMNS = {
+    "codigoconvocatoria",
+    "fecha_convocatoria",
+}
 
-def esperar_elemento(page, selector_texto, max_intentos=15, espera=1):
-    for intento in range(max_intentos):
-        try:
-            elemento = page.get_by_text(selector_texto, exact=False)
-            if elemento.count() > 0:
-                return elemento
-        except:
-            pass
-        time.sleep(espera)
-    return None
 
-def verificar_contenido_pdf(ruta_pdf):
+# =============================================================================
+# LOGGING
+# =============================================================================
+
+log_lines = []
+
+
+def log(message=""):
+    line = str(message)
+    print(line)
+    log_lines.append(line)
+
+
+def save_log():
+    LOG_FILE.write_text(
+        "\n".join(log_lines) + "\n",
+        encoding="utf-8"
+    )
+
+
+# =============================================================================
+# TEXT UTILITIES
+# =============================================================================
+
+def normalize_text(text):
+    text = str(text).lower()
+    text = unicodedata.normalize("NFKD", text)
+    return "".join(
+        character
+        for character in text
+        if not unicodedata.combining(character)
+    )
+
+
+# =============================================================================
+# INPUT VALIDATION
+# =============================================================================
+
+def validate_input_file():
+    if not INPUT_FILE.exists():
+        raise FileNotFoundError(
+            f"Required Script 00 output not found: {INPUT_FILE.name}"
+        )
+
+    dataframe = pd.read_excel(INPUT_FILE)
+
+    missing_columns = EXPECTED_INPUT_COLUMNS - set(dataframe.columns)
+
+    if missing_columns:
+        raise KeyError(
+            "Input dataset is missing required columns: "
+            + ", ".join(sorted(missing_columns))
+        )
+
+    if dataframe["codigoconvocatoria"].isna().any():
+        raise ValueError(
+            "Input dataset contains missing procurement procedure codes."
+        )
+
+    duplicated_codes = dataframe[
+        "codigoconvocatoria"
+    ].duplicated().sum()
+
+    if duplicated_codes > 0:
+        raise ValueError(
+            "Input dataset contains duplicated procurement procedure codes: "
+            f"{duplicated_codes}"
+        )
+
+    dataframe["fecha_convocatoria"] = pd.to_datetime(
+        dataframe["fecha_convocatoria"],
+        errors="coerce"
+    )
+
+    missing_dates = dataframe["fecha_convocatoria"].isna().sum()
+
+    if missing_dates > 0:
+        raise ValueError(
+            "Input dataset contains invalid or missing procurement notice "
+            f"dates: {missing_dates}"
+        )
+
+    dataframe["search_year"] = (
+        dataframe["fecha_convocatoria"].dt.year.astype(int)
+    )
+
+    return dataframe
+
+
+# =============================================================================
+# PDF VALIDATION
+# =============================================================================
+
+def validate_pdf_content(pdf_path, expected_document_type):
     try:
         import fitz
-        doc = fitz.open(str(ruta_pdf))
-        if len(doc) == 0:
-            doc.close()
-            return False
 
-        texto = ""
-        for i in range(min(2, len(doc))):
-            texto += doc[i].get_text()
-        doc.close()
+        document = fitz.open(str(pdf_path))
 
-        texto_lower = texto.lower()
+        if len(document) == 0:
+            document.close()
+            return False, "EMPTY_PDF"
 
-        if "pliego de absolución" in texto_lower or "pliego absolutorio" in texto_lower:
-            return True
-        if "absolución de consultas" in texto_lower and "consulta" in texto_lower:
-            return True
+        text = ""
 
-        return False
-    except Exception as e:
-        log(f"      Error verificando PDF: {str(e)[:100]}")
-        return False
+        for page_index in range(min(2, len(document))):
+            text += document[page_index].get_text("text")
 
-def buscar_ficha_en_anio(page, codigo, anio):
+        document.close()
+
+        normalized = normalize_text(text)
+
+        if expected_document_type == "PLIEGO":
+            valid_patterns = (
+                "pliego de absolucion",
+                "pliego absolutorio",
+                "absolucion de consultas",
+            )
+
+            if any(pattern in normalized for pattern in valid_patterns):
+                return True, "CONTENT_VERIFIED"
+
+            return False, "PLIEGO_CONTENT_NOT_VERIFIED"
+
+        if expected_document_type == "ACTA_NO_FORMULACION":
+            acta_patterns = (
+                "acta de no formulacion",
+                "no se formularon consultas",
+                "no se registraron consultas",
+                "no formulacion de consultas",
+            )
+
+            if any(pattern in normalized for pattern in acta_patterns):
+                return True, "CONTENT_VERIFIED"
+
+            return False, "ACTA_CONTENT_NOT_VERIFIED"
+
+        return False, "UNKNOWN_DOCUMENT_TYPE"
+
+    except Exception as error:
+        return False, (
+            f"PDF_VALIDATION_ERROR: "
+            f"{type(error).__name__}: {str(error)[:100]}"
+        )
+
+
+# =============================================================================
+# SEACE NAVIGATION HELPERS
+# =============================================================================
+
+def wait_for_text(page, text, max_attempts=15, wait_seconds=1):
+    for _ in range(max_attempts):
+        try:
+            element = page.get_by_text(text, exact=False)
+
+            if element.count() > 0:
+                return element
+
+        except Exception:
+            pass
+
+        time.sleep(wait_seconds)
+
+    return None
+
+
+def close_extra_pages(context, main_page):
+    for current_page in list(context.pages):
+        if current_page != main_page:
+            try:
+                current_page.close()
+            except Exception:
+                pass
+
+
+# =============================================================================
+# DOCUMENT SEARCH
+# =============================================================================
+
+def search_document_in_year(page, code, year):
     try:
-        log(f"   [Intento] Codigo={codigo}, Anio={anio}")
+        log(f"    Searching year {year}...")
 
-        page.goto(URL_SEACE, wait_until="domcontentloaded", timeout=60000)
+        page.goto(
+            SEACE_URL,
+            wait_until="domcontentloaded",
+            timeout=PAGE_TIMEOUT_MS
+        )
+
         page.wait_for_timeout(4000)
 
-        page.get_by_text("Buscador de Procedimientos de Selección", exact=True).click()
+        page.get_by_text(
+            "Buscador de Procedimientos de Selección",
+            exact=True
+        ).click()
+
         page.wait_for_timeout(2500)
 
-        page.wait_for_timeout(2000)
-        page.evaluate("""
+        page.evaluate(
+            """
             () => {
                 const legends = document.querySelectorAll('legend');
-                for (let l of legends) {
-                    if (l.textContent.includes('Búsqueda Avanzada')) {
-                        l.click();
+
+                for (const legend of legends) {
+                    if (
+                        legend.textContent.includes(
+                            'Búsqueda Avanzada'
+                        )
+                    ) {
+                        legend.click();
                         return true;
                     }
                 }
+
                 return false;
             }
-        """)
+            """
+        )
+
         page.wait_for_timeout(2500)
 
         try:
-            etiqueta_anio = page.get_by_text("Año de la Convocatoria", exact=False).first
-            fila_anio = etiqueta_anio.locator("xpath=ancestor::tr[1]")
-            trigger_anio = fila_anio.locator(".ui-selectonemenu-trigger")
-            trigger_anio.click()
+            year_label = page.get_by_text(
+                "Año de la Convocatoria",
+                exact=False
+            ).first
+
+            year_row = year_label.locator(
+                "xpath=ancestor::tr[1]"
+            )
+
+            year_trigger = year_row.locator(
+                ".ui-selectonemenu-trigger"
+            )
+
+            year_trigger.click()
+
             page.wait_for_timeout(700)
 
-            opciones = page.locator("li.ui-selectonemenu-item:visible")
-            opcion_anio = opciones.filter(has_text=str(anio))
-            if opcion_anio.count() == 0:
-                return ("ANIO_NO_DISPONIBLE", None, None)
-            opcion_anio.first.click()
+            options = page.locator(
+                "li.ui-selectonemenu-item:visible"
+            )
+
+            year_option = options.filter(
+                has_text=str(year)
+            )
+
+            if year_option.count() == 0:
+                return {
+                    "status": "YEAR_NOT_AVAILABLE",
+                    "path": None,
+                    "document_type": None,
+                    "validation": None,
+                    "source_filename": None,
+                }
+
+            year_option.first.click()
+
             page.wait_for_timeout(1200)
-        except Exception as e:
-            return ("ERROR_ANIO", None, None)
+
+        except Exception:
+            return {
+                "status": "YEAR_SELECTION_ERROR",
+                "path": None,
+                "document_type": None,
+                "validation": None,
+                "source_filename": None,
+            }
 
         try:
-            campo_codigo = page.locator("#tbBuscador\\:idFormBuscarProceso\\:numeroConvocatoria")
-            campo_codigo.fill(str(codigo))
-            page.wait_for_timeout(500)
-        except Exception as e:
-            return ("ERROR_CODIGO", None, None)
+            code_field = page.locator(
+                "#tbBuscador\\:idFormBuscarProceso\\:"
+                "numeroConvocatoria"
+            )
 
-        botones = page.get_by_text("Buscar", exact=True)
-        boton_buscar = None
-        for i in range(botones.count()):
-            if botones.nth(i).is_visible():
-                boton_buscar = botones.nth(i)
+            code_field.fill(str(code))
+
+            page.wait_for_timeout(500)
+
+        except Exception:
+            return {
+                "status": "CODE_FIELD_ERROR",
+                "path": None,
+                "document_type": None,
+                "validation": None,
+                "source_filename": None,
+            }
+
+        search_buttons = page.get_by_text(
+            "Buscar",
+            exact=True
+        )
+
+        search_button = None
+
+        for index in range(search_buttons.count()):
+            if search_buttons.nth(index).is_visible():
+                search_button = search_buttons.nth(index)
                 break
-        if boton_buscar is None:
-            return ("ERROR_BOTON", None, None)
-        boton_buscar.click()
+
+        if search_button is None:
+            return {
+                "status": "SEARCH_BUTTON_NOT_FOUND",
+                "path": None,
+                "document_type": None,
+                "validation": None,
+                "source_filename": None,
+            }
+
+        search_button.click()
+
         page.wait_for_timeout(8000)
 
-        texto_pagina = page.locator("body").inner_text()
-        if "No se encontraron Datos" in texto_pagina or "Mostrando de 0 a 0" in texto_pagina:
-            return ("SIN_FICHA", None, None)
+        page_text = page.locator("body").inner_text()
 
-        log(f"      Hay resultados. Buscando fila...")
+        if (
+            "No se encontraron Datos" in page_text
+            or "Mostrando de 0 a 0" in page_text
+        ):
+            return {
+                "status": "PROCEDURE_NOT_FOUND",
+                "path": None,
+                "document_type": None,
+                "validation": None,
+                "source_filename": None,
+            }
 
-        filas = page.locator("tr")
-        fila_resultado = None
-        for i in range(filas.count()):
+        rows = page.locator("tr")
+
+        result_row = None
+
+        procedure_prefixes = (
+            "LP-",
+            "CP-",
+            "AS-",
+            "AM-",
+            "AD-",
+            "CD-",
+        )
+
+        for index in range(rows.count()):
             try:
-                contenido = filas.nth(i).inner_text().strip()
-                if (any(nom in contenido for nom in ["LP-", "CP-", "AS-", "AM-", "AD-", "CD-"])
-                    and len(contenido) > 50):
-                    fila_resultado = filas.nth(i)
-                    log(f"      Fila encontrada en indice {i}")
+                row_text = rows.nth(index).inner_text().strip()
+
+                if (
+                    any(
+                        prefix in row_text
+                        for prefix in procedure_prefixes
+                    )
+                    and len(row_text) > 50
+                ):
+                    result_row = rows.nth(index)
                     break
-            except:
+
+            except Exception:
                 pass
 
-        if fila_resultado is None:
-            return ("SIN_FICHA", None, None)
+        if result_row is None:
+            return {
+                "status": "RESULT_ROW_NOT_FOUND",
+                "path": None,
+                "document_type": None,
+                "validation": None,
+                "source_filename": None,
+            }
 
-        candidatos = fila_resultado.locator("img, input[type='image']")
-        control_ficha = None
-        for i in range(candidatos.count()):
+        candidates = result_row.locator(
+            "img, input[type='image']"
+        )
+
+        procedure_control = None
+
+        for index in range(candidates.count()):
             try:
-                src = (candidatos.nth(i).get_attribute("src") or "").lower()
-                if "ficha" in src:
-                    control_ficha = candidatos.nth(i)
+                source = (
+                    candidates.nth(index)
+                    .get_attribute("src")
+                    or ""
+                ).lower()
+
+                if "ficha" in source:
+                    procedure_control = candidates.nth(index)
                     break
-            except:
+
+            except Exception:
                 pass
 
-        if control_ficha is None:
-            return ("FICHA_ENCONTRADA_SIN_ICONO", None, None)
+        if procedure_control is None:
+            return {
+                "status": "PROCEDURE_ICON_NOT_FOUND",
+                "path": None,
+                "document_type": None,
+                "validation": None,
+                "source_filename": None,
+            }
 
-        paginas_antes = len(page.context.pages)
-        control_ficha.click()
+        pages_before = len(page.context.pages)
+
+        procedure_control.click()
+
         page.wait_for_timeout(7000)
-        paginas_despues = len(page.context.pages)
-        if paginas_despues > paginas_antes:
-            page = page.context.pages[-1]
 
-        log(f"      Esperando que cargue la ficha...")
-        boton_docs = esperar_elemento(page, "Ver documentos por Etapa", max_intentos=15, espera=1)
+        pages_after = len(page.context.pages)
 
-        if boton_docs is None:
-            return ("FICHA_ENCONTRADA_SIN_DOCUMENTOS", None, None)
+        detail_page = page
+
+        if pages_after > pages_before:
+            detail_page = page.context.pages[-1]
+
+        documents_button = wait_for_text(
+            detail_page,
+            "Ver documentos por Etapa",
+            max_attempts=15,
+            wait_seconds=1
+        )
+
+        if documents_button is None:
+            if detail_page != page:
+                try:
+                    detail_page.close()
+                except Exception:
+                    pass
+
+            return {
+                "status": "DOCUMENT_SECTION_NOT_FOUND",
+                "path": None,
+                "document_type": None,
+                "validation": None,
+                "source_filename": None,
+            }
 
         try:
-            boton_docs.first.click()
-            page.wait_for_timeout(4000)
-        except Exception as e:
-            return ("FICHA_ENCONTRADA_SIN_DOCUMENTOS", None, None)
+            documents_button.first.click()
+            detail_page.wait_for_timeout(4000)
 
-        log(f"      Buscando fila de Pliego de Absolucion...")
+        except Exception:
+            if detail_page != page:
+                try:
+                    detail_page.close()
+                except Exception:
+                    pass
 
-        filas_docs = page.locator("tr")
-        fila_pliego = None
-        tipo_doc = None
+            return {
+                "status": "DOCUMENT_SECTION_OPEN_ERROR",
+                "path": None,
+                "document_type": None,
+                "validation": None,
+                "source_filename": None,
+            }
 
-        for i in range(filas_docs.count()):
+        document_rows = detail_page.locator("tr")
+
+        target_row = None
+        document_type = None
+
+        for index in range(document_rows.count()):
             try:
-                fila = filas_docs.nth(i)
-                celdas = fila.locator("td")
+                row = document_rows.nth(index)
+                cells = row.locator("td")
 
-                if celdas.count() < 4:
+                if cells.count() < 4:
                     continue
 
-                etapa = celdas.nth(1).inner_text().strip()
-                documento = celdas.nth(2).inner_text().strip()
+                stage = normalize_text(
+                    cells.nth(1).inner_text().strip()
+                )
 
-                if ("Absolución de consultas" in etapa
-                    and "Pliego de absolución" in documento):
-                    fila_pliego = fila
-                    tipo_doc = "PLIEGO"
-                    log(f"      *** ENCONTRADO PLIEGO en fila {i} ***")
-                    log(f"      Etapa: {etapa[:60]}")
-                    log(f"      Documento: {documento[:80]}")
-                    break
-                elif ("Absolución de consultas" in etapa
-                      and "Acta de no formulación" in documento):
-                    fila_pliego = fila
-                    tipo_doc = "ACTA_NO_FORMULACION"
-                    log(f"      *** ENCONTRADO ACTA en fila {i} ***")
+                document_name = normalize_text(
+                    cells.nth(2).inner_text().strip()
+                )
+
+                if (
+                    "absolucion de consultas" in stage
+                    and "pliego de absolucion" in document_name
+                ):
+                    target_row = row
+                    document_type = "PLIEGO"
                     break
 
-            except Exception as e:
+                if (
+                    "absolucion de consultas" in stage
+                    and "acta de no formulacion" in document_name
+                ):
+                    target_row = row
+                    document_type = "ACTA_NO_FORMULACION"
+                    break
+
+            except Exception:
                 pass
 
-        if fila_pliego is None:
-            log(f"      *** NO se encontro fila de Pliego ***")
-            return ("FICHA_SIN_PLIEGO", None, None)
+        if target_row is None:
+            if detail_page != page:
+                try:
+                    detail_page.close()
+                except Exception:
+                    pass
 
-        enlaces = fila_pliego.locator("a")
-        enlace_descarga = None
-        for i in range(enlaces.count()):
+            return {
+                "status": "TARGET_DOCUMENT_NOT_FOUND",
+                "path": None,
+                "document_type": None,
+                "validation": None,
+                "source_filename": None,
+            }
+
+        links = target_row.locator("a")
+
+        download_link = None
+
+        for index in range(links.count()):
             try:
-                elemento = enlaces.nth(i)
-                onclick = elemento.get_attribute("onclick") or ""
+                element = links.nth(index)
+
+                onclick = (
+                    element.get_attribute("onclick")
+                    or ""
+                )
+
                 if "descargaDocGeneral" in onclick:
-                    enlace_descarga = elemento
-                    log(f"      Enlace de descarga encontrado")
+                    download_link = element
                     break
-            except:
+
+            except Exception:
                 pass
 
-        if enlace_descarga is None:
-            return ("PLIEGO_SIN_ENLACE", None, tipo_doc)
+        if download_link is None:
+            if detail_page != page:
+                try:
+                    detail_page.close()
+                except Exception:
+                    pass
 
-        sufijo = "" if tipo_doc == "PLIEGO" else "_ACTA"
-        nombre_archivo = f"{codigo}{sufijo}.pdf"
-        ruta_pdf = PDFS_DIR / nombre_archivo
-        id_enlace = enlace_descarga.get_attribute("id")
+            return {
+                "status": "DOWNLOAD_LINK_NOT_FOUND",
+                "path": None,
+                "document_type": document_type,
+                "validation": None,
+                "source_filename": None,
+            }
+
+        suffix = (
+            ""
+            if document_type == "PLIEGO"
+            else "_ACTA"
+        )
+
+        output_filename = f"{code}{suffix}.pdf"
+        output_path = PDFS_DIR / output_filename
+
+        link_id = download_link.get_attribute("id")
 
         try:
-            with page.expect_download(timeout=30000) as download_info:
-                page.evaluate("""
+            with detail_page.expect_download(
+                timeout=DOWNLOAD_TIMEOUT_MS
+            ) as download_info:
+
+                detail_page.evaluate(
+                    """
                     (id) => {
-                        const el = document.getElementById(id);
-                        if (el) { el.click(); }
+                        const element =
+                            document.getElementById(id);
+
+                        if (element) {
+                            element.click();
+                        }
                     }
-                """, id_enlace)
+                    """,
+                    link_id
+                )
+
             download = download_info.value
 
-            nombre_descargado = download.suggested_filename.lower()
-            log(f"      Nombre del archivo descargado: {nombre_descargado}")
+            source_filename = (
+                download.suggested_filename or ""
+            )
 
-            if nombre_descargado.endswith('.zip') or nombre_descargado.endswith('.rar'):
-                log(f"      *** ERROR: Descargo un ZIP/RAR ***")
-                ruta_descartado = DESCARTADOS_DIR / f"{codigo}_descargado_como.zip"
-                download.save_as(str(ruta_descartado))
-                return ("PDF_INCORRECTO_FORMATO", None, tipo_doc)
+            source_lower = source_filename.lower()
 
-            download.save_as(str(ruta_pdf))
-            log(f"      Archivo guardado: {nombre_archivo}")
+            if (
+                source_lower.endswith(".zip")
+                or source_lower.endswith(".rar")
+            ):
+                if detail_page != page:
+                    try:
+                        detail_page.close()
+                    except Exception:
+                        pass
 
-            log(f"      Verificando contenido del PDF...")
-            if not verificar_contenido_pdf(ruta_pdf):
-                log(f"      *** ERROR: El PDF no es un Pliego ***")
-                ruta_descartado = DESCARTADOS_DIR / nombre_archivo
-                if ruta_descartado.exists():
-                    ruta_descartado.unlink()
-                ruta_pdf.rename(ruta_descartado)
-                return ("PDF_INCORRECTO_CONTENIDO", None, tipo_doc)
+                return {
+                    "status": "UNSUPPORTED_DOWNLOAD_FORMAT",
+                    "path": None,
+                    "document_type": document_type,
+                    "validation": "ZIP_OR_RAR",
+                    "source_filename": source_filename,
+                }
 
-            log(f"      OK - PDF verificado y guardado: {nombre_archivo} (tipo: {tipo_doc})")
-            return ("OK", ruta_pdf, tipo_doc)
+            download.save_as(str(output_path))
 
-        except Exception as e:
-            log(f"      Error descargando: {str(e)[:100]}")
-            return ("ERROR_DESCARGA", None, tipo_doc)
+        except Exception as error:
+            if detail_page != page:
+                try:
+                    detail_page.close()
+                except Exception:
+                    pass
 
-    except Exception as e:
-        log(f"      EXCEPCION: {type(e).__name__} - {str(e)[:150]}")
-        return ("ERROR_GENERAL", None, None)
+            return {
+                "status": "DOWNLOAD_ERROR",
+                "path": None,
+                "document_type": document_type,
+                "validation": (
+                    f"{type(error).__name__}: "
+                    f"{str(error)[:100]}"
+                ),
+                "source_filename": None,
+            }
 
-def descargar_con_reintentos(page, codigo, anio_original):
-    anio_original = int(anio_original)
-    anios_a_probar = [
-        anio_original,
-        anio_original + 1,
-        anio_original - 1,
-        anio_original + 2,
-        anio_original - 2
+        is_valid, validation_status = validate_pdf_content(
+            output_path,
+            document_type
+        )
+
+        if not is_valid:
+            if output_path.exists():
+                output_path.unlink()
+
+            if detail_page != page:
+                try:
+                    detail_page.close()
+                except Exception:
+                    pass
+
+            return {
+                "status": "PDF_VALIDATION_FAILED",
+                "path": None,
+                "document_type": document_type,
+                "validation": validation_status,
+                "source_filename": source_filename,
+            }
+
+        if detail_page != page:
+            try:
+                detail_page.close()
+            except Exception:
+                pass
+
+        return {
+            "status": "OK",
+            "path": output_path,
+            "document_type": document_type,
+            "validation": validation_status,
+            "source_filename": source_filename,
+        }
+
+    except Exception as error:
+        return {
+            "status": "GENERAL_ERROR",
+            "path": None,
+            "document_type": None,
+            "validation": (
+                f"{type(error).__name__}: "
+                f"{str(error)[:150]}"
+            ),
+            "source_filename": None,
+        }
+
+
+# =============================================================================
+# SEARCH STRATEGY
+# =============================================================================
+
+def download_with_year_search(page, code, base_year):
+    candidate_years = [
+        base_year,
+        base_year + 1,
+        base_year - 1,
+        base_year + 2,
+        base_year - 2,
     ]
 
-    for anio in anios_a_probar:
-        log(f"   >>> Probando anio {anio}")
-        estado, ruta, tipo_doc = buscar_ficha_en_anio(page, codigo, anio)
-        log(f"   <<< Resultado anio {anio}: {estado}")
+    attempts = []
 
-        if estado == "OK":
-            return (estado, ruta, anio, tipo_doc)
+    for year in candidate_years:
+        result = search_document_in_year(
+            page,
+            code,
+            year
+        )
 
-        if estado.startswith("FICHA_") and estado != "FICHA_ENCONTRADA_SIN_DOCUMENTOS":
-            return (estado, None, anio, tipo_doc)
+        attempts.append(
+            f"{year}:{result['status']}"
+        )
 
-        if estado == "FICHA_ENCONTRADA_SIN_DOCUMENTOS":
-            log(f"   *** Reintentando anio {anio} ***")
+        log(
+            f"      {year}: "
+            f"{result['status']}"
+        )
+
+        if result["status"] == "OK":
+            result["year_found"] = year
+            result["attempts"] = " | ".join(attempts)
+            return result
+
+        if result["status"] in {
+            "YEAR_NOT_AVAILABLE",
+            "PROCEDURE_NOT_FOUND",
+            "RESULT_ROW_NOT_FOUND",
+        }:
+            continue
+
+        if result["status"] in {
+            "DOCUMENT_SECTION_NOT_FOUND",
+            "DOCUMENT_SECTION_OPEN_ERROR",
+        }:
+            log("      Retrying the same year once...")
+
             time.sleep(5)
-            estado2, ruta2, tipo_doc2 = buscar_ficha_en_anio(page, codigo, anio)
-            log(f"   <<< Reintento anio {anio}: {estado2}")
-            if estado2 == "OK":
-                return (estado2, ruta2, anio, tipo_doc2)
-            return (estado2, None, anio, tipo_doc2)
 
-        if estado == "ANIO_NO_DISPONIBLE":
-            continue
+            retry_result = search_document_in_year(
+                page,
+                code,
+                year
+            )
 
-        if estado == "SIN_FICHA":
-            continue
+            attempts.append(
+                f"{year}:RETRY:{retry_result['status']}"
+            )
 
-        continue
+            log(
+                f"      {year} retry: "
+                f"{retry_result['status']}"
+            )
 
-    return ("SIN_FICHA_EN_NINGUN_ANIO", None, None, None)
+            if retry_result["status"] == "OK":
+                retry_result["year_found"] = year
+                retry_result["attempts"] = (
+                    " | ".join(attempts)
+                )
+                return retry_result
+
+        # If the procedure was found but the target document
+        # could not be retrieved, keep the evidence and stop
+        # searching unrelated years.
+        if result["status"] in {
+            "TARGET_DOCUMENT_NOT_FOUND",
+            "DOWNLOAD_LINK_NOT_FOUND",
+            "UNSUPPORTED_DOWNLOAD_FORMAT",
+            "DOWNLOAD_ERROR",
+            "PDF_VALIDATION_FAILED",
+            "PROCEDURE_ICON_NOT_FOUND",
+            "CODE_FIELD_ERROR",
+            "SEARCH_BUTTON_NOT_FOUND",
+            "YEAR_SELECTION_ERROR",
+            "GENERAL_ERROR",
+        }:
+            result["year_found"] = year
+            result["attempts"] = " | ".join(attempts)
+            return result
+
+    return {
+        "status": "PROCEDURE_NOT_FOUND_IN_SEARCH_YEARS",
+        "path": None,
+        "document_type": None,
+        "validation": None,
+        "source_filename": None,
+        "year_found": None,
+        "attempts": " | ".join(attempts),
+    }
+
+
+# =============================================================================
+# OUTPUT
+# =============================================================================
+
+def save_status(results):
+    dataframe = pd.DataFrame(results)
+
+    dataframe.to_excel(
+        STATUS_FILE,
+        index=False
+    )
+
+
+def print_final_summary(results, expected_count):
+    dataframe = pd.DataFrame(results)
+
+    successful = dataframe[
+        dataframe["download_status"] == "OK"
+    ]
+
+    failed = dataframe[
+        dataframe["download_status"] != "OK"
+    ]
+
+    pliegos = successful[
+        successful["document_type"] == "PLIEGO"
+    ]
+
+    acts = successful[
+        successful["document_type"]
+        == "ACTA_NO_FORMULACION"
+    ]
+
+    log()
+    log("=" * 78)
+    log("FINAL DOWNLOAD AUDIT")
+    log("=" * 78)
+
+    log(
+        f"Expected procedures:              "
+        f"{expected_count:,}"
+    )
+
+    log(
+        f"Successfully retrieved:           "
+        f"{len(successful):,}"
+    )
+
+    log(
+        f"Pliegos:                          "
+        f"{len(pliegos):,}"
+    )
+
+    log(
+        f"Acts of no formulation:           "
+        f"{len(acts):,}"
+    )
+
+    log(
+        f"Missing or failed:                "
+        f"{len(failed):,}"
+    )
+
+    log(
+        f"PDF files in 05_pdfs:             "
+        f"{len(list(PDFS_DIR.glob('*.pdf'))):,}"
+    )
+
+    if len(failed) > 0:
+        log()
+        log("PROCEDURES REQUIRING REVIEW")
+        log("-" * 78)
+
+        for _, row in failed.iterrows():
+            log(
+                f"  {row['codigoconvocatoria']} | "
+                f"{row['download_status']} | "
+                f"{row['search_attempts']}"
+            )
+
+    log()
+    log("=" * 78)
+
+    if (
+        len(successful) == expected_count
+        and len(list(PDFS_DIR.glob("*.pdf")))
+        == expected_count
+    ):
+        log("PIPELINE STATUS: COMPLETE")
+    else:
+        log("PIPELINE STATUS: INCOMPLETE")
+
+    log("=" * 78)
+
+
+# =============================================================================
+# MAIN PIPELINE
+# =============================================================================
 
 def main():
-    log("=" * 60)
-    log(" DESCARGA MASIVA DE PLIEGOS - VERSION v7 (CORREGIDA)")
-    log("=" * 60)
+    log("=" * 78)
+    log("SEACE DOCUMENT ACQUISITION - ROAD INFRASTRUCTURE TENDERS")
+    log("=" * 78)
+    log("Source: OECE-SEACE")
+    log("Input: Script 00 sample-selection output")
+    log()
 
-    log(f"Leyendo Excel: {EXCEL_BASE}")
-    df = pd.read_excel(EXCEL_BASE)
-    log(f"Total de procesos: {len(df)}")
+    log("[1] Validating Script 00 output...")
 
-    df["fecha_convocatoria"] = pd.to_datetime(df["fecha_convocatoria"], errors="coerce")
-    df["anio"] = df["fecha_convocatoria"].dt.year
+    sample = validate_input_file()
 
-    if MAX_PROCESOS:
-        df = df.head(MAX_PROCESOS)
-        log(f"*** MODO PRUEBA: procesando solo {MAX_PROCESOS} casos ***")
+    expected_count = len(sample)
 
-    pendientes = []
-    for _, fila in df.iterrows():
-        pendientes.append({
-            "codigo": str(fila["codigoconvocatoria"]),
-            "anio": int(fila["anio"])
-        })
+    log(
+        f"  Procedures to process: "
+        f"{expected_count:,}"
+    )
 
-    log(f"Procesos a procesar: {len(pendientes)}")
+    log()
+    log("[2] Preparing document directory...")
 
-    resultados = []
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+    existing_pdfs = list(PDFS_DIR.glob("*.pdf"))
+
+    if existing_pdfs:
+        log(
+            f"  Existing PDFs detected: "
+            f"{len(existing_pdfs):,}"
+        )
+        log(
+            "  Existing valid filenames will be "
+            "checked before downloading."
+        )
+    else:
+        log("  No existing PDFs detected.")
+
+    results = []
+
+    log()
+    log("[3] Starting automated SEACE acquisition...")
+
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(
+            headless=False
+        )
+
         context = browser.new_context(
-            viewport={"width": 1600, "height": 950},
+            viewport={
+                "width": 1600,
+                "height": 950
+            },
             accept_downloads=True
         )
+
         page = context.new_page()
 
-        for i, item in enumerate(pendientes):
-            codigo = item["codigo"]
-            anio = item["anio"]
+        for position, (_, row) in enumerate(
+            sample.iterrows(),
+            start=1
+        ):
+            code = str(
+                int(row["codigoconvocatoria"])
+            )
 
-            log(f"\n[{i+1}/{len(pendientes)}] Codigo: {codigo} (anio base {anio})")
+            base_year = int(row["search_year"])
 
-            try:
-                estado, ruta, anio_usado, tipo_doc = descargar_con_reintentos(page, codigo, anio)
-            except Exception as e:
-                log(f"EXCEPCION: {type(e).__name__}: {str(e)[:200]}")
-                estado = "EXCEPCION"
-                anio_usado = None
-                tipo_doc = None
+            log()
+            log(
+                f"[{position}/{expected_count}] "
+                f"Procedure {code} "
+                f"(base year {base_year})"
+            )
 
-            resultados.append({
-                "codigoconvocatoria": codigo,
-                "anio_base": anio,
-                "anio_encontrado": anio_usado if anio_usado else "",
-                "tipo_documento": tipo_doc if tipo_doc else "",
-                "estado_descarga": estado
+            existing_pliego = PDFS_DIR / f"{code}.pdf"
+            existing_acta = PDFS_DIR / f"{code}_ACTA.pdf"
+
+            existing_path = None
+            existing_type = None
+
+            if existing_pliego.exists():
+                existing_path = existing_pliego
+                existing_type = "PLIEGO"
+
+            elif existing_acta.exists():
+                existing_path = existing_acta
+                existing_type = "ACTA_NO_FORMULACION"
+
+            if existing_path is not None:
+                valid, validation = validate_pdf_content(
+                    existing_path,
+                    existing_type
+                )
+
+                if valid:
+                    log(
+                        f"      Existing verified PDF: "
+                        f"{existing_path.name}"
+                    )
+
+                    results.append({
+                        "codigoconvocatoria": code,
+                        "base_year": base_year,
+                        "year_found": "",
+                        "document_type": existing_type,
+                        "output_filename": existing_path.name,
+                        "source_filename": "",
+                        "content_validation": validation,
+                        "download_status": "OK",
+                        "acquisition_mode": "EXISTING_VERIFIED",
+                        "search_attempts": "",
+                    })
+
+                    save_status(results)
+                    continue
+
+                log(
+                    "      Existing PDF failed validation; "
+                    "downloading again."
+                )
+
+                existing_path.unlink()
+
+            result = download_with_year_search(
+                page,
+                code,
+                base_year
+            )
+
+            output_filename = ""
+
+            if result["path"] is not None:
+                output_filename = result["path"].name
+
+            results.append({
+                "codigoconvocatoria": code,
+                "base_year": base_year,
+                "year_found": (
+                    result["year_found"]
+                    if result["year_found"] is not None
+                    else ""
+                ),
+                "document_type": (
+                    result["document_type"]
+                    if result["document_type"] is not None
+                    else ""
+                ),
+                "output_filename": output_filename,
+                "source_filename": (
+                    result["source_filename"]
+                    if result["source_filename"] is not None
+                    else ""
+                ),
+                "content_validation": (
+                    result["validation"]
+                    if result["validation"] is not None
+                    else ""
+                ),
+                "download_status": result["status"],
+                "acquisition_mode": "DOWNLOADED",
+                "search_attempts": result["attempts"],
             })
 
-            if i < len(pendientes) - 1:
-                time.sleep(PAUSA_ENTRE_PROCESOS)
+            save_status(results)
+
+            close_extra_pages(
+                context,
+                page
+            )
+
+            if position < expected_count:
+                time.sleep(
+                    PAUSE_BETWEEN_PROCEDURES
+                )
 
         browser.close()
 
-    df_resultados = pd.DataFrame(resultados)
-    df_resultados.to_excel(EXCEL_SALIDA, index=False)
-    log(f"\nEstado guardado en: {EXCEL_SALIDA}")
+    log()
+    log("[4] Saving acquisition audit...")
 
-    log("\n" + "=" * 60)
-    log(" RESUMEN")
-    log("=" * 60)
-    conteo_estado = df_resultados["estado_descarga"].value_counts()
-    for estado, cantidad in conteo_estado.items():
-        log(f"  {estado}: {cantidad}")
+    save_status(results)
 
-    log(f"\nTotal PDFs en carpeta: {len(list(PDFS_DIR.glob('*.pdf')))}")
-    log(f"Total descartados: {len(list(DESCARTADOS_DIR.glob('*')))}")
-    log("FIN")
+    log(
+        f"  Status workbook: "
+        f"{STATUS_FILE.name}"
+    )
+
+    log(
+        f"  Log file: "
+        f"{LOG_FILE.name}"
+    )
+
+    print_final_summary(
+        results,
+        expected_count
+    )
+
+    save_log()
+
+
+# =============================================================================
+# EXECUTION
+# =============================================================================
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+
+    except Exception as error:
+        log()
+        log("=" * 78)
+        log("PIPELINE FAILED")
+        log("=" * 78)
+        log(
+            f"{type(error).__name__}: "
+            f"{error}"
+        )
+
+        save_log()
+
+        sys.exit(1)
