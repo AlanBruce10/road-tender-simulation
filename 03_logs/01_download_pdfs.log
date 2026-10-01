@@ -1,0 +1,444 @@
+==============================================================================
+SEACE DOCUMENT ACQUISITION - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Source: OECE-SEACE
+Input: Script 00 sample-selection output
+
+[1] Validating Script 00 output...
+  Procedures to process: 137
+
+[2] Preparing document directory...
+  Existing PDFs detected: 136
+  Existing valid filenames will be checked before downloading.
+
+[3] Starting automated SEACE acquisition...
+
+[1/137] Procedure 619504 (base year 2020)
+      Existing verified PDF: 619504.pdf
+
+[2/137] Procedure 619659 (base year 2020)
+      Existing verified PDF: 619659.pdf
+
+[3/137] Procedure 638506 (base year 2020)
+      Existing verified PDF: 638506.pdf
+
+[4/137] Procedure 644853 (base year 2020)
+      Existing verified PDF: 644853.pdf
+
+[5/137] Procedure 645854 (base year 2020)
+      Existing verified PDF: 645854.pdf
+
+[6/137] Procedure 653257 (base year 2020)
+      Existing verified PDF: 653257.pdf
+
+[7/137] Procedure 654278 (base year 2020)
+      Existing verified PDF: 654278.pdf
+
+[8/137] Procedure 654914 (base year 2020)
+      Existing verified PDF: 654914.pdf
+
+[9/137] Procedure 664728 (base year 2020)
+      Existing verified PDF: 664728.pdf
+
+[10/137] Procedure 676061 (base year 2020)
+      Existing verified PDF: 676061.pdf
+
+[11/137] Procedure 678446 (base year 2020)
+      Existing verified PDF: 678446.pdf
+
+[12/137] Procedure 686773 (base year 2020)
+      Existing verified PDF: 686773.pdf
+
+[13/137] Procedure 691573 (base year 2021)
+      Existing verified PDF: 691573.pdf
+
+[14/137] Procedure 696209 (base year 2020)
+      Existing verified PDF: 696209.pdf
+
+[15/137] Procedure 701050 (base year 2021)
+      Existing verified PDF: 701050.pdf
+
+[16/137] Procedure 709352 (base year 2021)
+      Existing verified PDF: 709352.pdf
+
+[17/137] Procedure 711351 (base year 2021)
+      Existing verified PDF: 711351.pdf
+
+[18/137] Procedure 716023 (base year 2021)
+      Existing verified PDF: 716023.pdf
+
+[19/137] Procedure 719832 (base year 2021)
+      Existing verified PDF: 719832.pdf
+
+[20/137] Procedure 726358 (base year 2021)
+      Existing verified PDF: 726358.pdf
+
+[21/137] Procedure 727561 (base year 2021)
+      Existing verified PDF: 727561.pdf
+
+[22/137] Procedure 730365 (base year 2021)
+      Existing verified PDF: 730365.pdf
+
+[23/137] Procedure 732696 (base year 2021)
+      Existing verified PDF: 732696.pdf
+
+[24/137] Procedure 739874 (base year 2021)
+      Existing verified PDF: 739874.pdf
+
+[25/137] Procedure 743324 (base year 2021)
+      Existing verified PDF: 743324.pdf
+
+[26/137] Procedure 747170 (base year 2021)
+      Existing verified PDF: 747170.pdf
+
+[27/137] Procedure 757402 (base year 2021)
+      Existing verified PDF: 757402.pdf
+
+[28/137] Procedure 769850 (base year 2021)
+      Existing verified PDF: 769850.pdf
+
+[29/137] Procedure 771181 (base year 2021)
+      Existing verified PDF: 771181.pdf
+
+[30/137] Procedure 773713 (base year 2022)
+      Existing verified PDF: 773713.pdf
+
+[31/137] Procedure 777969 (base year 2022)
+      Existing verified PDF: 777969.pdf
+
+[32/137] Procedure 796480 (base year 2022)
+      Existing verified PDF: 796480.pdf
+
+[33/137] Procedure 803065 (base year 2022)
+      Existing verified PDF: 803065.pdf
+
+[34/137] Procedure 815567 (base year 2022)
+      Existing verified PDF: 815567.pdf
+
+[35/137] Procedure 817913 (base year 2022)
+      Existing verified PDF: 817913.pdf
+
+[36/137] Procedure 825955 (base year 2022)
+      Existing verified PDF: 825955.pdf
+
+[37/137] Procedure 826002 (base year 2022)
+      Existing verified PDF: 826002.pdf
+
+[38/137] Procedure 830593 (base year 2022)
+      Existing verified PDF: 830593.pdf
+
+[39/137] Procedure 832929 (base year 2022)
+      Existing verified PDF: 832929.pdf
+
+[40/137] Procedure 834703 (base year 2022)
+      Existing verified PDF: 834703.pdf
+
+[41/137] Procedure 839615 (base year 2022)
+      Existing verified PDF: 839615.pdf
+
+[42/137] Procedure 843857 (base year 2022)
+      Existing verified PDF: 843857.pdf
+
+[43/137] Procedure 845027 (base year 2022)
+      Existing verified PDF: 845027.pdf
+
+[44/137] Procedure 847802 (base year 2022)
+      Existing verified PDF: 847802.pdf
+
+[45/137] Procedure 849061 (base year 2022)
+      Existing verified PDF: 849061.pdf
+
+[46/137] Procedure 854797 (base year 2022)
+      Existing verified PDF: 854797.pdf
+
+[47/137] Procedure 861965 (base year 2022)
+      Existing verified PDF: 861965.pdf
+
+[48/137] Procedure 881247 (base year 2022)
+      Existing verified PDF: 881247.pdf
+
+[49/137] Procedure 885569 (base year 2022)
+      Existing verified PDF: 885569.pdf
+
+[50/137] Procedure 893721 (base year 2023)
+      Existing verified PDF: 893721.pdf
+
+[51/137] Procedure 923189 (base year 2023)
+      Existing verified PDF: 923189.pdf
+
+[52/137] Procedure 925975 (base year 2023)
+      Existing verified PDF: 925975.pdf
+
+[53/137] Procedure 926055 (base year 2023)
+      Existing verified PDF: 926055.pdf
+
+[54/137] Procedure 929009 (base year 2023)
+      Existing verified PDF: 929009.pdf
+
+[55/137] Procedure 929914 (base year 2023)
+      Existing verified PDF: 929914.pdf
+
+[56/137] Procedure 930869 (base year 2023)
+      Existing verified PDF: 930869.pdf
+
+[57/137] Procedure 934991 (base year 2023)
+      Existing verified PDF: 934991.pdf
+
+[58/137] Procedure 935232 (base year 2023)
+      Existing verified PDF: 935232.pdf
+
+[59/137] Procedure 938651 (base year 2023)
+      Existing verified PDF: 938651.pdf
+
+[60/137] Procedure 941264 (base year 2023)
+      Existing verified PDF: 941264.pdf
+
+[61/137] Procedure 948338 (base year 2023)
+      Existing verified PDF: 948338.pdf
+
+[62/137] Procedure 948752 (base year 2023)
+      Existing verified PDF: 948752.pdf
+
+[63/137] Procedure 952653 (base year 2023)
+      Existing verified PDF: 952653.pdf
+
+[64/137] Procedure 954697 (base year 2023)
+      Existing verified PDF: 954697.pdf
+
+[65/137] Procedure 961210 (base year 2023)
+    Searching year 2023...
+      2023: OK
+
+[66/137] Procedure 961402 (base year 2023)
+      Existing verified PDF: 961402.pdf
+
+[67/137] Procedure 968247 (base year 2023)
+      Existing verified PDF: 968247.pdf
+
+[68/137] Procedure 985624 (base year 2024)
+      Existing verified PDF: 985624.pdf
+
+[69/137] Procedure 994457 (base year 2023)
+      Existing verified PDF: 994457.pdf
+
+[70/137] Procedure 999833 (base year 2024)
+      Existing verified PDF: 999833.pdf
+
+[71/137] Procedure 1007182 (base year 2024)
+      Existing verified PDF: 1007182.pdf
+
+[72/137] Procedure 1017551 (base year 2024)
+      Existing verified PDF: 1017551.pdf
+
+[73/137] Procedure 1019132 (base year 2024)
+      Existing verified PDF: 1019132.pdf
+
+[74/137] Procedure 1025563 (base year 2023)
+      Existing verified PDF: 1025563.pdf
+
+[75/137] Procedure 1027610 (base year 2024)
+      Existing verified PDF: 1027610.pdf
+
+[76/137] Procedure 1037657 (base year 2024)
+      Existing verified PDF: 1037657.pdf
+
+[77/137] Procedure 1039800 (base year 2024)
+      Existing verified PDF: 1039800.pdf
+
+[78/137] Procedure 1050622 (base year 2024)
+      Existing verified PDF: 1050622.pdf
+
+[79/137] Procedure 1050941 (base year 2024)
+      Existing verified PDF: 1050941.pdf
+
+[80/137] Procedure 1051789 (base year 2024)
+      Existing verified PDF: 1051789.pdf
+
+[81/137] Procedure 1054931 (base year 2024)
+      Existing verified PDF: 1054931.pdf
+
+[82/137] Procedure 1056298 (base year 2024)
+      Existing verified PDF: 1056298.pdf
+
+[83/137] Procedure 1058860 (base year 2024)
+      Existing verified PDF: 1058860.pdf
+
+[84/137] Procedure 1059825 (base year 2024)
+      Existing verified PDF: 1059825.pdf
+
+[85/137] Procedure 1064958 (base year 2024)
+      Existing verified PDF: 1064958.pdf
+
+[86/137] Procedure 1067332 (base year 2024)
+      Existing verified PDF: 1067332.pdf
+
+[87/137] Procedure 1068898 (base year 2024)
+      Existing verified PDF: 1068898.pdf
+
+[88/137] Procedure 1073059 (base year 2024)
+      Existing verified PDF: 1073059.pdf
+
+[89/137] Procedure 1073362 (base year 2024)
+      Existing verified PDF: 1073362.pdf
+
+[90/137] Procedure 1073981 (base year 2024)
+      Existing verified PDF: 1073981.pdf
+
+[91/137] Procedure 1079530 (base year 2024)
+      Existing verified PDF: 1079530.pdf
+
+[92/137] Procedure 1080304 (base year 2024)
+      Existing verified PDF: 1080304.pdf
+
+[93/137] Procedure 1083769 (base year 2024)
+      Existing verified PDF: 1083769.pdf
+
+[94/137] Procedure 1084469 (base year 2024)
+      Existing verified PDF: 1084469.pdf
+
+[95/137] Procedure 1084480 (base year 2024)
+      Existing verified PDF: 1084480.pdf
+
+[96/137] Procedure 1084610 (base year 2024)
+      Existing verified PDF: 1084610.pdf
+
+[97/137] Procedure 1084805 (base year 2024)
+      Existing verified PDF: 1084805.pdf
+
+[98/137] Procedure 1089336 (base year 2025)
+      Existing verified PDF: 1089336.pdf
+
+[99/137] Procedure 1090093 (base year 2024)
+      Existing verified PDF: 1090093.pdf
+
+[100/137] Procedure 1096154 (base year 2025)
+      Existing verified PDF: 1096154.pdf
+
+[101/137] Procedure 1102853 (base year 2024)
+      Existing verified PDF: 1102853.pdf
+
+[102/137] Procedure 1103284 (base year 2024)
+      Existing verified PDF: 1103284.pdf
+
+[103/137] Procedure 1103374 (base year 2024)
+      Existing verified PDF: 1103374.pdf
+
+[104/137] Procedure 1104804 (base year 2024)
+      Existing verified PDF: 1104804.pdf
+
+[105/137] Procedure 1106896 (base year 2025)
+      Existing verified PDF: 1106896.pdf
+
+[106/137] Procedure 1108096 (base year 2025)
+      Existing verified PDF: 1108096.pdf
+
+[107/137] Procedure 1108164 (base year 2025)
+      Existing verified PDF: 1108164.pdf
+
+[108/137] Procedure 1108567 (base year 2024)
+      Existing verified PDF: 1108567.pdf
+
+[109/137] Procedure 1108635 (base year 2025)
+      Existing verified PDF: 1108635.pdf
+
+[110/137] Procedure 1108743 (base year 2025)
+      Existing verified PDF: 1108743.pdf
+
+[111/137] Procedure 1109493 (base year 2025)
+      Existing verified PDF: 1109493.pdf
+
+[112/137] Procedure 1111801 (base year 2025)
+      Existing verified PDF: 1111801.pdf
+
+[113/137] Procedure 1112851 (base year 2024)
+      Existing verified PDF: 1112851.pdf
+
+[114/137] Procedure 1113382 (base year 2025)
+      Existing verified PDF: 1113382.pdf
+
+[115/137] Procedure 1117336 (base year 2025)
+      Existing verified PDF: 1117336.pdf
+
+[116/137] Procedure 1117340 (base year 2025)
+      Existing verified PDF: 1117340.pdf
+
+[117/137] Procedure 1121088 (base year 2025)
+      Existing verified PDF: 1121088.pdf
+
+[118/137] Procedure 1125456 (base year 2025)
+      Existing verified PDF: 1125456.pdf
+
+[119/137] Procedure 1129578 (base year 2025)
+      Existing verified PDF: 1129578.pdf
+
+[120/137] Procedure 1132122 (base year 2025)
+      Existing verified PDF: 1132122.pdf
+
+[121/137] Procedure 1139311 (base year 2025)
+      Existing verified PDF: 1139311.pdf
+
+[122/137] Procedure 1145168 (base year 2025)
+      Existing verified PDF: 1145168.pdf
+
+[123/137] Procedure 1149224 (base year 2025)
+      Existing verified PDF: 1149224.pdf
+
+[124/137] Procedure 1150722 (base year 2025)
+      Existing verified PDF: 1150722.pdf
+
+[125/137] Procedure 1151950 (base year 2025)
+      Existing verified PDF: 1151950.pdf
+
+[126/137] Procedure 1152891 (base year 2025)
+      Existing verified PDF: 1152891.pdf
+
+[127/137] Procedure 1156672 (base year 2025)
+      Existing verified PDF: 1156672.pdf
+
+[128/137] Procedure 1160206 (base year 2025)
+      Existing verified PDF: 1160206.pdf
+
+[129/137] Procedure 1162940 (base year 2025)
+      Existing verified PDF: 1162940.pdf
+
+[130/137] Procedure 1163486 (base year 2025)
+      Existing verified PDF: 1163486.pdf
+
+[131/137] Procedure 1165514 (base year 2025)
+      Existing verified PDF: 1165514.pdf
+
+[132/137] Procedure 1168338 (base year 2025)
+      Existing verified PDF: 1168338.pdf
+
+[133/137] Procedure 1178754 (base year 2025)
+      Existing verified PDF: 1178754.pdf
+
+[134/137] Procedure 1183731 (base year 2025)
+      Existing verified PDF: 1183731.pdf
+
+[135/137] Procedure 1186382 (base year 2025)
+      Existing verified PDF: 1186382.pdf
+
+[136/137] Procedure 1201165 (base year 2025)
+      Existing verified PDF: 1201165.pdf
+
+[137/137] Procedure 1226867 (base year 2025)
+      Existing verified PDF: 1226867.pdf
+
+[4] Saving acquisition audit...
+  Status workbook: 01_1_download_status.xlsx
+  Log file: 01_download_pdfs.log
+
+==============================================================================
+FINAL DOWNLOAD AUDIT
+==============================================================================
+Expected procedures:              137
+Successfully retrieved:           137
+Pliegos:                          136
+Acts of no formulation:           1
+Missing or failed:                0
+PDF files in 05_pdfs:             137
+
+==============================================================================
+PIPELINE STATUS: COMPLETE
+==============================================================================
