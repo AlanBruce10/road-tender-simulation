@@ -1,0 +1,128 @@
+SCRIPT 04 - EXPLORATORY STATISTICAL ANALYSIS
+Execution timestamp: 2026-10-02T07:37:26
+Python version: 3.11.7
+Pandas version: 2.1.4
+NumPy version: 1.26.4
+SciPy version: 1.11.4
+
+==============================================================================
+EXPLORATORY STATISTICAL ANALYSIS - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Input: Script 03 integrated analytical dataset
+Purpose: Statistical diagnosis before scenario definition and simulation
+
+[1] Validating Script 03 input...
+  Input file: 03_1_integrated_dataset.xlsx
+  Input file found.
+
+[2] Reading analytical dataset...
+  Rows: 137
+  Columns: 18
+
+[3] Validating analytical contract...
+  Expected analytical sample verified: 137
+  Required columns verified.
+  procedure_code uniqueness verified.
+
+[4] Running data-quality diagnostics...
+  PASS   | total_rows                                    | 137
+  PASS   | unique_procedure_codes                        | 137
+  PASS   | duplicate_procedure_codes                     | 0
+  PASS   | missing_query_counts                          | 0
+  PASS   | negative_query_counts                         | 0
+  PASS   | negative_query_stage_duration_days            | 0
+  PASS   | negative_evaluation_stage_duration_days       | 0
+  PASS   | negative_total_award_time_days                | 0
+  PASS   | chronological_order_violations                | 0
+  PASS   | non_OK_count_status                           | 0
+
+[4A] Auditing temporal data coverage...
+  Notice date                         137/137 (100.00%)
+  Integrated-terms date               109/137 (79.56%)
+  Award date                          136/137 (99.27%)
+  Query-stage duration                109/137 (79.56%)
+  Evaluation-stage duration           109/137 (79.56%)
+  Total award time                    136/137 (99.27%)
+  Procedures with incomplete temporal information: 28
+
+[4B] Auditing temporal arithmetic consistency...
+  PASS   | query_stage_duration_days matches integrated_terms_date - notice_date | 0
+  PASS   | evaluation_stage_duration_days matches award_date - integrated_terms_date | 0
+  PASS   | total_award_time_days matches award_date - notice_date | 0
+
+[5] Calculating descriptive statistics...
+  queries_observations_count: n=137, mean=90.175, median=60.000
+  query_stage_duration_days: n=109, mean=52.936, median=29.000
+  evaluation_stage_duration_days: n=109, mean=48.211, median=25.000
+  total_award_time_days: n=136, mean=106.485, median=82.500
+  reference_amount: n=137, mean=106375083.774, median=43903241.580
+  awarded_amount_pen: n=137, mean=98022850.765, median=42848634.740
+  pages: n=137, mean=95.175, median=66.000
+
+[6] Diagnosing potential outliers using the 1.5*IQR rule...
+  queries_observations_count: 5 flagged (3.65%)
+  query_stage_duration_days: 13 flagged (11.93%)
+  evaluation_stage_duration_days: 4 flagged (3.67%)
+  total_award_time_days: 7 flagged (5.15%)
+  NOTE: No observations were removed or modified.
+
+[7] Running normality diagnostics...
+  queries_observations_count: W=0.8462, p=1.20371e-10, REJECT_NORMALITY
+  query_stage_duration_days: W=0.6624, p=1.76066e-14, REJECT_NORMALITY
+  evaluation_stage_duration_days: W=0.7508, p=2.59115e-12, REJECT_NORMALITY
+  total_award_time_days: W=0.8267, p=2.259e-11, REJECT_NORMALITY
+  NOTE: Normality tests are diagnostic and do not select a probability distribution.
+
+[8] Evaluating bivariate associations...
+  queries_observations_count vs query_stage_duration_days: Pearson r=0.3556 (p=0.000147997); Spearman rho=0.5815 (p=3.35186e-11)
+  queries_observations_count vs evaluation_stage_duration_days: Pearson r=0.2495 (p=0.0089002); Spearman rho=0.4136 (p=7.81606e-06)
+  queries_observations_count vs total_award_time_days: Pearson r=0.3457 (p=3.74844e-05); Spearman rho=0.5453 (p=6.67301e-12)
+  NOTE: These coefficients describe association only; they do not establish causality.
+
+[9] Auditing document and processing metadata...
+  Document types: 2 categories
+  Processing methods: 1 categories
+  Confidence categories: 1 categories
+  Count-status categories: 1 categories
+
+[10] Saving reproducible statistical outputs...
+  Descriptive statistics: 04_1_descriptive_statistics.xlsx
+  Data-quality diagnostics: 04_2_data_quality_diagnostics.xlsx
+  Association analysis: 04_3_association_analysis.xlsx
+  Log file: 04_exploratory_analysis.log
+
+==============================================================================
+EXPLORATORY ANALYSIS AUDIT
+==============================================================================
+Analytical procedures:            137
+Unique procedure codes:           137
+Missing query counts:             0
+Verified zero query counts:       1
+Positive query counts:            136
+Failed data-quality checks:       0
+Checks requiring review:          0
+
+
+TEMPORAL DATA COVERAGE
+------------------------------------------------------------------------------
+Notice date                         137/137  100.00%
+Integrated-terms date               109/137   79.56%
+Award date                          136/137   99.27%
+Query-stage duration                109/137   79.56%
+Evaluation-stage duration           109/137   79.56%
+Total award time                    136/137   99.27%
+
+Complete temporal decompositions: 109
+Temporal arithmetic inconsistencies: 0
+
+SCIENTIFIC SCOPE
+- No observations removed.
+- No outliers removed.
+- No scenario thresholds defined.
+- No probability distribution selected.
+- No stochastic simulation performed.
+- No causal interpretation imposed.
+
+==============================================================================
+PIPELINE STATUS: COMPLETE
+==============================================================================
