@@ -1,0 +1,151 @@
+==============================================================================
+ROBUSTNESS AND SENSITIVITY ANALYSIS - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Purpose: Stress-test the principal conclusions developed in Scripts 03-17.
+
+IMPORTANT:
+- No primary model is redefined.
+- No validation result is used to retrospectively optimize prior choices.
+- Sensitivity analyses are prespecified from alternatives already developed.
+- Robustness is assessed conclusion by conclusion, not by a single omnibus score.
+
+[1] Validating analytical inputs...
+  Found: 03_1_integrated_dataset.xlsx
+  Found: 07_1_scenario_definition.xlsx
+  Found: 08_1_scenario_robustness.xlsx
+  Found: 14_1_monte_carlo_simulation.xlsx
+  Found: 16_1_discrete_event_simulation.xlsx
+  Found: 17_1_model_validation.xlsx
+
+[2] Inspecting workbook contracts...
+  Script 07: required sheets verified.
+  Script 08: required sheets verified.
+  Script 14: required sheets verified.
+  Script 16: required sheets verified.
+  Script 17 workbook detected with 16 sheet(s).
+
+[3] Reading analytical datasets...
+  Master rows: 137
+  Scenario-audit rows: 137
+  Script 08 robustness rows: 3
+  Monte Carlo primary rows: 3
+  DES summary rows: 3
+
+[4] Validating analytical contract...
+  Master analytical sample verified: 137
+  Available total award times: 136/137
+  procedure_code uniqueness verified.
+
+[5] Evaluating robustness of the continuous relationship...
+  Full sample: n=136; Pearson=0.3457; Spearman=0.5453; Kendall=0.3717
+  2020-2023: n=69; Pearson=0.4798; Spearman=0.6530; Kendall=0.4686
+  2024-2025: n=67; Pearson=0.3105; Spearman=0.4706; Kendall=0.3174
+
+[6] Re-evaluating scenario-definition robustness...
+  Terciles: medians=43.50/83.50/126.00; ordered=True; KW p=1.13931e-09; epsilon²=0.2946
+  P25_P75: medians=46.00/82.00/132.00; ordered=True; KW p=3.23886e-08; epsilon²=0.2443
+  Data_driven_1D: medians=55.50/123.50/134.50; ordered=True; KW p=3.43109e-06; epsilon²=0.1742
+
+[7] Auditing cross-method scenario assignment robustness...
+  Terciles vs P25_P75: 84.67% same assignments
+  Terciles vs Data_driven_1D: 39.42% same assignments
+  P25_P75 vs Data_driven_1D: 40.15% same assignments
+
+[8] Evaluating Monte Carlo representation sensitivity...
+  Low mean: empirical=60.56; Lognormal=59.27; difference=-1.29; relative=-2.13%
+  Low median: empirical=43.00; Lognormal=53.44; difference=+10.44; relative=+24.27%
+  Low std: empirical=36.88; Lognormal=28.57; difference=-8.31; relative=-22.54%
+  Low p90: empirical=112.00; Lognormal=95.92; difference=-16.08; relative=-14.35%
+  Low p95: empirical=125.00; Lognormal=113.13; difference=-11.87; relative=-9.50%
+  Low p99: empirical=218.00; Lognormal=154.30; difference=-63.70; relative=-29.22%
+  Low exceedance_probability: empirical=0.10914; Lognormal=0.06132; difference=-0.04782; relative=-43.82%
+  Interpretation: Low-scenario summaries vary across the empirical and Lognormal representations; empirical/nonparametric remains primary.
+
+[9] Evaluating direct Monte Carlo vs DES sensitivity...
+  Low: DES-MC median difference=-1.00 days; DES-MC P95 difference=-2.00 days
+  Medium: DES-MC median difference=-20.09 days; DES-MC P95 difference=-9.33 days
+  High: DES-MC median difference=+5.49 days; DES-MC P95 difference=+93.66 days
+
+[10] Evaluating DES dependence-specification sensitivity...
+  Independence counterfactual rows evaluated: 3
+
+[11] Recovering temporal-validation robustness evidence...
+  Script 17 sheets inspected: 16
+  Structured validation decision records recovered: 6
+
+[12] Building conclusion-level robustness framework...
+
+[13] Building robustness matrix...
+  C1 | ROBUST | STRONG
+  C2 | ROBUST_WITH_SENSITIVITY | STRONG
+  C3 | SENSITIVE_TO_REPRESENTATION | CONDITIONAL
+  C4 | MODEL_ARCHITECTURE_SENSITIVE | CONDITIONAL
+  C5 | SENSITIVE_TO_DEPENDENCE_ASSUMPTION | CONDITIONAL
+  C6 | ROBUST_DIRECTIONALLY | STRONG
+
+[14] Building objective-level scientific synthesis...
+  Objective 1: COMPLETED_PREVIOUSLY
+  Objective 2: SUPPORTED_WITH_ROBUSTNESS_EVIDENCE
+  Objective 3: COMPLETED_WITH_MODEL_SPECIFIC_LIMITATIONS
+  Objective 4: VALIDATION_AND_ROBUSTNESS_EVALUATED
+
+[15] Recording robustness-analysis limitations...
+  Recorded limitations: 7
+
+[16] Building scientific interpretation audit...
+  Interpretation boundaries recorded.
+
+[17] Building reproducibility metadata...
+
+[18] Saving reproducible robustness outputs...
+  Output workbook: 18_1_robustness_analysis.xlsx
+  Log file: 18_robustness_analysis.log
+
+==============================================================================
+ROBUSTNESS AND SENSITIVITY ANALYSIS AUDIT
+==============================================================================
+Master analytical procedures:          137
+Available total award times:           136/137
+
+CONTINUOUS RELATIONSHIP
+------------------------------------------------------------------------------
+2020-2025    | n=136 | Pearson=0.3457 | Spearman=0.5453 | Kendall=0.3717
+2020-2023    | n=69  | Pearson=0.4798 | Spearman=0.6530 | Kendall=0.4686
+2024-2025    | n=67  | Pearson=0.3105 | Spearman=0.4706 | Kendall=0.3174
+
+SCENARIO-DEFINITION ROBUSTNESS
+------------------------------------------------------------------------------
+Terciles         | medians=43.50/83.50/126.00 | ordered=True  | KW p=1.14e-09 | min n=44
+P25_P75          | medians=46.00/82.00/132.00 | ordered=True  | KW p=3.24e-08 | min n=33
+Data_driven_1D   | medians=55.50/123.50/134.50 | ordered=True  | KW p=3.43e-06 | min n=8
+
+CONCLUSION-LEVEL ROBUSTNESS
+------------------------------------------------------------------------------
+C1   ROBUST                              STRONG
+C2   ROBUST_WITH_SENSITIVITY             STRONG
+C3   SENSITIVE_TO_REPRESENTATION         CONDITIONAL
+C4   MODEL_ARCHITECTURE_SENSITIVE        CONDITIONAL
+C5   SENSITIVE_TO_DEPENDENCE_ASSUMPTION  CONDITIONAL
+C6   ROBUST_DIRECTIONALLY                STRONG
+
+SCIENTIFIC INTERPRETATION
+------------------------------------------------------------------------------
+- Robustness is evaluated across prespecified reasonable analytical alternatives.
+- Primary tercile thresholds are not redefined.
+- P25/P75 remains a robustness specification.
+- Data-driven 1D partition remains sensitivity only.
+- Low empirical/nonparametric representation remains primary.
+- Low Lognormal remains parametric sensitivity only.
+- Direct total-duration Monte Carlo remains the primary stochastic reference.
+- Two-stage DES remains a secondary process-decomposition model.
+- Independent DES stage sampling remains counterfactual sensitivity only.
+- Script 17 temporal validation results are not altered or optimized away.
+- Simulation iterations do not create additional independent tenders.
+- No observations are deleted because of unfavorable results.
+- No missing temporal values are imputed.
+- No probability family is re-selected after validation.
+- No causal interpretation is imposed.
+
+==============================================================================
+PIPELINE STATUS: ROBUSTNESS_ANALYSIS_COMPLETE_READY_FOR_FINAL_SYNTHESIS
+==============================================================================
