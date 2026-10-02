@@ -1,0 +1,159 @@
+==============================================================================
+DISCRETE-EVENT SIMULATION ASSESSMENT - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Purpose: Evaluate whether stage-level process simulation is feasible and scientifically additive.
+
+IMPORTANT: This script does NOT perform the final discrete-event simulation.
+
+[1] Validating analytical inputs...
+  Found: 03_1_integrated_dataset.xlsx
+  Found: 07_1_scenario_definition.xlsx
+  Found: 14_1_monte_carlo_simulation.xlsx
+
+[2] Reading source datasets...
+  Master rows: 137
+  Scenario-audit rows: 137
+
+[3] Validating analytical contract...
+  Master analytical sample verified: 137
+  procedure_code uniqueness verified.
+  Primary tercile scenario assignments found.
+
+[4] Merging primary tercile scenario assignments...
+  Merged analytical rows: 137
+  All procedures have primary scenario assignments.
+
+[5] Assessing stage-level temporal coverage...
+  Query-stage duration:       109/137 (79.56%)
+  Evaluation-stage duration:  109/137 (79.56%)
+  Complete stage decomposition: 109/137 (79.56%)
+  Total award time:           136/137 (99.27%)
+
+[6] Verifying temporal reconstruction...
+  Stage-decomposed procedures with total time: 109
+  Exact arithmetic reconstructions: 109/109 (100.00%)
+  Maximum absolute reconstruction difference: 0.000000 days
+
+[7] Diagnosing stage-duration distributions...
+  query_stage_duration_days: n=109; mean=52.94; median=29.00; SD=55.49; skewness=2.448; P95=164.60
+  evaluation_stage_duration_days: n=109; mean=48.21; median=25.00; SD=46.40; skewness=2.190; P95=131.40
+
+[8] Evaluating dependence between temporal stages...
+  Pearson r=0.2297 (p=0.0162919)
+  Spearman rho=0.2888 (p=0.00232374)
+  Kendall tau=0.1985 (p=0.00265726)
+  Bootstrap Spearman 95% CI: [0.1081, 0.4553]
+  Valid bootstrap iterations: 10,000/10,000
+
+  NOTE: Statistical dependence between stages is evaluated explicitly; independence is not assumed automatically.
+
+[9] Evaluating stage dependence within Low/Medium/High scenarios...
+  Low: n=41; Pearson=0.0894; Spearman=-0.2793; Kendall=-0.1986
+  Medium: n=35; Pearson=0.2760; Spearman=0.4306; Kendall=0.2816
+  High: n=33; Pearson=0.0578; Spearman=-0.0318; Kendall=-0.0077
+
+[10] Describing temporal stages by primary scenario...
+  Low | query_stage_duration_days: n=41; median=22.00; mean=29.24; SD=25.18
+  Low | evaluation_stage_duration_days: n=41; median=20.00; mean=27.44; SD=22.21
+  Medium | query_stage_duration_days: n=35; median=30.00; mean=47.49; SD=40.49
+  Medium | evaluation_stage_duration_days: n=35; median=27.00; mean=60.54; SD=61.45
+  High | query_stage_duration_days: n=33; median=55.00; mean=88.15; SD=76.35
+  High | evaluation_stage_duration_days: n=33; median=55.00; mean=60.94; SD=41.87
+
+[11] Evaluating scenario differences in each temporal stage...
+  query_stage_duration_days: H=32.9895; p=6.86136e-08; epsilon²=0.2924; ordered medians=True
+  evaluation_stage_duration_days: H=17.6486; p=0.000147116; epsilon²=0.1476; ordered medians=True
+
+[12] Quantifying stage contributions to total award time...
+  query_stage_share: median=0.519; mean=0.523; IQR=0.251
+  evaluation_stage_share: median=0.481; mean=0.477; IQR=0.251
+
+[13] Evaluating query-count relationships with individual stages...
+  queries_observations_count vs query_stage_duration_days: n=109; Pearson=0.3556; Spearman=0.5815; Kendall=0.3966
+  queries_observations_count vs evaluation_stage_duration_days: n=109; Pearson=0.2495; Spearman=0.4136; Kendall=0.2844
+
+[14] Assessing independence assumption for stage simulation...
+  Independence assessment: INDEPENDENCE_NOT_SUPPORTED
+  Interpretation: Stage dependence is statistically detectable and non-trivial. A DES implementation should preserve dependence rather than sample the two stages independently.
+
+[15] Assessing incremental scientific value of stage decomposition...
+  stage_coverage: PASS
+  exact_temporal_reconstruction: PASS
+  nondegenerate_stage_variability: PASS
+  stage_specific_information: PASS
+  dependence_requires_process_structure: PASS
+
+[16] Auditing limitations of a possible discrete-event model...
+  - Incomplete stage decomposition: 28/137 procedures (20.44%) lack complete stage durations
+  - Non-random missingness concern: Script 05 identified systematic associations with availability of integrated-terms dates.
+  - Stage dependence: Spearman rho=0.2888
+  - Observed process resolution: Only two empirical temporal stages are available in the analytical dataset.
+  - Causal interpretation: The analytical design is observational.
+
+[17] Evaluating discrete-event simulation authorization gates...
+  DES1 | PASS    | Stage-level coverage sufficient for modeling
+  DES2 | PASS    | Stages reconstruct total award time
+  DES3 | PASS    | Both stages contain stochastic variability
+  DES4 | PASS    | Stage dependence is empirically estimable
+  DES5 | PASS    | Stage decomposition provides incremental analytical value
+
+[18] Determining methodological DES decision...
+  Final DES status: DES_AUTHORIZED_WITH_CAUTION
+  Interpretation: A two-stage stochastic process representation is scientifically defensible and provides incremental analytical information, but implementation must preserve stage dependence and explicitly report the n=109 stage-coverage limitation and the missing-data findings from Script 05.
+
+[19] Building prespecified next-phase protocol...
+  1. Construct a two-stage stochastic process model
+  2. Preserve empirical dependence between stage durations
+  3. Compare reconstructed DES total times with direct Monte Carlo totals
+  4. Treat DES as secondary if incremental predictive value is limited
+  5. Carry stage-coverage limitation into validation
+
+[20] Saving reproducible DES-assessment outputs...
+  Output workbook: 15_1_discrete_event_assessment.xlsx
+  Log file: 15_discrete_event_assessment.log
+
+==============================================================================
+DISCRETE-EVENT SIMULATION ASSESSMENT AUDIT
+==============================================================================
+Master analytical procedures:          137
+Available total award times:           136
+Complete temporal decompositions:      109 (79.56%)
+Exact stage reconstructions:           109/109 (100.00%)
+Stage-duration Spearman rho:           0.2888
+Stage-duration Spearman p-value:       0.00232374
+
+STAGE-SPECIFIC QUERY/OBSERVATION RELATIONSHIPS
+------------------------------------------------------------------------------
+query_stage_duration_days              n=109 | Spearman=0.5815 | p=3.35186e-11
+evaluation_stage_duration_days         n=109 | Spearman=0.4136 | p=7.81606e-06
+
+DES AUTHORIZATION GATES
+------------------------------------------------------------------------------
+DES1   PASS     Stage-level coverage sufficient for modeling
+DES2   PASS     Stages reconstruct total award time
+DES3   PASS     Both stages contain stochastic variability
+DES4   PASS     Stage dependence is empirically estimable
+DES5   PASS     Stage decomposition provides incremental analytical value
+
+FINAL METHODOLOGICAL DECISION
+------------------------------------------------------------------------------
+DES status: DES_AUTHORIZED_WITH_CAUTION
+A two-stage stochastic process representation is scientifically defensible and provides incremental analytical information, but implementation must preserve stage dependence and explicitly report the n=109 stage-coverage limitation and the missing-data findings from Script 05.
+
+SCIENTIFIC SCOPE
+- No discrete-event simulation is performed in Script 15.
+- Stage-level feasibility is evaluated before implementation.
+- The master analytical population remains n=137.
+- Stage-level analyses use available complete decompositions only.
+- Missing temporal values are not imputed.
+- No observations are deleted from the master population.
+- Stage dependence is measured rather than assumed absent.
+- Independent stage sampling is not automatically authorized.
+- DES complexity is not treated as evidence of scientific superiority.
+- The direct total-duration Monte Carlo model remains the primary stochastic reference.
+- Any DES implementation must demonstrate incremental analytical value.
+- No causal interpretation is imposed.
+
+==============================================================================
+PIPELINE STATUS: DES_ASSESSED_PROCEED_ACCORDING_TO_RECORDED_CAUTION
+==============================================================================
