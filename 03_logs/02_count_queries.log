@@ -1,0 +1,465 @@
+==============================================================================
+QUERY AND OBSERVATION COUNT - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Source documents: Script 01 SEACE acquisition output
+Input directory: 05_pdfs
+
+[1] Validating analytical sample...
+  Expected procedures from Script 00: 137
+
+[2] Auditing Script 01 document output...
+  PDF files found: 137
+  Expected procedures represented: 137
+  Missing procedures: 0
+  Unexpected procedures: 0
+  Duplicate procedure documents: 0
+
+[3] Configuring processing methods...
+  Primary method: PyMuPDF
+  AI fallback: disabled
+  Previous verified results: 0
+
+[4] Processing PDF documents...
+
+[1/137] Procedure 619504 | 619504.pdf
+      Local: total=176 | type=PLIEGO | confidence=HIGH | status=OK
+
+[2/137] Procedure 619659 | 619659.pdf
+      Local: total=183 | type=PLIEGO | confidence=HIGH | status=OK
+
+[3/137] Procedure 638506 | 638506.pdf
+      Local: total=381 | type=PLIEGO | confidence=HIGH | status=OK
+
+[4/137] Procedure 644853 | 644853.pdf
+      Local: total=81 | type=PLIEGO | confidence=HIGH | status=OK
+
+[5/137] Procedure 645854 | 645854.pdf
+      Local: total=45 | type=PLIEGO | confidence=HIGH | status=OK
+
+[6/137] Procedure 653257 | 653257.pdf
+      Local: total=109 | type=PLIEGO | confidence=HIGH | status=OK
+
+[7/137] Procedure 654278 | 654278.pdf
+      Local: total=12 | type=PLIEGO | confidence=HIGH | status=OK
+
+[8/137] Procedure 654914 | 654914.pdf
+      Local: total=2 | type=PLIEGO | confidence=HIGH | status=OK
+
+[9/137] Procedure 664728 | 664728.pdf
+      Local: total=93 | type=PLIEGO | confidence=HIGH | status=OK
+
+[10/137] Procedure 676061 | 676061.pdf
+      Local: total=5 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[11/137] Procedure 678446 | 678446.pdf
+      Local: total=191 | type=PLIEGO | confidence=HIGH | status=OK
+
+[12/137] Procedure 686773 | 686773.pdf
+      Local: total=120 | type=PLIEGO | confidence=HIGH | status=OK
+
+[13/137] Procedure 691573 | 691573.pdf
+      Local: total=117 | type=PLIEGO | confidence=HIGH | status=OK
+
+[14/137] Procedure 696209 | 696209.pdf
+      Local: total=403 | type=PLIEGO | confidence=HIGH | status=OK
+
+[15/137] Procedure 701050 | 701050.pdf
+      Local: total=6 | type=PLIEGO | confidence=HIGH | status=OK
+
+[16/137] Procedure 709352 | 709352.pdf
+      Local: total=340 | type=PLIEGO | confidence=HIGH | status=OK
+
+[17/137] Procedure 711351 | 711351.pdf
+      Local: total=106 | type=PLIEGO | confidence=HIGH | status=OK
+
+[18/137] Procedure 716023 | 716023.pdf
+      Local: total=121 | type=PLIEGO | confidence=HIGH | status=OK
+
+[19/137] Procedure 719832 | 719832.pdf
+      Local: total=211 | type=PLIEGO | confidence=HIGH | status=OK
+
+[20/137] Procedure 726358 | 726358.pdf
+      Local: total=54 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[21/137] Procedure 727561 | 727561.pdf
+      Local: total=233 | type=PLIEGO | confidence=HIGH | status=OK
+
+[22/137] Procedure 730365 | 730365.pdf
+      Local: total=269 | type=PLIEGO | confidence=HIGH | status=OK
+
+[23/137] Procedure 732696 | 732696.pdf
+      Local: total=223 | type=PLIEGO | confidence=HIGH | status=OK
+
+[24/137] Procedure 739874 | 739874.pdf
+      Local: total=214 | type=PLIEGO | confidence=HIGH | status=OK
+
+[25/137] Procedure 743324 | 743324.pdf
+      Local: total=392 | type=PLIEGO | confidence=HIGH | status=OK
+
+[26/137] Procedure 747170 | 747170.pdf
+      Local: total=174 | type=PLIEGO | confidence=HIGH | status=OK
+
+[27/137] Procedure 757402 | 757402.pdf
+      Local: total=124 | type=PLIEGO | confidence=HIGH | status=OK
+
+[28/137] Procedure 769850 | 769850.pdf
+      Local: total=24 | type=PLIEGO | confidence=HIGH | status=OK
+
+[29/137] Procedure 771181 | 771181.pdf
+      Local: total=66 | type=PLIEGO | confidence=HIGH | status=OK
+
+[30/137] Procedure 773713 | 773713.pdf
+      Local: total=30 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[31/137] Procedure 777969 | 777969.pdf
+      Local: total=219 | type=PLIEGO | confidence=HIGH | status=OK
+
+[32/137] Procedure 796480 | 796480.pdf
+      Local: total=124 | type=PLIEGO | confidence=HIGH | status=OK
+
+[33/137] Procedure 803065 | 803065.pdf
+      Local: total=48 | type=PLIEGO | confidence=HIGH | status=OK
+
+[34/137] Procedure 815567 | 815567.pdf
+      Local: total=132 | type=PLIEGO | confidence=HIGH | status=OK
+
+[35/137] Procedure 817913 | 817913.pdf
+      Local: total=16 | type=PLIEGO | confidence=HIGH | status=OK
+
+[36/137] Procedure 825955 | 825955.pdf
+      Local: total=66 | type=PLIEGO | confidence=HIGH | status=OK
+
+[37/137] Procedure 826002 | 826002.pdf
+      Local: total=61 | type=PLIEGO | confidence=HIGH | status=OK
+
+[38/137] Procedure 830593 | 830593.pdf
+      Local: total=3 | type=PLIEGO | confidence=HIGH | status=OK
+
+[39/137] Procedure 832929 | 832929.pdf
+      Local: total=6 | type=PLIEGO | confidence=HIGH | status=OK
+
+[40/137] Procedure 834703 | 834703.pdf
+      Local: total=47 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[41/137] Procedure 839615 | 839615.pdf
+      Local: total=27 | type=PLIEGO | confidence=HIGH | status=OK
+
+[42/137] Procedure 843857 | 843857.pdf
+      Local: total=291 | type=PLIEGO | confidence=HIGH | status=OK
+
+[43/137] Procedure 845027 | 845027.pdf
+      Local: total=17 | type=PLIEGO | confidence=HIGH | status=OK
+
+[44/137] Procedure 847802 | 847802.pdf
+      Local: total=134 | type=PLIEGO | confidence=HIGH | status=OK
+
+[45/137] Procedure 849061 | 849061.pdf
+      Local: total=64 | type=PLIEGO | confidence=HIGH | status=OK
+
+[46/137] Procedure 854797 | 854797.pdf
+      Local: total=89 | type=PLIEGO | confidence=HIGH | status=OK
+
+[47/137] Procedure 861965 | 861965.pdf
+      Local: total=26 | type=PLIEGO | confidence=HIGH | status=OK
+
+[48/137] Procedure 881247 | 881247.pdf
+      Local: total=42 | type=PLIEGO | confidence=HIGH | status=OK
+
+[49/137] Procedure 885569 | 885569.pdf
+      Local: total=37 | type=PLIEGO | confidence=HIGH | status=OK
+
+[50/137] Procedure 893721 | 893721.pdf
+      Local: total=13 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[51/137] Procedure 923189 | 923189.pdf
+      Local: total=135 | type=PLIEGO | confidence=HIGH | status=OK
+
+[52/137] Procedure 925975 | 925975.pdf
+      Local: total=12 | type=PLIEGO | confidence=HIGH | status=OK
+
+[53/137] Procedure 926055 | 926055.pdf
+      Local: total=27 | type=PLIEGO | confidence=HIGH | status=OK
+
+[54/137] Procedure 929009 | 929009.pdf
+      Local: total=30 | type=PLIEGO | confidence=HIGH | status=OK
+
+[55/137] Procedure 929914 | 929914.pdf
+      Local: total=12 | type=PLIEGO | confidence=HIGH | status=OK
+
+[56/137] Procedure 930869 | 930869.pdf
+      Local: total=215 | type=PLIEGO | confidence=HIGH | status=OK
+
+[57/137] Procedure 934991 | 934991.pdf
+      Local: total=144 | type=PLIEGO | confidence=HIGH | status=OK
+
+[58/137] Procedure 935232 | 935232.pdf
+      Local: total=27 | type=PLIEGO | confidence=HIGH | status=OK
+
+[59/137] Procedure 938651 | 938651.pdf
+      Local: total=23 | type=PLIEGO | confidence=HIGH | status=OK
+
+[60/137] Procedure 941264 | 941264.pdf
+      Local: total=6 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[61/137] Procedure 948338 | 948338.pdf
+      Local: total=22 | type=PLIEGO | confidence=HIGH | status=OK
+
+[62/137] Procedure 948752 | 948752.pdf
+      Local: total=23 | type=PLIEGO | confidence=HIGH | status=OK
+
+[63/137] Procedure 952653 | 952653.pdf
+      Local: total=45 | type=PLIEGO | confidence=HIGH | status=OK
+
+[64/137] Procedure 954697 | 954697.pdf
+      Local: total=93 | type=PLIEGO | confidence=HIGH | status=OK
+
+[65/137] Procedure 961210 | 961210_ACTA.pdf
+      Local: total=0 | type=ACTA_NO_FORMULACION | confidence=HIGH | status=OK
+
+[66/137] Procedure 961402 | 961402.pdf
+      Local: total=57 | type=PLIEGO | confidence=HIGH | status=OK
+
+[67/137] Procedure 968247 | 968247.pdf
+      Local: total=81 | type=PLIEGO | confidence=HIGH | status=OK
+
+[68/137] Procedure 985624 | 985624.pdf
+      Local: total=69 | type=PLIEGO | confidence=HIGH | status=OK
+
+[69/137] Procedure 994457 | 994457.pdf
+      Local: total=38 | type=PLIEGO | confidence=HIGH | status=OK
+
+[70/137] Procedure 999833 | 999833.pdf
+      Local: total=40 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[71/137] Procedure 1007182 | 1007182.pdf
+      Local: total=33 | type=PLIEGO | confidence=HIGH | status=OK
+
+[72/137] Procedure 1017551 | 1017551.pdf
+      Local: total=34 | type=PLIEGO | confidence=HIGH | status=OK
+
+[73/137] Procedure 1019132 | 1019132.pdf
+      Local: total=63 | type=PLIEGO | confidence=HIGH | status=OK
+
+[74/137] Procedure 1025563 | 1025563.pdf
+      Local: total=93 | type=PLIEGO | confidence=HIGH | status=OK
+
+[75/137] Procedure 1027610 | 1027610.pdf
+      Local: total=109 | type=PLIEGO | confidence=HIGH | status=OK
+
+[76/137] Procedure 1037657 | 1037657.pdf
+      Local: total=8 | type=PLIEGO | confidence=HIGH | status=OK
+
+[77/137] Procedure 1039800 | 1039800.pdf
+      Local: total=129 | type=PLIEGO | confidence=HIGH | status=OK
+
+[78/137] Procedure 1050622 | 1050622.pdf
+      Local: total=106 | type=PLIEGO | confidence=HIGH | status=OK
+
+[79/137] Procedure 1050941 | 1050941.pdf
+      Local: total=57 | type=PLIEGO | confidence=HIGH | status=OK
+
+[80/137] Procedure 1051789 | 1051789.pdf
+      Local: total=154 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[81/137] Procedure 1054931 | 1054931.pdf
+      Local: total=161 | type=PLIEGO | confidence=HIGH | status=OK
+
+[82/137] Procedure 1056298 | 1056298.pdf
+      Local: total=26 | type=PLIEGO | confidence=HIGH | status=OK
+
+[83/137] Procedure 1058860 | 1058860.pdf
+      Local: total=5 | type=PLIEGO | confidence=HIGH | status=OK
+
+[84/137] Procedure 1059825 | 1059825.pdf
+      Local: total=227 | type=PLIEGO | confidence=HIGH | status=OK
+
+[85/137] Procedure 1064958 | 1064958.pdf
+      Local: total=163 | type=PLIEGO | confidence=HIGH | status=OK
+
+[86/137] Procedure 1067332 | 1067332.pdf
+      Local: total=6 | type=PLIEGO | confidence=HIGH | status=OK
+
+[87/137] Procedure 1068898 | 1068898.pdf
+      Local: total=33 | type=PLIEGO | confidence=HIGH | status=OK
+
+[88/137] Procedure 1073059 | 1073059.pdf
+      Local: total=20 | type=PLIEGO | confidence=HIGH | status=OK
+
+[89/137] Procedure 1073362 | 1073362.pdf
+      Local: total=66 | type=PLIEGO | confidence=HIGH | status=OK
+
+[90/137] Procedure 1073981 | 1073981.pdf
+      Local: total=101 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[91/137] Procedure 1079530 | 1079530.pdf
+      Local: total=70 | type=PLIEGO | confidence=HIGH | status=OK
+
+[92/137] Procedure 1080304 | 1080304.pdf
+      Local: total=60 | type=PLIEGO | confidence=HIGH | status=OK
+
+[93/137] Procedure 1083769 | 1083769.pdf
+      Local: total=4 | type=PLIEGO | confidence=HIGH | status=OK
+
+[94/137] Procedure 1084469 | 1084469.pdf
+      Local: total=181 | type=PLIEGO | confidence=HIGH | status=OK
+
+[95/137] Procedure 1084480 | 1084480.pdf
+      Local: total=36 | type=PLIEGO | confidence=HIGH | status=OK
+
+[96/137] Procedure 1084610 | 1084610.pdf
+      Local: total=222 | type=PLIEGO | confidence=HIGH | status=OK
+
+[97/137] Procedure 1084805 | 1084805.pdf
+      Local: total=301 | type=PLIEGO | confidence=HIGH | status=OK
+
+[98/137] Procedure 1089336 | 1089336.pdf
+      Local: total=68 | type=PLIEGO | confidence=HIGH | status=OK
+
+[99/137] Procedure 1090093 | 1090093.pdf
+      Local: total=65 | type=PLIEGO | confidence=HIGH | status=OK
+
+[100/137] Procedure 1096154 | 1096154.pdf
+      Local: total=51 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[101/137] Procedure 1102853 | 1102853.pdf
+      Local: total=117 | type=PLIEGO | confidence=HIGH | status=OK
+
+[102/137] Procedure 1103284 | 1103284.pdf
+      Local: total=181 | type=PLIEGO | confidence=HIGH | status=OK
+
+[103/137] Procedure 1103374 | 1103374.pdf
+      Local: total=22 | type=PLIEGO | confidence=HIGH | status=OK
+
+[104/137] Procedure 1104804 | 1104804.pdf
+      Local: total=17 | type=PLIEGO | confidence=HIGH | status=OK
+
+[105/137] Procedure 1106896 | 1106896.pdf
+      Local: total=8 | type=PLIEGO | confidence=HIGH | status=OK
+
+[106/137] Procedure 1108096 | 1108096.pdf
+      Local: total=4 | type=PLIEGO | confidence=HIGH | status=OK
+
+[107/137] Procedure 1108164 | 1108164.pdf
+      Local: total=87 | type=PLIEGO | confidence=HIGH | status=OK
+
+[108/137] Procedure 1108567 | 1108567.pdf
+      Local: total=160 | type=PLIEGO | confidence=HIGH | status=OK
+
+[109/137] Procedure 1108635 | 1108635.pdf
+      Local: total=21 | type=PLIEGO | confidence=HIGH | status=OK
+
+[110/137] Procedure 1108743 | 1108743.pdf
+      Local: total=71 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[111/137] Procedure 1109493 | 1109493.pdf
+      Local: total=83 | type=PLIEGO | confidence=HIGH | status=OK
+
+[112/137] Procedure 1111801 | 1111801.pdf
+      Local: total=264 | type=PLIEGO | confidence=HIGH | status=OK
+
+[113/137] Procedure 1112851 | 1112851.pdf
+      Local: total=151 | type=PLIEGO | confidence=HIGH | status=OK
+
+[114/137] Procedure 1113382 | 1113382.pdf
+      Local: total=232 | type=PLIEGO | confidence=HIGH | status=OK
+
+[115/137] Procedure 1117336 | 1117336.pdf
+      Local: total=28 | type=PLIEGO | confidence=HIGH | status=OK
+
+[116/137] Procedure 1117340 | 1117340.pdf
+      Local: total=153 | type=PLIEGO | confidence=HIGH | status=OK
+
+[117/137] Procedure 1121088 | 1121088.pdf
+      Local: total=14 | type=PLIEGO | confidence=HIGH | status=OK
+
+[118/137] Procedure 1125456 | 1125456.pdf
+      Local: total=21 | type=PLIEGO | confidence=HIGH | status=OK
+
+[119/137] Procedure 1129578 | 1129578.pdf
+      Local: total=160 | type=PLIEGO | confidence=HIGH | status=OK
+
+[120/137] Procedure 1132122 | 1132122.pdf
+      Local: total=2 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[121/137] Procedure 1139311 | 1139311.pdf
+      Local: total=14 | type=PLIEGO | confidence=HIGH | status=OK
+
+[122/137] Procedure 1145168 | 1145168.pdf
+      Local: total=35 | type=PLIEGO | confidence=HIGH | status=OK
+
+[123/137] Procedure 1149224 | 1149224.pdf
+      Local: total=60 | type=PLIEGO | confidence=HIGH | status=OK
+
+[124/137] Procedure 1150722 | 1150722.pdf
+      Local: total=5 | type=PLIEGO | confidence=HIGH | status=OK
+
+[125/137] Procedure 1151950 | 1151950.pdf
+      Local: total=47 | type=PLIEGO | confidence=HIGH | status=OK
+
+[126/137] Procedure 1152891 | 1152891.pdf
+      Local: total=14 | type=PLIEGO | confidence=HIGH | status=OK
+
+[127/137] Procedure 1156672 | 1156672.pdf
+      Local: total=24 | type=PLIEGO | confidence=HIGH | status=OK
+
+[128/137] Procedure 1160206 | 1160206.pdf
+      Local: total=58 | type=PLIEGO | confidence=HIGH | status=OK
+
+[129/137] Procedure 1162940 | 1162940.pdf
+      Local: total=33 | type=PLIEGO | confidence=HIGH | status=OK
+
+[130/137] Procedure 1163486 | 1163486.pdf
+      Local: total=43 | type=PLIEGO | confidence=HIGH | status=OK
+      Partial results saved.
+
+[131/137] Procedure 1165514 | 1165514.pdf
+      Local: total=14 | type=PLIEGO | confidence=HIGH | status=OK
+
+[132/137] Procedure 1168338 | 1168338.pdf
+      Local: total=23 | type=PLIEGO | confidence=HIGH | status=OK
+
+[133/137] Procedure 1178754 | 1178754.pdf
+      Local: total=229 | type=PLIEGO | confidence=HIGH | status=OK
+
+[134/137] Procedure 1183731 | 1183731.pdf
+      Local: total=1 | type=PLIEGO | confidence=HIGH | status=OK
+
+[135/137] Procedure 1186382 | 1186382.pdf
+      Local: total=1 | type=PLIEGO | confidence=HIGH | status=OK
+
+[136/137] Procedure 1201165 | 1201165.pdf
+      Local: total=180 | type=PLIEGO | confidence=HIGH | status=OK
+
+[137/137] Procedure 1226867 | 1226867.pdf
+      Local: total=59 | type=PLIEGO | confidence=HIGH | status=OK
+
+[5] Saving Script 02 outputs...
+  Counts workbook: 02_1_query_counts.xlsx
+  Summary workbook: 02_2_processing_summary.xlsx
+
+==============================================================================
+QUERY / OBSERVATION COUNT AUDIT
+==============================================================================
+Expected procedures:              137
+PDF documents processed:          137
+Pliegos successfully processed:   136
+No-formulation acts:              1
+Successfully counted:             137
+Verified zero counts:             1
+Manual review required:           0
+
+==============================================================================
+PIPELINE STATUS: COMPLETE
+==============================================================================
