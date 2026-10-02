@@ -1,0 +1,130 @@
+==============================================================================
+RELATIONSHIP DIAGNOSTICS - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Input: Script 03 integrated analytical dataset
+Purpose: Diagnose the form, robustness, and influence structure of the relationship between queries/observations and award time
+
+[1] Validating Script 03 input...
+  Input file: 03_1_integrated_dataset.xlsx
+  Input file found.
+
+[2] Reading analytical dataset...
+  Rows: 137
+  Columns: 18
+
+[3] Validating analytical contract...
+  Master analytical sample verified: 137
+  Required columns verified.
+  procedure_code uniqueness verified.
+
+[4] Preparing primary relationship sample...
+  Master sample: 137
+  Primary complete cases: 136
+  Excluded from primary relationship because total award time is unavailable: 1
+  NOTE: This is analysis-specific complete-case selection; the master sample remains unchanged.
+
+[5] Evaluating bivariate association...
+  Pearson r=0.3457 (p=3.74844e-05)
+  Spearman rho=0.5453 (p=6.67301e-12)
+  Kendall tau=0.3717 (p=1.86227e-10)
+  NOTE: Association coefficients do not establish causality.
+
+[6] Fitting original-scale linear model...
+  Slope: 0.304534
+  Slope p-value: 3.74844e-05
+  R-squared: 0.1195
+  Adjusted R-squared: 0.1130
+  AIC: 1559.985
+  BIC: 1565.810
+
+[7] Fitting log-transformed predictor model...
+  Predictor transformation: log(1 + queries_observations_count)
+  Slope: 25.181791
+  Slope p-value: 1.10479e-06
+  R-squared: 0.1629
+  Adjusted R-squared: 0.1566
+  AIC: 1553.117
+  BIC: 1558.943
+
+[8] Fitting quadratic relationship model...
+  Quadratic term: -0.00205526
+  Quadratic-term p-value: 0.000721339
+  R-squared: 0.1923
+  Adjusted R-squared: 0.1802
+  AIC: 1550.250
+  BIC: 1558.988
+
+[9] Fitting robust linear sensitivity model...
+  Estimator: Robust Linear Model (Huber T)
+  Robust slope: 0.295338
+  Robust slope p-value: 1.21374e-08
+  NOTE: Robust regression is used as a sensitivity diagnostic, not as an automatic replacement for the primary model.
+
+[10] Comparing candidate functional forms...
+  OLS_original_scale: R2=0.1195; Adj.R2=0.1130; AIC=1559.985; BIC=1565.810; RMSE=73.817
+  OLS_log1p_predictor: R2=0.1629; Adj.R2=0.1566; AIC=1553.117; BIC=1558.943; RMSE=71.977
+  OLS_quadratic: R2=0.1923; Adj.R2=0.1802; AIC=1550.250; BIC=1558.988; RMSE=70.700
+
+  NOTE: Model-comparison metrics are diagnostic. No final functional form is selected in this script.
+
+[11] Building coefficient diagnostics...
+  Coefficient records: 9
+
+[12] Running OLS residual diagnostics...
+  OLS_original_scale: Shapiro p=7.19184e-12; Breusch-Pagan p=0.222104; Durbin-Watson=1.455
+  OLS_log1p_predictor: Shapiro p=1.48859e-10; Breusch-Pagan p=0.0993876; Durbin-Watson=1.485
+  OLS_quadratic: Shapiro p=1.63897e-10; Breusch-Pagan p=0.112029; Durbin-Watson=1.524
+
+  NOTE: Residual diagnostics evaluate model assumptions; they do not determine causality.
+
+[13] Evaluating influential observations...
+  Cook's distance > 4/n: 6
+  Leverage > 2p/n: 8
+  |Studentized residual| > 3: 4
+  Flagged by at least one rule: 13
+  NOTE: Flagging does not imply that an observation is erroneous or should be deleted.
+
+[14] Running influence sensitivity analysis...
+  Full analytical sample: n=136; slope=0.304534; p=3.74844e-05; R2=0.1195
+  Sensitivity excluding Cook-flagged cases: n=130; slope=0.297892; p=8.42639e-07; R2=0.1732
+
+  NOTE: The sensitivity refit does not redefine the analytical sample and does not authorize automatic exclusion of influential observations.
+
+[15] Evaluating secondary temporal-stage associations...
+  query_stage_duration_days: n=109; Pearson=0.3556; Spearman=0.5815; Kendall=0.3966
+  evaluation_stage_duration_days: n=109; Pearson=0.2495; Spearman=0.4136; Kendall=0.2844
+  NOTE: These stage-specific analyses use n=109 and must be interpreted together with the missing-data findings from Script 05.
+
+[16] Preparing primary analytical data audit...
+  Primary analytical rows: 136
+
+[17] Saving reproducible relationship diagnostics...
+  Output workbook: 06_1_relationship_diagnostics.xlsx
+  Log file: 06_relationship_diagnostics.log
+
+==============================================================================
+RELATIONSHIP DIAGNOSTICS AUDIT
+==============================================================================
+Master analytical procedures:          137
+Primary relationship sample:           136
+Primary outcome coverage:              99.27%
+Secondary stage-analysis sample:        109
+Cook-flagged observations:             6
+Any influence-rule flags:              13
+
+SCIENTIFIC SCOPE
+- The master analytical sample remains unchanged at n=137.
+- The primary relationship uses available total-award-time observations only.
+- Pearson, Spearman, and Kendall associations are reported without causal interpretation.
+- Linear, log-predictor, and quadratic forms are compared diagnostically.
+- Robust regression is used only as a sensitivity diagnostic.
+- Influential observations are flagged, not automatically deleted.
+- No scenario thresholds are defined.
+- No probability distribution is selected.
+- No stochastic simulation is performed.
+- No Monte Carlo procedure is performed.
+- No final model is selected in this script.
+
+==============================================================================
+PIPELINE STATUS: COMPLETE
+==============================================================================
