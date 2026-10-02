@@ -1,0 +1,179 @@
+==============================================================================
+PROBABILITY-DISTRIBUTION FITTING - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Input: Script 07 procedure-level scenario assignments
+Purpose: Compare plausible positive-support probability distributions for award time before stochastic simulation
+
+[1] Validating Script 07 input...
+  Input file: 07_1_scenario_definition.xlsx
+  Input file found.
+
+[2] Reading procedure-level scenario assignments...
+  Rows: 137
+  Columns: 7
+
+[3] Validating analytical contract...
+  Master analytical sample verified: 137
+  Available total award times: 136/137
+  procedure_code uniqueness verified.
+
+[4] Verifying positive-support assumption...
+  Non-positive award times: 0
+  Observed range: 17.00 - 408.00 days
+  Positive-support assumption verified.
+
+[5] Registering candidate distributions...
+  Lognormal
+  Weibull
+  Gamma
+  Exponential
+
+  All candidates are fitted by maximum likelihood with loc fixed at zero.
+  Lognormal and Weibull are retained from the approved research design but are not privileged in model selection.
+  Gamma provides an additional flexible positive-support alternative; Exponential provides a simpler benchmark.
+
+[6] Registering scenario analyses...
+  Terciles: PRIMARY
+  P25_P75: ROBUSTNESS
+
+  Data_driven_1D is not used for primary distribution fitting because Script 08 identified only n=8 in its High scenario and no significant Medium-vs-High separation.
+  It remains documented in Scripts 07-08 as sensitivity evidence.
+
+[7] Fitting candidate distributions...
+  Terciles:
+    Low: n=46
+    Medium: n=46
+    High: n=44
+  P25_P75:
+    Low: n=36
+    Medium: n=67
+    High: n=33
+
+  Candidate fits completed: 24
+  Failed fits: 0
+
+[8] Comparing fitted distributions...
+  Terciles:
+    Low: best AIC=Lognormal; best BIC=Lognormal; best CvM=Lognormal; best quantile RMSE=Lognormal
+      Lognormal    AIC=428.109; AICc=428.388; BIC=431.766; ΔAIC=0.000; wAIC=0.993; KS=0.1867; CvM=0.5105
+      Gamma        AIC=438.096; AICc=438.375; BIC=441.753; ΔAIC=9.987; wAIC=0.007; KS=0.2129; CvM=0.6559
+      Weibull      AIC=448.822; AICc=449.101; BIC=452.479; ΔAIC=20.713; wAIC=0.000; KS=0.2435; CvM=0.7129
+      Exponential  AIC=471.245; AICc=471.336; BIC=473.073; ΔAIC=43.136; wAIC=0.000; KS=0.4306; CvM=1.5172
+    Medium: best AIC=Lognormal; best BIC=Lognormal; best CvM=Lognormal; best quantile RMSE=Lognormal
+      Lognormal    AIC=516.332; AICc=516.612; BIC=519.990; ΔAIC=0.000; wAIC=0.771; KS=0.0796; CvM=0.0514
+      Gamma        AIC=519.218; AICc=519.497; BIC=522.875; ΔAIC=2.886; wAIC=0.182; KS=0.1108; CvM=0.0974
+      Weibull      AIC=521.973; AICc=522.252; BIC=525.630; ΔAIC=5.641; wAIC=0.046; KS=0.1123; CvM=0.1111
+      Exponential  AIC=530.898; AICc=530.989; BIC=532.727; ΔAIC=14.566; wAIC=0.001; KS=0.2269; CvM=0.3987
+    High: best AIC=Lognormal; best BIC=Lognormal; best CvM=Lognormal; best quantile RMSE=Lognormal
+      Lognormal    AIC=498.409; AICc=498.701; BIC=501.977; ΔAIC=0.000; wAIC=0.734; KS=0.0574; CvM=0.0202
+      Gamma        AIC=500.633; AICc=500.925; BIC=504.201; ΔAIC=2.224; wAIC=0.241; KS=0.0714; CvM=0.0350
+      Weibull      AIC=505.225; AICc=505.518; BIC=508.794; ΔAIC=6.816; wAIC=0.024; KS=0.0935; CvM=0.0838
+      Exponential  AIC=528.145; AICc=528.241; BIC=529.930; ΔAIC=29.737; wAIC=0.000; KS=0.2813; CvM=0.9318
+  P25_P75:
+    Low: best AIC=Lognormal; best BIC=Lognormal; best CvM=Lognormal; best quantile RMSE=Lognormal
+      Lognormal    AIC=340.597; AICc=340.961; BIC=343.764; ΔAIC=0.000; wAIC=0.982; KS=0.1946; CvM=0.4073
+      Gamma        AIC=348.647; AICc=349.010; BIC=351.814; ΔAIC=8.049; wAIC=0.018; KS=0.2327; CvM=0.5350
+      Weibull      AIC=356.371; AICc=356.735; BIC=359.539; ΔAIC=15.774; wAIC=0.000; KS=0.2433; CvM=0.5734
+      Exponential  AIC=371.315; AICc=371.432; BIC=372.898; ΔAIC=30.717; wAIC=0.000; KS=0.4214; CvM=1.1095
+    Medium: best AIC=Lognormal; best BIC=Lognormal; best CvM=Lognormal; best quantile RMSE=Lognormal
+      Lognormal    AIC=733.112; AICc=733.300; BIC=737.522; ΔAIC=0.000; wAIC=0.958; KS=0.0853; CvM=0.0747
+      Gamma        AIC=739.497; AICc=739.684; BIC=743.906; ΔAIC=6.384; wAIC=0.039; KS=0.1076; CvM=0.1638
+      Weibull      AIC=744.942; AICc=745.129; BIC=749.351; ΔAIC=11.829; wAIC=0.003; KS=0.1186; CvM=0.1945
+      Exponential  AIC=760.447; AICc=760.509; BIC=762.652; ΔAIC=27.335; wAIC=0.000; KS=0.2534; CvM=0.7047
+    High: best AIC=Lognormal; best BIC=Lognormal; best CvM=Lognormal; best quantile RMSE=Lognormal
+      Lognormal    AIC=379.799; AICc=380.199; BIC=382.792; ΔAIC=0.000; wAIC=0.586; KS=0.0777; CvM=0.0217
+      Gamma        AIC=380.878; AICc=381.278; BIC=383.871; ΔAIC=1.078; wAIC=0.342; KS=0.0765; CvM=0.0308
+      Weibull      AIC=383.989; AICc=384.389; BIC=386.982; ΔAIC=4.190; wAIC=0.072; KS=0.1076; CvM=0.0709
+      Exponential  AIC=401.534; AICc=401.663; BIC=403.030; ΔAIC=21.734; wAIC=0.000; KS=0.2696; CvM=0.7320
+
+[9] Calibrating goodness-of-fit with parametric bootstrap...
+  Bootstrap iterations per fitted model: 1,000
+  Terciles | Low | Lognormal: bootstrap KS p=0.0010
+  Terciles | Low | Weibull: bootstrap KS p=0.0010
+  Terciles | Low | Gamma: bootstrap KS p=0.0010
+  Terciles | Low | Exponential: bootstrap KS p=0.0010
+  Terciles | Medium | Lognormal: bootstrap KS p=0.6723
+  Terciles | Medium | Weibull: bootstrap KS p=0.1339
+  Terciles | Medium | Gamma: bootstrap KS p=0.1678
+  Terciles | Medium | Exponential: bootstrap KS p=0.0010
+  Terciles | High | Lognormal: bootstrap KS p=0.9730
+  Terciles | High | Weibull: bootstrap KS p=0.3906
+  Terciles | High | Gamma: bootstrap KS p=0.8492
+  Terciles | High | Exponential: bootstrap KS p=0.0010
+  P25_P75 | Low | Lognormal: bootstrap KS p=0.0030
+  P25_P75 | Low | Weibull: bootstrap KS p=0.0010
+  P25_P75 | Low | Gamma: bootstrap KS p=0.0010
+  P25_P75 | Low | Exponential: bootstrap KS p=0.0010
+  P25_P75 | Medium | Lognormal: bootstrap KS p=0.2957
+  P25_P75 | Medium | Weibull: bootstrap KS p=0.0100
+  P25_P75 | Medium | Gamma: bootstrap KS p=0.0460
+  P25_P75 | Medium | Exponential: bootstrap KS p=0.0010
+  P25_P75 | High | Lognormal: bootstrap KS p=0.8881
+  P25_P75 | High | Weibull: bootstrap KS p=0.4026
+  P25_P75 | High | Gamma: bootstrap KS p=0.8931
+  P25_P75 | High | Exponential: bootstrap KS p=0.0010
+
+  NOTE: Parametric-bootstrap KS calibration accounts for parameter estimation more appropriately than treating the nominal scipy KS p-value as exact.
+
+[10] Evaluating model-selection stability...
+  Terciles:
+    Low: most frequent AIC winner=Lognormal (1.000)
+    Medium: most frequent AIC winner=Lognormal (0.874)
+    High: most frequent AIC winner=Lognormal (0.851)
+  P25_P75:
+    Low: most frequent AIC winner=Lognormal (1.000)
+    Medium: most frequent AIC winner=Lognormal (0.976)
+    High: most frequent AIC winner=Lognormal (0.710)
+
+  NOTE: This bootstrap evaluates stability of distribution selection under resampling.
+  It is not the Monte Carlo simulation of procurement durations.
+
+[11] Building distribution-selection audit...
+  Terciles | Low: Lognormal | ΔAIC2=9.987 | bootstrap KS p=0.0010 | AIC stability=1.000 | BEST_AIC_BUT_GOF_CAUTION
+  Terciles | Medium: Lognormal | ΔAIC2=2.886 | bootstrap KS p=0.6723 | AIC stability=0.874 | SUPPORTED_CANDIDATE
+  Terciles | High: Lognormal | ΔAIC2=2.224 | bootstrap KS p=0.9730 | AIC stability=0.851 | SUPPORTED_CANDIDATE
+  P25_P75 | Low: Lognormal | ΔAIC2=8.049 | bootstrap KS p=0.0030 | AIC stability=1.000 | BEST_AIC_BUT_GOF_CAUTION
+  P25_P75 | Medium: Lognormal | ΔAIC2=6.384 | bootstrap KS p=0.2957 | AIC stability=0.976 | SUPPORTED_CANDIDATE
+  P25_P75 | High: Lognormal | ΔAIC2=1.078 | bootstrap KS p=0.8881 | AIC stability=0.710 | COMPETING_MODELS
+
+[12] Saving reproducible distribution-fitting outputs...
+  Output workbook: 09_1_distribution_fitting.xlsx
+  Log file: 09_distribution_fitting.log
+
+==============================================================================
+DISTRIBUTION-FITTING AUDIT
+==============================================================================
+Master analytical procedures:          137
+Available total award times:           136
+Candidate distributions:               4
+Scenario definitions fitted:           2
+Scenario-specific datasets:            6
+Successful candidate fits:             24
+Failed candidate fits:                 0
+Bootstrap iterations per diagnostic:   1,000
+
+PRIMARY TERCILE RESULTS
+------------------------------------------------------------------------------
+Low      | Lognormal    | ΔAIC2=9.987 | KSboot p=0.0010 | stability=1.000 | BEST_AIC_BUT_GOF_CAUTION
+Medium   | Lognormal    | ΔAIC2=2.886 | KSboot p=0.6723 | stability=0.874 | SUPPORTED_CANDIDATE
+High     | Lognormal    | ΔAIC2=2.224 | KSboot p=0.9730 | stability=0.851 | SUPPORTED_CANDIDATE
+
+SCIENTIFIC SCOPE
+- Candidate distributions are compared rather than imposed.
+- Lognormal and Weibull from the approved research design are evaluated alongside Gamma and Exponential.
+- All models use maximum-likelihood estimation with loc=0.
+- AIC/AICc/BIC compare relative model support; they do not prove that a distribution is true.
+- Nominal KS/CvM p-values are retained only as diagnostics because parameters are estimated from the same observations.
+- Parametric-bootstrap KS calibration is therefore reported.
+- Quantile diagnostics evaluate practical reproduction of the observed award-time distribution.
+- Bootstrap model-selection frequencies evaluate stability under resampling.
+- P25/P75 fitting is retained as scenario-definition robustness.
+- Data-driven scenarios are not used for primary fitting because the High group has only n=8.
+- No observations are deleted.
+- No Monte Carlo award-time simulation is performed.
+- No discrete-event simulation is performed.
+- No causal interpretation is imposed.
+
+==============================================================================
+PIPELINE STATUS: COMPLETE
+==============================================================================
