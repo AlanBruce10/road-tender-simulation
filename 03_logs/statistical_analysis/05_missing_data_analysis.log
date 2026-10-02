@@ -1,0 +1,86 @@
+==============================================================================
+MISSING-DATA ANALYSIS - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Input: Script 03 integrated analytical dataset
+Purpose: Diagnose whether temporal-data availability is systematically associated with observed procedure characteristics
+
+[1] Validating Script 03 input...
+  Input file: 03_1_integrated_dataset.xlsx
+  Input file found.
+
+[2] Reading analytical dataset...
+  Rows: 137
+  Columns: 18
+
+[3] Validating analytical contract...
+  Expected analytical sample verified: 137
+  Required columns verified.
+  procedure_code uniqueness verified.
+
+[4] Creating missingness indicators...
+  Missing integrated-terms dates: 28
+  Missing award dates: 1
+  Missing stage decompositions: 28
+  Missing total award times: 1
+
+[5] Deriving procurement-notice year...
+  Missing integrated-terms dates by notice year:
+    2020: 0/13 missing (0.00%)
+    2021: 0/16 missing (0.00%)
+    2022: 0/20 missing (0.00%)
+    2023: 0/20 missing (0.00%)
+    2024: 14/35 missing (40.00%)
+    2025: 14/33 missing (42.42%)
+
+[6] Comparing procedures with and without integrated-terms dates...
+  queries_observations_count: median available=51.000; median missing=94.000; U=1098.500; p=0.022643; rank-biserial=-0.2801
+  reference_amount: median available=40331155.430; median missing=88380351.445; U=917.000; p=0.00116207; rank-biserial=-0.3991
+  awarded_amount_pen: median available=38206514.650; median missing=79055611.635; U=879.000; p=0.000558803; rank-biserial=-0.4240
+  total_award_time_days: median available=67.000; median missing=112.000; U=985.500; p=0.00807002; rank-biserial=-0.3303
+  pages: median available=55.000; median missing=102.500; U=1104.500; p=0.0246198; rank-biserial=-0.2762
+
+  NOTE: Group comparisons are diagnostic. They do not establish the mechanism causing missing data.
+
+[7] Testing association between notice year and integration-date availability...
+  Chi-square: 35.7716
+  Degrees of freedom: 5
+  p-value: 1.05515e-06
+  Minimum expected frequency: 2.657
+  Expected cells < 5: 4/12 (33.33%)
+  Assumption audit: CAUTION
+  WARNING: The chi-square approximation should be interpreted cautiously because expected-frequency criteria are not fully satisfied.
+
+  NOTE: Statistical association with missingness does not by itself identify MCAR, MAR, or MNAR.
+
+[8] Preparing missing-case audit...
+  Procedures with at least one missing key temporal date: 28
+
+[9] Building analytical coverage summary...
+  Query/observation count             137/137 (100.00%)
+  Total award time                    136/137 (99.27%)
+  Temporal stage decomposition        109/137 (79.56%)
+
+[10] Saving reproducible missing-data outputs...
+  Output workbook: 05_1_missing_data_analysis.xlsx
+  Log file: 05_missing_data_analysis.log
+
+==============================================================================
+MISSING-DATA ANALYSIS AUDIT
+==============================================================================
+Analytical procedures:                  137
+Missing integrated-terms dates:         28
+Missing award dates:                    1
+Available total award times:            136
+Available temporal decompositions:      109
+
+SCIENTIFIC SCOPE
+- Missing observations were diagnosed, not deleted.
+- Missing temporal dates were not imputed.
+- Group comparisons are descriptive/diagnostic and do not establish causality.
+- No MCAR, MAR, or MNAR mechanism is asserted from these tests alone.
+- The chi-square test is accompanied by an explicit expected-frequency assumption audit.
+- The master analytical sample remains unchanged at n=137.
+
+==============================================================================
+PIPELINE STATUS: COMPLETE
+==============================================================================
