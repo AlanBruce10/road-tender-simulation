@@ -1,0 +1,173 @@
+==============================================================================
+STOCHASTIC MODEL SPECIFICATION - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Purpose: Translate Scripts 03-11 into an explicit stochastic-model protocol
+IMPORTANT: No Monte Carlo or discrete-event simulation is performed here.
+
+[1] Validating analytical inputs...
+  Found: 03_1_integrated_dataset.xlsx
+  Found: 07_1_scenario_definition.xlsx
+  Found: 08_1_scenario_robustness.xlsx
+  Found: 09_1_distribution_fitting.xlsx
+  Found: 10_1_distribution_diagnostics.xlsx
+  Found: 11_1_methodological_assessment.xlsx
+
+[2] Reading source datasets...
+  Master rows: 137
+  Scenario-audit rows: 137
+  Distribution-fit rows: 24
+
+[3] Validating analytical contract...
+  Master analytical sample verified: 137
+  Query-count coverage: 137/137
+  Total-award-time coverage: 136/137
+  Complete stage decompositions: 109/137
+
+[4] Defining primary scientific variables...
+  PRIMARY: queries_observations_count -> Primary empirical proxy for information-asymmetry / pre-award informational friction
+  PRIMARY: total_award_time_days -> Primary stochastic outcome from notice date to award date
+  SECONDARY: query_stage_duration_days -> Stage-level outcome for possible process decomposition
+  SECONDARY: evaluation_stage_duration_days -> Stage-level outcome for possible process decomposition
+
+[5] Specifying scenario-definition roles...
+  Terciles: PRIMARY | Balanced group sizes, strong ordered award-time pattern, and adequate sample size in all three scenarios.
+  P25_P75: ROBUSTNESS | Alternative quantile-based definition used to test sensitivity of conclusions to scenario thresholds.
+  Data_driven_1D: SENSITIVITY_ONLY | Query-count-only clustering retained for sensitivity; high scenario is too small for equal modeling status.
+
+[6] Auditing primary tercile scenario sample...
+  Low: n=46; queries=0-30; median=43.50; SD=37.07
+  Medium: n=46; queries=33-106; median=83.50; SD=84.58
+  High: n=44; queries=109-403; median=126.00; SD=82.13
+
+[7] Consolidating probability-model evidence...
+  Low: Lognormal | bootstrap KS p=0.0010 | NOT_AUTHORIZED_AS_SOLE_PARAMETRIC_MODEL
+  Medium: Lognormal | bootstrap KS p=0.6723 | AUTHORIZED_FOR_CONVERGENCE_TESTING
+  High: Lognormal | bootstrap KS p=0.9730 | AUTHORIZED_FOR_CONVERGENCE_TESTING
+
+[8] Specifying Low-scenario modeling protocol...
+  Priority 1: Observed empirical distribution / nonparametric resampling -> PRIMARY_ROBUST_REPRESENTATION_CANDIDATE
+  Priority 2: Lognormal parametric model -> PARAMETRIC_SENSITIVITY
+  Priority 3: Alternative flexible model -> FUTURE_OPTION_IF_NEEDED
+  NOTE: No new distribution is selected in Script 12.
+
+[9] Defining stochastic quantities of interest...
+  T1: Expected award time [PRIMARY]
+  T2: Median award time [PRIMARY]
+  T3: Award-time standard deviation [PRIMARY]
+  T4: Upper quantiles [PRIMARY]
+  T5: Exceedance probability [SECONDARY]
+  T6: Scenario contrasts [PRIMARY]
+
+[10] Defining Monte Carlo authorization gates...
+  MC1 | PASS    | Empirical stochastic variability exists
+  MC2 | PASS    | Scenario structure is empirically reproducible
+  MC3 | PARTIAL | Probability representation specified by scenario
+  MC4 | PASS    | Simulation estimands are prespecified
+  MC5 | PENDING | Iteration count empirically justified
+  MC6 | PASS    | Reproducibility protocol established
+
+[11] Prespecifying Monte Carlo convergence experiment...
+  Candidate iteration grid:
+  100, 500, 1,000, 2,500, 5,000, 10,000, 25,000, 50,000, 100,000
+
+  IMPORTANT:
+  10,000 iterations is included as a candidate, not as a predetermined answer.
+  Script 13 must determine whether fewer or more iterations are required.
+
+[12] Defining discrete-event simulation authorization gates...
+  DES1 | CAUTION | Stage-level durations available
+  DES2 | PASS    | Stage arithmetic is structurally interpretable
+  DES3 | CAUTION | Dependence between stages explicitly considered
+  DES4 | PENDING | Incremental scientific value beyond direct duration simulation
+  DES5 | PENDING | Final DES authorization
+
+[13] Defining model hierarchy...
+  Level 1: Continuous empirical relationship -> SUPPORTED
+  Level 2: Tercile scenario representation -> SUPPORTED
+  Level 3: Scenario-specific probability representation -> PARTIALLY_SUPPORTED
+  Level 4: Monte Carlo uncertainty propagation -> CONDITIONAL
+  Level 5: Discrete-event representation -> CONDITIONAL
+  Level 6: Validation and sensitivity analysis -> REQUIRED_LATER
+
+[14] Recording methodological decisions and unresolved decisions...
+  Primary stochastic outcome: DECIDED -> total_award_time_days
+  Primary information-asymmetry proxy: DECIDED -> queries_observations_count
+  Primary scenario definition: DECIDED_FOR_MODELING -> Terciles
+  Robustness scenario definition: DECIDED -> P25/P75
+  Data-driven scenario role: DECIDED -> Sensitivity only
+  Medium probability representation: CANDIDATE_AUTHORIZED -> Script 09 AIC-preferred supported distribution
+  High probability representation: CANDIDATE_AUTHORIZED -> Script 09 AIC-preferred supported distribution
+  Low probability representation: UNRESOLVED_WITH_PROTOCOL -> Empirical/nonparametric primary robust candidate + parametric sensitivity
+  Use Monte Carlo: CONDITIONAL -> Not yet finally authorized
+  Monte Carlo iterations: NOT_DECIDED -> To be determined empirically
+  Use discrete-event simulation: CONDITIONAL -> Not yet authorized
+  Causal interpretation: NOT_AUTHORIZED -> No
+
+[15] Building prespecified next-phase protocol...
+  1. 13_monte_carlo_convergence.py: Evaluate numerical convergence across candidate iteration counts and independent deterministic seeds.
+  2. 14_monte_carlo_simulation.py: Run final scenario-based stochastic simulation using only representations authorized by Scripts 12-13.
+  3. 15_discrete_event_assessment.py: Test whether explicit stage-level process simulation is feasible and scientifically additive.
+  4. 16_model_validation.py: Compare stochastic outputs against observed empirical behavior and temporal subsets.
+  5. 17_sensitivity_robustness.py: Evaluate sensitivity to scenario thresholds, Low representation, distributional assumptions, and modeling choices.
+
+[16] Building reproducibility metadata...
+  Reproducibility metadata created.
+
+[17] Saving reproducible model specification...
+  Output workbook: 12_1_model_specification.xlsx
+  Log file: 12_model_specification.log
+
+==============================================================================
+STOCHASTIC MODEL SPECIFICATION AUDIT
+==============================================================================
+Master analytical procedures:          137
+Available total award times:           136
+Complete temporal decompositions:      109
+
+PRIMARY MODEL ARCHITECTURE
+------------------------------------------------------------------------------
+Exposure:                              queries_observations_count
+Primary outcome:                       total_award_time_days
+Primary scenario definition:           Terciles
+Robustness scenario definition:        P25/P75
+Data-driven partition:                 Sensitivity only
+
+PROBABILITY REPRESENTATION
+------------------------------------------------------------------------------
+Low        Lognormal       CAUTION    NOT_AUTHORIZED_AS_SOLE_PARAMETRIC_MODEL
+Medium     Lognormal       READY      AUTHORIZED_FOR_CONVERGENCE_TESTING
+High       Lognormal       READY      AUTHORIZED_FOR_CONVERGENCE_TESTING
+
+MONTE CARLO STATUS
+------------------------------------------------------------------------------
+Empirical stochastic rationale:        SUPPORTED
+Simulation targets:                    PRESPECIFIED
+Medium/High probability models:        CANDIDATE AUTHORIZED
+Low probability model:                 CAUTION / DUAL PROTOCOL
+Iteration count:                       NOT YET DETERMINED
+Final Monte Carlo authorization:        PENDING CONVERGENCE
+
+DISCRETE-EVENT STATUS
+------------------------------------------------------------------------------
+Stage-level coverage:                   79.56%
+Stage-duration Spearman correlation:    0.2888
+Final DES authorization:                PENDING
+
+SCIENTIFIC SCOPE
+- No Monte Carlo award-time simulation was performed.
+- No discrete-event simulation was performed.
+- No iteration count was selected.
+- 10,000 iterations remains a candidate value, not a predetermined answer.
+- Terciles are specified as the primary scenario representation.
+- P25/P75 is prespecified for robustness analysis.
+- The data-driven partition remains a sensitivity analysis.
+- Medium and High may proceed to convergence testing with supported candidates.
+- Low requires empirical/nonparametric representation plus parametric sensitivity.
+- No new distribution was selected opportunistically.
+- No observations were deleted.
+- No missing temporal values were imputed.
+- No causal interpretation is imposed.
+
+==============================================================================
+PIPELINE STATUS: READY_FOR_MONTE_CARLO_CONVERGENCE_ASSESSMENT
+==============================================================================
