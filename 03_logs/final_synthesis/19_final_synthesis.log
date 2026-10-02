@@ -1,0 +1,255 @@
+==============================================================================
+FINAL SCIENTIFIC SYNTHESIS - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Purpose: Integrate Scripts 03-18 into the final reproducible
+scientific evidence architecture for thesis reporting.
+
+IMPORTANT:
+- No new model is fitted.
+- No scenario threshold is changed.
+- No probability distribution is re-selected.
+- No validation criterion is changed.
+- No result is optimized retrospectively.
+- No causal interpretation is introduced.
+
+[1] Validating final-synthesis inputs...
+  Found: 03_1_integrated_dataset.xlsx
+  Found: 07_1_scenario_definition.xlsx
+  Found: 08_1_scenario_robustness.xlsx
+  Found: 11_1_methodological_assessment.xlsx
+  Found: 14_1_monte_carlo_simulation.xlsx
+  Found: 16_1_discrete_event_simulation.xlsx
+  Found: 17_1_model_validation.xlsx
+  Found: 18_1_robustness_analysis.xlsx
+
+[2] Inspecting workbook contracts...
+  07_1_scenario_definition.xlsx: required sheets verified.
+  08_1_scenario_robustness.xlsx: required sheets verified.
+  14_1_monte_carlo_simulation.xlsx: required sheets verified.
+  16_1_discrete_event_simulation.xlsx: required sheets verified.
+  Script 17 workbook detected with 16 sheet(s).
+  Script 18 workbook detected with 15 sheet(s).
+
+[3] Reading core analytical evidence...
+  Master rows: 137
+  Scenario-audit rows: 137
+  Monte Carlo primary rows: 3
+  DES summary rows: 3
+
+[4] Validating master analytical contract...
+  Master analytical population verified: 137
+  Available total award times: 136/137
+  Complete stage decompositions: 109/137
+  procedure_code uniqueness verified.
+
+[5] Reconstructing final primary scenario evidence...
+  Low: n=46; queries=0-30; median=43.50; P95=124.50
+  Medium: n=46; queries=33-106; median=83.50; P95=277.00
+  High: n=44; queries=109-403; median=126.00; P95=285.45
+  Strict observed median ordering Low < Medium < High: True
+
+[6] Consolidating full-sample continuous relationship...
+  Pearson r=0.3457 (p=3.74844e-05)
+  Spearman rho=0.5453 (p=6.67301e-12)
+  Kendall tau=0.3717 (p=1.86227e-10)
+
+[7] Consolidating final Monte Carlo evidence...
+  Low: Empirical | N=50,000 | simulated median=43.00 | simulated P95=125.00
+  Medium: Lognormal | N=50,000 | simulated median=90.09 | simulated P95=286.33
+  High: Lognormal | N=50,000 | simulated median=126.51 | simulated P95=297.34
+
+[8] Consolidating Low-scenario representation sensitivity...
+  mean: empirical=60.5620; Lognormal=59.2720; relative difference=-2.13%
+  median: empirical=43.0000; Lognormal=53.4380; relative difference=+24.27%
+  std: empirical=36.8794; Lognormal=28.5664; relative difference=-22.54%
+  p90: empirical=112.0000; Lognormal=95.9228; relative difference=-14.35%
+  p95: empirical=125.0000; Lognormal=113.1306; relative difference=-9.50%
+  p99: empirical=218.0000; Lognormal=154.2988; relative difference=-29.22%
+  exceedance_probability: empirical=0.1091; Lognormal=0.0613; relative difference=-43.82%
+  Final role: empirical/nonparametric remains primary for Low; Lognormal remains sensitivity only.
+
+[9] Consolidating two-stage DES evidence...
+  Low: query median=22.00; evaluation median=20.00; total median=42.00; P95=123.00
+  Medium: query median=30.00; evaluation median=27.00; total median=70.00; P95=277.00
+  High: query median=55.00; evaluation median=55.00; total median=132.00; P95=391.00
+
+[10] Consolidating model-architecture sensitivity...
+  Low: DES-MC median=-1.00 days; DES-MC P95=-2.00 days
+  Medium: DES-MC median=-20.09 days; DES-MC P95=-9.33 days
+  High: DES-MC median=+5.49 days; DES-MC P95=+93.66 days
+  Interpretation: direct Monte Carlo and two-stage DES are complementary representations, not interchangeable estimators.
+
+[11] Consolidating DES dependence sensitivity...
+  Low: joint P95=123.00; independent P95=131.00; difference=+8.00 days
+  Medium: joint P95=277.00; independent P95=255.00; difference=-22.00 days
+  High: joint P95=391.00; independent P95=324.00; difference=-67.00 days
+  Primary DES continues to preserve empirical stage dependence.
+
+[12] Recovering temporal-validation evidence...
+  Script 17 decision evidence: sheet 'validation_framework'
+  Script 17 direct evidence: no canonical candidate sheet identified; workbook-level evidence retained separately.
+  Script 17 des evidence: no canonical candidate sheet identified; workbook-level evidence retained separately.
+
+[13] Reconstructing temporal relationship evidence...
+  TRAIN_2020_2023: n=69; Spearman rho=0.6530; p=1.19632e-09
+  TEST_2024_2025: n=67; Spearman rho=0.4706; p=5.85225e-05
+
+[14] Recovering final robustness evidence...
+  Script 18 workbook contains 15 sheet(s).
+  Conclusion-level robustness evidence recovered from sheet 'conclusion_robustness'.
+
+[15] Building final conclusion-level robustness matrix...
+  C1 | ROBUST | STRONG
+  C2 | ROBUST_WITH_SENSITIVITY | STRONG
+  C3 | SENSITIVE_TO_REPRESENTATION | CONDITIONAL
+  C4 | MODEL_ARCHITECTURE_SENSITIVE | CONDITIONAL
+  C5 | SENSITIVE_TO_DEPENDENCE_ASSUMPTION | CONDITIONAL
+  C6 | ROBUST_DIRECTIONALLY | STRONG
+
+[16] Building objective-level final scientific synthesis...
+  OE1: COMPLETED
+  OE2: COMPLETED_WITH_ROBUSTNESS_EVIDENCE
+  OE3: COMPLETED_WITH_MODEL_SPECIFIC_LIMITATIONS
+  OE4: COMPLETED_WITH_VALIDATION_CAUTIONS
+
+[17] Building hypothesis-evidence matrix...
+  Evidence direction: consistently compatible with a positive association between the empirical information-friction proxy and award-time behavior.
+  Causal claim: NOT AUTHORIZED.
+
+[18] Formulating final hypothesis assessment...
+  Research hypothesis: SUPPORTED_AS_ASSOCIATIONAL_HYPOTHESIS
+  Null-style interpretation: INCONSISTENT_WITH_PRIMARY_ASSOCIATION_EVIDENCE
+  Causal hypothesis: NOT_AUTHORIZED
+
+[19] Locking final model hierarchy...
+  Level 1: Continuous empirical relationship -> SUPPORTED
+  Level 2: Low-Medium-High scenario structure -> SUPPORTED_WITH_ROBUSTNESS
+  Level 3: Scenario probability representation -> MIXED_BY_SCENARIO
+  Level 4: Direct Monte Carlo -> AUTHORIZED_AND_COMPLETED
+  Level 5: Two-stage discrete-event simulation -> AUTHORIZED_WITH_CAUTION_AND_COMPLETED
+  Level 6: Temporal validation -> COMPLETED_WITH_HETEROGENEOUS_PERFORMANCE
+  Level 7: Robustness and sensitivity -> COMPLETED
+
+[20] Consolidating final scientific limitations...
+  Final limitations recorded: 10
+
+[21] Building interpretation-boundary framework...
+  Interpretation boundaries recorded: 7
+
+[22] Building thesis-ready key findings...
+  F1: The analytical population comprised 137 eligible road-infrastructure tender procedures from the implemented 2020-2025 selection protocol.
+  F2: The continuous relationship between query/observation volume and total award time was positive (Spearman rho=0.5453).
+  F3: Observed award-time medians increased from 43.50 days in Low to 83.50 days in Medium and 126.00 days in High.
+  F4: The final direct Monte Carlo model used 50,000 operational iterations per scenario after numerical convergence assessment.
+  F5: The primary Monte Carlo representations were empirical/nonparametric for Low and Lognormal for Medium and High.
+  F6: Primary simulated medians were 43.00, 90.09, and 126.51 days for Low, Medium, and High, respectively.
+  F7: The two-stage DES preserved empirical dependence by jointly resampling observed query/integration and evaluation/award duration pairs.
+  F8: Temporal validation showed that the positive continuous relationship persisted in 2024-2025, while scenario-specific predictive performance was heterogeneous.
+  F9: Robustness analysis identified strong directional evidence for the principal relationship but meaningful sensitivity to Low probability representation, model architecture, and DES dependence assumptions.
+
+[23] Building final scientific decision table...
+  Final scientific decisions recorded: 14
+
+[24] Building reproducibility metadata...
+  Reproducibility metadata created.
+
+[25] Building final pipeline manifest...
+  Pipeline manifest rows: 14
+
+[26] Determining final thesis-analysis status...
+  Objective 1                         | COMPLETED
+  Objective 2                         | COMPLETED_WITH_ROBUSTNESS_EVIDENCE
+  Objective 3                         | COMPLETED_WITH_MODEL_SPECIFIC_LIMITATIONS
+  Objective 4                         | COMPLETED_WITH_VALIDATION_CAUTIONS
+  Primary hypothesis                  | SUPPORTED_AS_ASSOCIATIONAL_HYPOTHESIS
+  Causal interpretation               | NOT_AUTHORIZED
+  Statistical pipeline                | COMPLETE
+  Stochastic-modeling pipeline        | COMPLETE
+  Validation pipeline                 | COMPLETE
+  Robustness pipeline                 | COMPLETE
+  Next scientific phase               | RESULTS_DISCUSSION_AND_REPORTING
+
+[27] Saving final scientific synthesis...
+  Output workbook: 19_1_final_synthesis.xlsx
+  Log file: 19_final_synthesis.log
+
+==============================================================================
+FINAL SCIENTIFIC SYNTHESIS AUDIT
+==============================================================================
+Master analytical procedures:          137
+Available total award times:           136/137
+Complete temporal decompositions:      109/137
+
+PRIMARY CONTINUOUS EVIDENCE
+------------------------------------------------------------------------------
+Pearson r:                             0.3457 (p=3.74844e-05)
+Spearman rho:                          0.5453 (p=6.67301e-12)
+Kendall tau:                           0.3717 (p=1.86227e-10)
+
+PRIMARY OBSERVED SCENARIO MEDIANS
+------------------------------------------------------------------------------
+Low        n=46  | median=43.50 | P95=124.50
+Medium     n=46  | median=83.50 | P95=277.00
+High       n=44  | median=126.00 | P95=285.45
+
+PRIMARY MONTE CARLO RESULTS
+------------------------------------------------------------------------------
+Low        Empirical    | median=43.00 | P95=125.00
+Medium     Lognormal    | median=90.09 | P95=286.33
+High       Lognormal    | median=126.51 | P95=297.34
+
+TWO-STAGE DES RESULTS
+------------------------------------------------------------------------------
+Low        | query median=22.00 | evaluation median=20.00 | total median=42.00 | P95=123.00
+Medium     | query median=30.00 | evaluation median=27.00 | total median=70.00 | P95=277.00
+High       | query median=55.00 | evaluation median=55.00 | total median=132.00 | P95=391.00
+
+CONCLUSION-LEVEL ROBUSTNESS
+------------------------------------------------------------------------------
+C1   ROBUST                              STRONG
+C2   ROBUST_WITH_SENSITIVITY             STRONG
+C3   SENSITIVE_TO_REPRESENTATION         CONDITIONAL
+C4   MODEL_ARCHITECTURE_SENSITIVE        CONDITIONAL
+C5   SENSITIVE_TO_DEPENDENCE_ASSUMPTION  CONDITIONAL
+C6   ROBUST_DIRECTIONALLY                STRONG
+
+OBJECTIVE CLOSURE
+------------------------------------------------------------------------------
+OE1   COMPLETED
+OE2   COMPLETED_WITH_ROBUSTNESS_EVIDENCE
+OE3   COMPLETED_WITH_MODEL_SPECIFIC_LIMITATIONS
+OE4   COMPLETED_WITH_VALIDATION_CAUTIONS
+
+HYPOTHESIS ASSESSMENT
+------------------------------------------------------------------------------
+Primary hypothesis:                  SUPPORTED_AS_ASSOCIATIONAL_HYPOTHESIS
+Causal interpretation:               NOT_AUTHORIZED
+
+FINAL MODEL ARCHITECTURE
+------------------------------------------------------------------------------
+Primary stochastic model:            Direct total-duration Monte Carlo
+Low representation:                  Empirical/nonparametric
+Medium representation:               Lognormal
+High representation:                 Lognormal
+Operational Monte Carlo iterations:  50,000
+Secondary process model:             Two-stage DES with joint pair resampling
+
+SCIENTIFIC SCOPE
+------------------------------------------------------------------------------
+- Script 19 integrates previously generated evidence.
+- No new model is fitted.
+- No probability distribution is re-selected.
+- No scenario threshold is redefined.
+- No Monte Carlo simulation is rerun.
+- No discrete-event simulation is rerun.
+- No validation criterion is changed.
+- No unfavorable result is removed or optimized away.
+- Robust and sensitive conclusions are reported separately.
+- Simulation iterations do not increase the empirical sample size.
+- The hypothesis is assessed as associational, not causal.
+- The master analytical population remains unchanged.
+- The pipeline is now ready for thesis Results and Discussion.
+
+==============================================================================
+PIPELINE STATUS: FINAL_SYNTHESIS_COMPLETE_READY_FOR_THESIS_REPORTING
+==============================================================================
