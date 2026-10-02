@@ -1,0 +1,184 @@
+==============================================================================
+MONTE CARLO CONVERGENCE ASSESSMENT - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Purpose: Empirically determine the minimum numerically sufficient
+Monte Carlo iteration count before final stochastic simulation.
+
+IMPORTANT: Convergence tolerances are preserved unchanged.
+Finite-support empirical behavior is diagnosed separately.
+This is a convergence experiment, not the final simulation.
+
+[1] Validating analytical inputs...
+  Found: 03_1_integrated_dataset.xlsx
+  Found: 07_1_scenario_definition.xlsx
+  Found: 09_1_distribution_fitting.xlsx
+  Found: 12_1_model_specification.xlsx
+
+[2] Reading source datasets...
+  Master rows: 137
+  Scenario-audit rows: 137
+  Distribution-fit rows: 24
+
+[3] Validating analytical contract...
+  Master analytical sample verified: 137
+  Available total award times: 136/137
+  Primary scenario definition verified: Terciles
+
+[4] Verifying prespecified convergence grid from Script 12...
+  Original Script 12 grid verified:
+  100, 500, 1,000, 2,500, 5,000, 10,000, 25,000, 50,000, 100,000
+
+  Prospective extension grid:
+  250,000, 500,000, 1,000,000
+
+  Independent deterministic seeds: 10
+  High-iteration parametric reference: 1,000,000
+
+[5] Preparing primary tercile scenario samples...
+  Low: n=46; min=34.00; median=43.50; max=218.00
+  Medium: n=46; min=17.00; median=83.50; max=389.00
+  High: n=44; min=48.00; median=126.00; max=408.00
+
+[6] Verifying probability representations authorized by Script 12...
+  Low: Lognormal | NOT_AUTHORIZED_AS_SOLE_PARAMETRIC_MODEL
+  Medium: Lognormal | AUTHORIZED_FOR_CONVERGENCE_TESTING
+  High: Lognormal | AUTHORIZED_FOR_CONVERGENCE_TESTING
+
+[7] Extracting Script 09 Lognormal parameters...
+  Low: sigma=0.455865; loc=0.000000; scale=53.330131
+  Medium: sigma=0.698961; loc=0.000000; scale=90.744975
+  High: sigma=0.527398; loc=0.000000; scale=126.361049
+
+[8] Defining convergence experiments...
+  Low | Empirical | PRIMARY_ROBUST_REPRESENTATION
+  Low | Lognormal | PARAMETRIC_SENSITIVITY_ONLY
+  Medium | Lognormal | PRIMARY_PARAMETRIC_CANDIDATE
+  High | Lognormal | PRIMARY_PARAMETRIC_CANDIDATE
+
+[9] Defining scenario-specific exceedance thresholds...
+  Low: empirical observed P90 = 108.00 days
+  Medium: empirical observed P90 = 240.50 days
+  High: empirical observed P90 = 242.80 days
+
+  NOTE: Thresholds are fixed before the convergence experiment.
+
+[10] Building representation-specific numerical references...
+  Low | Empirical: exact empirical functionals used as deterministic reference
+  Low | Lognormal: 10 independent high-iteration references completed
+  Medium | Lognormal: 10 independent high-iteration references completed
+  High | Lognormal: 10 independent high-iteration references completed
+
+[11] Diagnosing finite-support structure of Low empirical model...
+  Median: reference=43.5000; nearest support=43.0000; minimum support error=1.1494%; tolerance=1.0000%; attainable=False
+  P90: reference=108.0000; nearest support=104.0000; minimum support error=3.7037%; tolerance=2.0000%; attainable=False
+  P95: reference=124.5000; nearest support=125.0000; minimum support error=0.4016%; tolerance=2.5000%; attainable=True
+
+  STRUCTURAL FINDING:
+  The nearest observed support value cannot satisfy the prespecified 1% median relative-error tolerance.
+  This is a finite-support property and is not treated automatically as evidence that more Monte Carlo iterations are required.
+
+[12] Running original prespecified convergence grid...
+  Candidate simulation runs: 360
+  Original convergence grid completed.
+
+[13] Classifying base-grid convergence outcomes...
+  Low | Empirical: STRICT_CRITERION_BLOCKED_BY_DISCRETE_SUPPORT
+    Next action: USE_EXACT_EMPIRICAL_FUNCTIONALS_NO_GRID_CHASING
+  Low | Lognormal: CONVERGED_IN_BASE_GRID
+    Next action: NO_EXTENSION_REQUIRED
+  Medium | Lognormal: CONVERGED_IN_BASE_GRID
+    Next action: NO_EXTENSION_REQUIRED
+  High | Lognormal: CONVERGED_IN_BASE_GRID
+    Next action: NO_EXTENSION_REQUIRED
+
+[14] Applying prospective grid-extension rule...
+  No genuine numerical grid extension is required.
+
+[15] Recomputing convergence with all authorized grid points...
+  Convergence summary completed.
+
+[16] Determining experiment-specific numerical decisions...
+  Low | Empirical: STRUCTURAL_DISCRETE_SUPPORT; N=N/A
+  Low | Lognormal: CONVERGED; N=25,000
+  Medium | Lognormal: CONVERGED; N=50,000
+  High | Lognormal: CONVERGED; N=50,000
+
+[17] Determining common operational Monte Carlo iteration count...
+  All primary parametric representations converged.
+  Common operational Monte Carlo count: 50,000
+
+  Low empirical representation retains exact empirical benchmarks.
+  Its structural median-support conflict is reported separately and does not inflate the common Monte Carlo iteration count.
+
+[18] Auditing the originally proposed 10,000 iterations...
+  10,000-iteration status: NOT_SUPPORTED_AS_COMMON_OPERATIONAL_MINIMUM
+  Interpretation: 10,000 iterations are below the empirically supported common operational requirement of 50,000.
+
+[19] Building unchanged convergence-criterion audit...
+
+[20] Building Monte Carlo authorization decision...
+
+[21] Saving reproducible convergence outputs...
+  Output workbook: 13_1_monte_carlo_convergence.xlsx
+  Log file: 13_monte_carlo_convergence.log
+
+==============================================================================
+MONTE CARLO CONVERGENCE AUDIT - IMPROVED
+==============================================================================
+Master analytical procedures:          137
+Available total award times:           136
+Independent deterministic seeds:       10
+Parametric reference N per seed:       1,000,000
+
+BASE GRID
+------------------------------------------------------------------------------
+100, 500, 1,000, 2,500, 5,000, 10,000, 25,000, 50,000, 100,000
+
+PROSPECTIVE EXTENSION GRID
+------------------------------------------------------------------------------
+250,000, 500,000, 1,000,000
+
+EXPERIMENT-SPECIFIC DECISIONS
+------------------------------------------------------------------------------
+Low        Empirical    STRUCTURAL_DISCRETE_SUPPORT              N/A
+Low        Lognormal    CONVERGED                                25,000
+Medium     Lognormal    CONVERGED                                50,000
+High       Lognormal    CONVERGED                                50,000
+
+LOW EMPIRICAL STRUCTURAL DIAGNOSTIC
+------------------------------------------------------------------------------
+Median support conflict:               True
+
+PRIMARY MONTE CARLO DECISION
+------------------------------------------------------------------------------
+Common operational iterations:         50,000
+Final convergence status:              AUTHORIZED_FOR_FINAL_SIMULATION
+Original 10,000-iteration proposal:    NOT_SUPPORTED_AS_COMMON_OPERATIONAL_MINIMUM
+
+UNCHANGED CONVERGENCE TOLERANCES
+------------------------------------------------------------------------------
+Mean relative error:                   <= 1.0%
+Median relative error:                 <= 1.0%
+SD relative error:                     <= 2.0%
+P90 relative error:                    <= 2.0%
+P95 relative error:                    <= 2.5%
+Exceedance probability absolute error: <= 0.010
+
+SCIENTIFIC SCOPE
+- The original convergence tolerances were not changed.
+- Script 12's original iteration grid remains explicitly preserved.
+- Grid extension is prospective and rule-based rather than manually chosen after observing a favorable result.
+- Low empirical finite-support behavior is diagnosed separately from genuine numerical non-convergence.
+- Exact empirical functionals are used as the reference for the Low empirical representation.
+- Medium and High Lognormal models remain the primary parametric Monte Carlo convergence targets.
+- Low Lognormal remains a parametric sensitivity analysis only.
+- Numerical convergence does not establish distributional truth.
+- Numerical convergence does not establish causality.
+- No observations are deleted.
+- No missing temporal values are imputed.
+- No discrete-event simulation is performed.
+- Final substantive stochastic results remain reserved for Script 14.
+
+==============================================================================
+PIPELINE STATUS: MONTE_CARLO_NUMERICALLY_AUTHORIZED_FOR_SCRIPT_14
+==============================================================================
