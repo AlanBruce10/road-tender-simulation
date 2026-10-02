@@ -1,0 +1,180 @@
+==============================================================================
+TWO-STAGE DISCRETE-EVENT SIMULATION - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Purpose: Implement the stage-level stochastic process authorized by Script 15 and evaluate its behavior relative to observed data and the direct Monte Carlo reference.
+
+IMPORTANT: The model preserves empirical dependence between stages through joint pair resampling.
+The direct total-duration Monte Carlo model from Script 14 remains the primary stochastic reference.
+
+[1] Validating analytical inputs...
+  Found: 15_1_discrete_event_assessment.xlsx
+  Found: 14_1_monte_carlo_simulation.xlsx
+
+[2] Reading Script 15 stage-level analytical data...
+  Procedure-level rows: 137
+  Final-decision rows: 1
+  Authorization-gate rows: 5
+
+[3] Validating stage-level analytical contract...
+  Master analytical sample verified: 137
+  procedure_code uniqueness verified.
+
+[4] Verifying Script 15 DES authorization...
+  Script 15 status: DES_AUTHORIZED_WITH_CAUTION
+  Script 15 authorization gates verified.
+
+[5] Preparing complete stage-decomposition sample...
+  Complete stage decompositions: 109/137
+  Stage coverage: 79.56%
+  Maximum stage-sum reconstruction error: 0.000000 days
+
+[6] Defining explicit two-stage event process...
+  Event 0: NOTICE -> QUERY_INTEGRATION_STAGE
+  Event 1: INTEGRATED_TERMS -> EVALUATION_AWARD_STAGE
+  Event 2: AWARD -> ABSORBING_COMPLETED_STATE
+
+  DES architecture: each simulated tender is an entity moving through ordered events on a simulation clock.
+  No queue, resource capacity, or artificial waiting mechanism is introduced because those mechanisms are not observed in the dataset.
+
+[7] Auditing empirical dependence before simulation...
+  Low: n=41; Pearson=0.0894; Spearman=-0.2793
+  Medium: n=35; Pearson=0.2760; Spearman=0.4306
+  High: n=33; Pearson=0.0578; Spearman=-0.0318
+
+  Modeling rule: observed stage pairs are resampled jointly within scenario; query and evaluation durations are never sampled independently in the primary DES.
+
+[8] Computing observed stage-level benchmarks...
+  Low: n=41; query median=22.00; evaluation median=20.00; total median=42.00
+  Medium: n=35; query median=30.00; evaluation median=27.00; total median=70.00
+  High: n=33; query median=55.00; evaluation median=55.00; total median=132.00
+
+[9] Defining operational DES simulation size...
+  Operational entities per scenario: 50,000
+  Reproducibility base seed: 2026
+
+  NOTE: 50,000 is inherited from Script 13 as a common operational simulation budget for comparability.
+  It is not interpreted as proof that the Monte Carlo convergence experiment automatically establishes DES convergence.
+
+[10] Running primary two-stage discrete-event simulation...
+  Low: N=50,000; query median=22.00; evaluation median=20.00; total median=42.00; Spearman=-0.2814
+  Medium: N=50,000; query median=30.00; evaluation median=27.00; total median=70.00; Spearman=0.4345
+  High: N=50,000; query median=55.00; evaluation median=55.00; total median=132.00; Spearman=-0.0324
+
+[11] Evaluating dependence preservation...
+  Low: observed rho=-0.2793; simulated rho=-0.2814; difference=-0.0021
+  Medium: observed rho=0.4306; simulated rho=0.4345; difference=+0.0039
+  High: observed rho=-0.0318; simulated rho=-0.0324; difference=-0.0006
+
+[12] Comparing DES outputs with observed stage-complete data...
+  Low: total median observed=42.00; simulated=42.00; relative error=0.00%
+  Medium: total median observed=70.00; simulated=70.00; relative error=0.00%
+  High: total median observed=132.00; simulated=132.00; relative error=0.00%
+
+[13] Quantifying simulated stage contributions...
+  Low: median query-stage share=0.528; median evaluation-stage share=0.472
+  Medium: median query-stage share=0.514; median evaluation-stage share=0.486
+  High: median query-stage share=0.513; median evaluation-stage share=0.487
+
+[14] Quantifying DES scenario contrasts...
+  Medium vs Low: median difference=28.00 days; P(T_Medium > T_Low)=0.7123
+  High vs Low: median difference=90.00 days; P(T_High > T_Low)=0.9038
+  High vs Medium: median difference=62.00 days; P(T_High > T_Medium)=0.6588
+
+[15] Auditing internal numerical stability of DES outputs...
+  Low: checkpoints evaluated through 50,000 entities.
+  Medium: checkpoints evaluated through 50,000 entities.
+  High: checkpoints evaluated through 50,000 entities.
+
+  NOTE: This is an internal stability audit relative to the fixed 50,000-entity run.
+  It is not a replacement for Script 13 and does not redefine the Monte Carlo convergence criteria.
+
+[16] Comparing DES totals with Script 14 direct Monte Carlo...
+  Script 14 comparison source sheet: primary_results
+  Low: DES median=42.00; MC median=43.00
+  Medium: DES median=70.00; MC median=90.09
+  High: DES median=132.00; MC median=126.51
+
+[17] Running independence counterfactual sensitivity analysis...
+  Low: joint P95=123.00; independent P95=131.00; difference=+8.00
+  Medium: joint P95=277.00; independent P95=255.00; difference=-22.00
+  High: joint P95=391.00; independent P95=324.00; difference=-67.00
+
+  NOTE: Independent sampling is intentionally retained only as a counterfactual sensitivity analysis.
+  It is not promoted to the primary DES because Script 15 rejected automatic independence.
+
+[18] Assessing incremental analytical value of the DES...
+  Incremental-value framework created.
+  Current role: DES = secondary process-decomposition model; direct Monte Carlo = primary stochastic reference.
+
+[19] Recording DES-specific limitations...
+  - Stage-level coverage: 109/137 complete decompositions (79.56%)
+  - Process resolution: Only two empirical temporal stages are available.
+  - Empirical pair resampling: Primary DES samples observed stage-duration pairs with replacement within scenario.
+  - Observational design: No randomized intervention is present.
+  - Operational simulation size: 50,000 entities per scenario.
+
+[20] Building model-architecture audit...
+  DES architecture audit created.
+
+[21] Building scientific interpretation audit...
+  Interpretation audit created.
+
+[22] Building reproducibility metadata...
+  Reproducibility metadata created.
+
+[23] Saving reproducible DES outputs...
+  Output workbook: 16_1_discrete_event_simulation.xlsx
+  Log file: 16_discrete_event_simulation.log
+
+==============================================================================
+TWO-STAGE DISCRETE-EVENT SIMULATION AUDIT
+==============================================================================
+Master analytical procedures:          137
+Complete temporal decompositions:      109 (79.56%)
+Operational simulated entities:        50,000 per scenario
+
+PROCESS ARCHITECTURE
+------------------------------------------------------------------------------
+NOTICE
+  -> Query / integration stage
+INTEGRATED_TERMS
+  -> Evaluation / award stage
+AWARD
+
+PRIMARY DEPENDENCE REPRESENTATION
+------------------------------------------------------------------------------
+Joint empirical resampling of observed stage-duration pairs.
+Independent stage sampling is retained only as sensitivity analysis.
+
+PRIMARY DES RESULTS
+------------------------------------------------------------------------------
+Low        | query median=22.00 | evaluation median=20.00 | total median=42.00 | P95=123.00 | rho=-0.2814
+Medium     | query median=30.00 | evaluation median=27.00 | total median=70.00 | P95=277.00 | rho=0.4345
+High       | query median=55.00 | evaluation median=55.00 | total median=132.00 | P95=391.00 | rho=-0.0324
+
+SCIENTIFIC ROLE
+------------------------------------------------------------------------------
+Direct total-duration Monte Carlo: PRIMARY STOCHASTIC REFERENCE
+Two-stage discrete-event model:    SECONDARY PROCESS-DECOMPOSITION MODEL
+
+SCIENTIFIC SCOPE
+------------------------------------------------------------------------------
+- Script 16 implements the two-stage stochastic process authorized with caution by Script 15.
+- Each simulated tender is represented as an entity progressing through NOTICE -> INTEGRATED_TERMS -> AWARD.
+- Stage dependence is preserved through joint empirical pair resampling within each tercile scenario.
+- Independent stage sampling is not used as the primary model.
+- No queue, resource constraint, service discipline, or unobserved administrative mechanism is invented.
+- The DES uses the 109 observed complete stage decompositions.
+- The master analytical population remains n=137.
+- Missing temporal values are not imputed.
+- No observations are deleted from the master analytical population.
+- Scenario thresholds are not redefined.
+- No probability distribution is selected in this script.
+- The 50,000-entity budget is inherited for comparability and is audited for internal stability.
+- DES does not replace the direct Monte Carlo model automatically.
+- Scenario contrasts are stochastic/descriptive and do not establish causal effects.
+- Formal joint model validation remains a subsequent pipeline phase.
+
+==============================================================================
+PIPELINE STATUS: TWO_STAGE_DES_COMPLETE_READY_FOR_JOINT_VALIDATION
+==============================================================================
