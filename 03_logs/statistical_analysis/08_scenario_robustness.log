@@ -1,0 +1,142 @@
+==============================================================================
+SCENARIO ROBUSTNESS ANALYSIS - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Input: Script 07 scenario-definition diagnostics
+Purpose: Evaluate whether low/medium/high award-time patterns are robust across candidate scenario definitions before probability-distribution fitting
+
+[1] Validating Script 07 input...
+  Input file: 07_1_scenario_definition.xlsx
+  Input file found.
+
+[2] Reading procedure-level scenario assignments...
+  Rows: 137
+  Columns: 7
+
+[3] Validating analytical contract...
+  Master analytical sample verified: 137
+  Unique procedure codes verified.
+  Scenario assignments verified.
+
+[4] Registering candidate scenario definitions...
+  Terciles: PRIMARY_CANDIDATE
+  P25_P75: ROBUSTNESS_CANDIDATE
+  Data_driven_1D: SENSITIVITY_CANDIDATE
+  NOTE: These labels organize the robustness analysis; they do not constitute final scientific model selection.
+
+[5] Evaluating descriptive robustness...
+  Terciles:
+    Low: n=46; median=43.50; mean=60.37; SD=37.07; IQR=27.00
+    Medium: n=46; median=83.50; mean=115.46; SD=84.58; IQR=106.75
+    High: n=44; median=126.00; mean=145.32; SD=82.13; IQR=82.50
+  P25_P75:
+    Low: n=36; median=46.00; mean=62.14; SD=40.19; IQR=26.00
+    Medium: n=67; median=82.00; mean=105.64; SD=76.96; IQR=83.00
+    High: n=33; median=132.00; mean=156.58; SD=86.72; IQR=79.00
+  Data_driven_1D:
+    Low: n=92; median=55.50; mean=87.91; SD=70.60; IQR=70.25
+    Medium: n=36; median=123.50; mean=148.58; SD=88.82; IQR=95.00
+    High: n=8; median=134.50; mean=130.62; SD=41.01; IQR=53.75
+
+[6] Evaluating omnibus differences and ordered trend...
+  Terciles: Kruskal-Wallis H=41.1857; p=1.13931e-09; epsilon²=0.2946
+    Jonckheere-Terpstra z=6.3299; one-sided p=1.2267e-10
+    Median order: 43.50 < 83.50 < 126.00 = True
+  P25_P75: Kruskal-Wallis H=34.4909; p=3.23886e-08; epsilon²=0.2443
+    Jonckheere-Terpstra z=5.9458; one-sided p=1.37521e-09
+    Median order: 46.00 < 82.00 < 132.00 = True
+  Data_driven_1D: Kruskal-Wallis H=25.1653; p=3.43109e-06; epsilon²=0.1742
+    Jonckheere-Terpstra z=4.9632; one-sided p=3.46655e-07
+    Median order: 55.50 < 123.50 < 134.50 = True
+
+  NOTE: The ordered-trend test evaluates whether award times tend to increase across Low -> Medium -> High.
+  It does not establish that query counts causally produce longer award times.
+
+[7] Running pairwise nonparametric comparisons...
+  Terciles:
+    Low vs Medium: U=552.500; raw p=7.97197e-05; Holm p=0.000159439; rank-biserial=-0.4778
+    Low vs High: U=222.000; raw p=1.83886e-10; Holm p=5.51657e-10; rank-biserial=-0.7806
+    Medium vs High: U=724.000; raw p=0.0202908; Holm p=0.0202908; rank-biserial=-0.2846
+  P25_P75:
+    Low vs Medium: U=695.500; raw p=0.000417752; Holm p=0.000835504; rank-biserial=-0.4233
+    Low vs High: U=125.500; raw p=1.87691e-08; Holm p=5.63074e-08; rank-biserial=-0.7887
+    Medium vs High: U=632.000; raw p=0.000524717; Holm p=0.000835504; rank-biserial=-0.4283
+  Data_driven_1D:
+    Low vs Medium: U=783.500; raw p=3.7949e-06; Holm p=1.13847e-05; rank-biserial=-0.5269
+    Low vs High: U=162.500; raw p=0.00917301; Holm p=0.018346; rank-biserial=-0.5584
+    Medium vs High: U=143.000; raw p=0.987861; Holm p=0.987861; rank-biserial=-0.0069
+
+  NOTE: Holm correction controls family-wise error within each three-comparison scenario-definition family.
+
+[8] Estimating bootstrap uncertainty...
+  Bootstrap iterations per statistic: 10,000
+  Reproducibility seed: 2026
+  Terciles:
+    Low: median=43.50 [41.00, 52.00]; IQR=27.00 [13.00, 63.00]
+    Medium: median=83.50 [65.00, 118.50]; IQR=106.75 [60.25, 131.00]
+    High: median=126.00 [107.50, 154.50]; IQR=82.50 [55.50, 135.01]
+  P25_P75:
+    Low: median=46.00 [39.50, 54.00]; IQR=26.00 [13.25, 69.25]
+    Medium: median=82.00 [65.00, 108.00]; IQR=83.00 [59.00, 118.00]
+    High: median=132.00 [112.00, 171.00]; IQR=79.00 [51.98, 137.00]
+  Data_driven_1D:
+    Low: median=55.50 [50.00, 70.00]; IQR=70.25 [45.25, 93.25]
+    Medium: median=123.50 [101.50, 166.00]; IQR=95.00 [57.00, 158.00]
+    High: median=134.50 [103.00, 171.00]; IQR=53.75 [15.00, 94.25]
+
+  NOTE: Bootstrap is used here only to quantify sampling uncertainty in descriptive statistics.
+  This is not the stochastic Monte Carlo model specified for later simulation.
+
+[9] Auditing scenario-specific sample sizes for later distribution fitting...
+  Terciles:
+    Low: n=46; unique times=28; ADEQUATE_FOR_CANDIDATE_FITTING
+    Medium: n=46; unique times=39; ADEQUATE_FOR_CANDIDATE_FITTING
+    High: n=44; unique times=43; ADEQUATE_FOR_CANDIDATE_FITTING
+  P25_P75:
+    Low: n=36; unique times=25; ADEQUATE_FOR_CANDIDATE_FITTING
+    Medium: n=67; unique times=52; ADEQUATE_FOR_CANDIDATE_FITTING
+    High: n=33; unique times=33; ADEQUATE_FOR_CANDIDATE_FITTING
+  Data_driven_1D:
+    Low: n=92; unique times=60; ADEQUATE_FOR_CANDIDATE_FITTING
+    Medium: n=36; unique times=35; ADEQUATE_FOR_CANDIDATE_FITTING
+    High: n=8; unique times=8; SMALL_SAMPLE_CAUTION
+
+[10] Building cross-method robustness summary...
+  Terciles: increasing medians=True; all pairwise Holm significant=True; minimum scenario n=44; small-sample flag=False
+  P25_P75: increasing medians=True; all pairwise Holm significant=True; minimum scenario n=33; small-sample flag=False
+  Data_driven_1D: increasing medians=True; all pairwise Holm significant=False; minimum scenario n=8; small-sample flag=True
+
+[11] Building scientific interpretation audit...
+  Interpretation audit created.
+
+[12] Saving reproducible robustness outputs...
+  Output workbook: 08_1_scenario_robustness.xlsx
+  Log file: 08_scenario_robustness.log
+
+==============================================================================
+SCENARIO ROBUSTNESS AUDIT
+==============================================================================
+Master analytical procedures:          137
+Available total award times:           136
+Bootstrap iterations:                  10,000
+
+Terciles               | ordered=True  | KW p=1.14e-09 | JT p=1.23e-10 | all pairs=True  | min n=44
+P25_P75                | ordered=True  | KW p=3.24e-08 | JT p=1.38e-09 | all pairs=True  | min n=33
+Data_driven_1D         | ordered=True  | KW p=3.43e-06 | JT p=3.47e-07 | all pairs=False | min n=8
+
+SCIENTIFIC SCOPE
+- Scenario thresholds are inherited from Script 07; no new thresholds are optimized here.
+- Terciles and P25/P75 are evaluated as principal quantile-based candidates.
+- The data-driven partition is retained as a sensitivity analysis.
+- Kruskal-Wallis evaluates global distributional differences.
+- Pairwise Mann-Whitney tests use Holm multiplicity correction.
+- Jonckheere-Terpstra evaluates the prespecified Low -> Medium -> High ordering.
+- Bootstrap intervals quantify sampling uncertainty and do not constitute the later Monte Carlo simulation.
+- No observations are deleted.
+- No probability distribution is selected.
+- No Monte Carlo stochastic model is performed.
+- No discrete-event simulation is performed.
+- No causal interpretation is imposed.
+
+==============================================================================
+PIPELINE STATUS: COMPLETE
+==============================================================================
