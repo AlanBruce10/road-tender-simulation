@@ -1,0 +1,180 @@
+==============================================================================
+MODEL VALIDATION - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Purpose: Validate the stochastic architecture developed in Scripts 12-16.
+
+IMPORTANT:
+- Internal fidelity and temporal out-of-sample validation are distinguished.
+- No previous modeling decision is changed to improve validation.
+- Temporal validation uses 2020-2023 for training and 2024-2025 for testing.
+
+[1] Validating analytical inputs...
+  Found: 03_1_integrated_dataset.xlsx
+  Found: 07_1_scenario_definition.xlsx
+  Found: 14_1_monte_carlo_simulation.xlsx
+  Found: 16_1_discrete_event_simulation.xlsx
+
+[2] Reading analytical datasets...
+  Master rows: 137
+  Scenario-audit rows: 137
+  Monte Carlo primary-result rows: 3
+  DES primary-result rows: 3
+
+[3] Validating analytical contract...
+  Master analytical sample verified: 137
+  Available total award times: 136/137
+  Complete stage decompositions: 109/137
+  procedure_code uniqueness verified.
+
+[4] Recovering locked full-sample scenario assignments...
+  Full-sample tercile assignments recovered.
+  These remain the locked primary scenarios from Script 07.
+
+[5] Building internal full-sample fidelity audit...
+  Low: n=46; median=43.50; P95=124.50
+  Medium: n=46; median=83.50; P95=277.00
+  High: n=44; median=126.00; P95=285.45
+
+  NOTE: Reproduction of the full sample is not treated as out-of-sample validation.
+
+[6] Defining temporal validation experiment...
+  Training period: 2020-2023 (n=69)
+  Validation period: 2024-2025 (n=68)
+
+[7] Deriving training-only tercile thresholds...
+  Training-only lower tercile threshold: 34.667
+  Training-only upper tercile threshold: 120.333
+
+  IMPORTANT:
+  Temporal thresholds are estimated from 2020-2023 only.
+  2024-2025 outcomes do not influence scenario thresholds.
+  This validation classification does not replace Script 07's primary scenarios.
+
+[8] Auditing temporal validation feasibility...
+  Low: total train/test=23/27 [PASS] | stage train/test=23/22 [PASS]
+  Medium: total train/test=23/24 [PASS] | stage train/test=23/13 [PASS]
+  High: total train/test=23/16 [PASS] | stage train/test=23/5 [PASS]
+
+[9] Auditing temporal distribution shift...
+  queries_observations_count: train median=66.00; test median=57.50; KS=0.1405; p=0.444961
+  total_award_time_days: train median=70.00; test median=99.00; KS=0.1754; p=0.209405
+
+[10] Fitting training-only stochastic representations...
+  Low: empirical training representation (n=23)
+  Medium: Lognormal training fit (n=23; sigma=0.568774; scale=84.961147)
+  High: Lognormal training fit (n=23; sigma=0.490191; scale=120.452934)
+
+  NOTE: Probability families are not re-selected using validation outcomes.
+
+[11] Running temporal out-of-sample stochastic validation...
+  Low: test n=27; observed median=50.00; predicted median=42.00; KS=0.2525; p=0.0527739; Wasserstein=29.25 days
+  Medium: test n=24; observed median=122.50; predicted median=84.85; KS=0.2881; p=0.0294234; Wasserstein=35.83 days
+  High: test n=16; observed median=122.50; predicted median=120.30; KS=0.1723; p=0.667103; Wasserstein=29.88 days
+
+[12] Evaluating temporal predictive coverage...
+  Low: 90% interval coverage=0.630; 95% interval coverage=0.704
+  Medium: 90% interval coverage=0.792; 95% interval coverage=0.875
+  High: 90% interval coverage=0.812; 95% interval coverage=0.875
+
+[13] Testing scenario ordering in the temporal holdout...
+  Holdout medians: 50.00 < 122.50 < 122.50 = False
+  Holdout Kruskal-Wallis: H=13.6893; p=0.00106511
+
+[14] Evaluating continuous relationship in training and holdout periods...
+  TRAIN_2020_2023: n=69; Pearson=0.4798; Spearman=0.6530; Kendall=0.4686
+  TEST_2024_2025: n=67; Pearson=0.3105; Spearman=0.4706; Kendall=0.3174
+
+[15] Evaluating temporal validation of the two-stage DES...
+  Low: train/test stage n=23/22; observed total median=46.50; predicted=42.00; KS=0.1879; p=0.372322
+  Medium: train/test stage n=23/13; observed total median=133.00; predicted=80.00; KS=0.3244; p=0.10203
+  High: train/test stage n=23/5; observed total median=193.00; predicted=132.00; KS=0.4680; p=0.160704
+
+[16] Comparing direct stochastic model and DES validation behavior...
+  Direct-model and DES validation metrics assembled.
+  No winner is automatically selected from a single validation metric.
+
+[17] Building year-by-year validation audit...
+  2020: n=13; total coverage=100.00%; stage coverage=100.00%; role=TRAIN
+  2021: n=16; total coverage=100.00%; stage coverage=100.00%; role=TRAIN
+  2022: n=20; total coverage=100.00%; stage coverage=100.00%; role=TRAIN
+  2023: n=20; total coverage=100.00%; stage coverage=100.00%; role=TRAIN
+  2024: n=35; total coverage=97.14%; stage coverage=60.00%; role=TEST
+  2025: n=33; total coverage=100.00%; stage coverage=57.58%; role=TEST
+
+[18] Recording validation limitations...
+  Recorded limitations: 7
+
+[19] Building validation decision framework...
+  Temporal split feasibility                    | PASS
+  Independent scenario ordering                 | CAUTION
+  Continuous relationship transportability      | PASS
+  Direct stochastic predictive validation       | EVALUATED
+  DES temporal validation                       | EVALUATED
+  Causal validation                             | NOT_AUTHORIZED
+
+[20] Building scientific interpretation audit...
+  Interpretation boundaries recorded.
+
+[21] Building procedure-level temporal validation audit...
+  Training-threshold vs full-sample scenario agreement: 93.43%
+
+[22] Building reproducibility metadata...
+
+[23] Saving reproducible validation outputs...
+  Output workbook: 17_1_model_validation.xlsx
+  Log file: 17_model_validation.log
+
+==============================================================================
+MODEL VALIDATION AUDIT
+==============================================================================
+Master analytical procedures:          137
+Training period:                       2020-2023 (n=69)
+Temporal validation period:            2024-2025 (n=68)
+Training-only tercile thresholds:      34.667 / 120.333
+Scenario assignment agreement:         93.43%
+
+TEMPORAL HOLDOUT SCENARIO STRUCTURE
+------------------------------------------------------------------------------
+Low median:                            50.00
+Medium median:                         122.50
+High median:                           122.50
+Strict Low < Medium < High:             False
+Holdout Kruskal-Wallis p:              0.00106511
+
+TEMPORAL HOLDOUT CONTINUOUS RELATIONSHIP
+------------------------------------------------------------------------------
+Spearman rho:                          0.4706
+Spearman p-value:                      5.85225e-05
+
+DIRECT STOCHASTIC MODEL VALIDATION
+------------------------------------------------------------------------------
+Low        Empirical    | test n=27  | obs median=50.00 | pred median=42.00 | KS=0.2525 | W=29.25
+Medium     Lognormal    | test n=24  | obs median=122.50 | pred median=84.85 | KS=0.2881 | W=35.83
+High       Lognormal    | test n=16  | obs median=122.50 | pred median=120.30 | KS=0.1723 | W=29.88
+
+DES TEMPORAL VALIDATION
+------------------------------------------------------------------------------
+Low        | train/test=23/22 | obs median=46.50 | pred median=42.00 | KS=0.1879 | W=26.61
+Medium     | train/test=23/13 | obs median=133.00 | pred median=80.00 | KS=0.3244 | W=36.61
+High       | train/test=23/5 | obs median=193.00 | pred median=132.00 | KS=0.4680 | W=98.90
+
+SCIENTIFIC INTERPRETATION
+------------------------------------------------------------------------------
+- Full-sample reproduction is treated as internal fidelity, not independent validation.
+- Temporal validation calibrates only on 2020-2023 and evaluates 2024-2025.
+- Validation-period outcomes do not determine temporal scenario thresholds.
+- Previously selected probability families are not changed after seeing validation results.
+- Low retains an empirical/nonparametric representation.
+- Medium and High retain the previously authorized Lognormal family.
+- DES validation uses only procedures with complete stage decomposition.
+- K-S p-values are not interpreted as proof of distributional identity.
+- Wasserstein distance and quantile errors complement hypothesis-test diagnostics.
+- Monte Carlo iterations do not create additional independent tenders.
+- DES simulated entities do not create additional independent tenders.
+- No missing temporal values are imputed.
+- No observations are removed from the master analytical population.
+- No causal interpretation is authorized.
+
+==============================================================================
+PIPELINE STATUS: MODEL_VALIDATION_COMPLETE_REVIEW_RESULTS_BEFORE_ROBUSTNESS
+==============================================================================
