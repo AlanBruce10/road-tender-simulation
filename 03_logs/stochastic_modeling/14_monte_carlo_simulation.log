@@ -1,0 +1,172 @@
+==============================================================================
+FINAL MONTE CARLO SIMULATION - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Purpose: Perform the substantive stochastic simulation authorized by Scripts 12-13.
+IMPORTANT: No model selection or convergence criterion is changed here.
+
+[1] Validating analytical inputs...
+  Found: 03_1_integrated_dataset.xlsx
+  Found: 07_1_scenario_definition.xlsx
+  Found: 09_1_distribution_fitting.xlsx
+  Found: 12_1_model_specification.xlsx
+  Found: 13_1_monte_carlo_convergence.xlsx
+
+[2] Reading source datasets...
+  Master rows: 137
+  Scenario-audit rows: 137
+  Distribution-fit rows: 24
+
+[3] Validating analytical contract...
+  Master analytical sample verified: 137
+  Available total award times: 136/137
+  Primary scenario definition verified: Terciles
+
+[4] Verifying Script 13 Monte Carlo authorization...
+  Script 13 authorization: AUTHORIZED_FOR_FINAL_SIMULATION
+  Operational Monte Carlo iterations: 50,000
+  Current expected operational N verified: 50,000
+
+[5] Verifying representation-specific convergence decisions...
+  Low | Empirical: STRUCTURAL_DISCRETE_SUPPORT
+  Low | Lognormal: CONVERGED
+  Medium | Lognormal: CONVERGED
+  High | Lognormal: CONVERGED
+
+[6] Preparing observed scenario samples...
+  Low: n=46; range=34-218 days
+  Medium: n=46; range=17-389 days
+  High: n=44; range=48-408 days
+
+[7] Verifying Script 12 probability-model protocol...
+  Low: Lognormal | NOT_AUTHORIZED_AS_SOLE_PARAMETRIC_MODEL
+  Medium: Lognormal | AUTHORIZED_FOR_CONVERGENCE_TESTING
+  High: Lognormal | AUTHORIZED_FOR_CONVERGENCE_TESTING
+  Low empirical/nonparametric primary protocol verified.
+
+[8] Extracting authorized Lognormal parameters...
+  Low: sigma=0.455865; loc=0.000000; scale=53.330131
+  Medium: sigma=0.698961; loc=0.000000; scale=90.744975
+  High: sigma=0.527398; loc=0.000000; scale=126.361049
+
+[9] Defining prespecified scenario-specific exceedance thresholds...
+  Low: observed P90 = 108.00 days
+  Medium: observed P90 = 240.50 days
+  High: observed P90 = 242.80 days
+  NOTE: These thresholds reproduce the prespecified convergence-stage definition.
+
+[10] Computing exact observed scenario benchmarks...
+  Low: mean=60.37; median=43.50; SD=37.07; P90=108.00; P95=124.50
+  Medium: mean=115.46; median=83.50; SD=84.58; P90=240.50; P95=277.00
+  High: mean=145.32; median=126.00; SD=82.13; P90=242.80; P95=285.45
+
+[11] Running final authorized stochastic simulations...
+  Low | Empirical: N=50,000; mean=60.56; median=43.00; SD=36.88; P90=112.00; P95=125.00
+  Low | Lognormal: N=50,000; mean=59.27; median=53.44; SD=28.57; P90=95.92; P95=113.13
+  Medium | Lognormal: N=50,000; mean=115.13; median=90.09; SD=91.29; P90=222.20; P95=286.33
+  High | Lognormal: N=50,000; mean=144.64; median=126.51; SD=81.42; P90=245.81; P95=297.34
+
+[12] Computing theoretical Lognormal benchmarks...
+  Low: theoretical mean=59.17; median=53.33
+  Medium: theoretical mean=115.85; median=90.74
+  High: theoretical mean=145.22; median=126.36
+
+[13] Auditing final Monte Carlo numerical accuracy...
+  Low | Empirical: mean difference=0.319%
+  Low | Lognormal: mean difference=0.173%
+  Medium | Lognormal: mean difference=-0.621%
+  High | Lognormal: mean difference=-0.397%
+  NOTE: Low empirical quantiles retain finite-support behavior diagnosed in Script 13.
+
+[14] Building primary stochastic-results table...
+  Low: Empirical | simulated median=43.00; simulated P95=125.00
+  Medium: Lognormal | simulated median=90.09; simulated P95=286.33
+  High: Lognormal | simulated median=126.51; simulated P95=297.34
+
+[15] Quantifying primary scenario contrasts...
+  Medium vs Low: median difference=47.09 days; P95 difference=161.33 days
+  High vs Low: median difference=83.51 days; P95 difference=172.34 days
+  High vs Medium: median difference=36.42 days; P95 difference=11.01 days
+
+[16] Estimating stochastic cross-scenario ordering probabilities...
+  P(T_Medium > T_Low): 0.7426
+  P(T_High > T_Low): 0.8829
+  P(T_High > T_Medium): 0.6504
+  P(T_Low < T_Medium < T_High): 0.4164
+  NOTE: These are stochastic comparison probabilities, not causal probabilities.
+
+[17] Evaluating Low empirical vs Low Lognormal sensitivity...
+  Low empirical remains PRIMARY.
+  Low Lognormal remains PARAMETRIC SENSITIVITY ONLY.
+
+[18] Building reproducible stochastic distribution curves...
+  Distribution-curve records: 102
+
+[19] Building compact histogram data for reproducible figures...
+  Histogram records: 824
+
+[20] Building compact simulation-draw audit...
+  Stored audit draws: 4,000
+  NOTE: Full simulations are reproducible from the recorded seeds, parameters, and operational N.
+
+[21] Building final model-architecture audit...
+  Model architecture locked for this simulation.
+
+[22] Building scientific interpretation audit...
+  Interpretation audit created.
+
+[23] Building reproducibility metadata...
+  Reproducibility metadata created.
+
+[24] Saving final Monte Carlo outputs...
+  Output workbook: 14_1_monte_carlo_simulation.xlsx
+  Log file: 14_monte_carlo_simulation.log
+
+==============================================================================
+FINAL MONTE CARLO SIMULATION AUDIT
+==============================================================================
+Master analytical procedures:          137
+Available total award times:           136
+Operational Monte Carlo iterations:    50,000
+
+PRIMARY STOCHASTIC REPRESENTATIONS
+------------------------------------------------------------------------------
+Low        Empirical     PRIMARY ROBUST REPRESENTATION
+Medium     Lognormal     PRIMARY PARAMETRIC REPRESENTATION
+High       Lognormal     PRIMARY PARAMETRIC REPRESENTATION
+Low        Lognormal     PARAMETRIC SENSITIVITY ONLY
+
+PRIMARY SIMULATION RESULTS
+------------------------------------------------------------------------------
+Low        Empirical    | mean=60.56 | median=43.00 | SD=36.88 | P90=112.00 | P95=125.00
+Medium     Lognormal    | mean=115.13 | median=90.09 | SD=91.29 | P90=222.20 | P95=286.33
+High       Lognormal    | mean=144.64 | median=126.51 | SD=81.42 | P90=245.81 | P95=297.34
+
+STOCHASTIC ORDERING PROBABILITIES
+------------------------------------------------------------------------------
+P(T_Medium > T_Low):                  0.7426
+P(T_High > T_Low):                    0.8829
+P(T_High > T_Medium):                 0.6504
+P(T_Low < T_Medium < T_High):         0.4164
+
+SCIENTIFIC SCOPE
+------------------------------------------------------------------------------
+- Script 14 performs the final scenario-based Monte Carlo simulation.
+- The operational iteration count is inherited from Script 13.
+- The iteration count is not re-selected or optimized in this script.
+- Low uses empirical/nonparametric resampling as its primary representation.
+- Exact Low empirical functionals remain deterministic benchmarks.
+- Low Lognormal is retained only as parametric sensitivity.
+- Medium and High use the Lognormal representations authorized previously.
+- Monte Carlo iterations do not increase the number of independent tenders.
+- Scenario contrasts describe stochastic differences, not causal effects.
+- Numerical convergence does not prove the scientific truth of a distribution.
+- No observations are deleted.
+- No missing temporal values are imputed.
+- No scenario thresholds are redefined.
+- No probability distribution is re-selected.
+- No discrete-event simulation is performed.
+- Model validation remains a subsequent pipeline phase.
+
+==============================================================================
+PIPELINE STATUS: FINAL_MONTE_CARLO_SIMULATION_COMPLETE
+==============================================================================
