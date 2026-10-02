@@ -1,0 +1,143 @@
+==============================================================================
+DISTRIBUTION DIAGNOSTICS - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Input 1: Script 07 scenario assignments
+Input 2: Script 09 distribution-fitting results
+Purpose: Diagnose the source and location of distributional misfit before stochastic simulation
+
+[1] Validating input files...
+  Script 07: 07_1_scenario_definition.xlsx
+  Script 09: 09_1_distribution_fitting.xlsx
+  Input files found.
+
+[2] Reading source datasets...
+  Procedure-level rows: 137
+  Distribution-fit rows: 24
+  Selection-audit rows: 6
+
+[3] Validating analytical contract...
+  Master analytical sample verified: 137
+  Available total award times: 136
+  procedure_code uniqueness verified.
+
+[4] Confirming Script 09 diagnostic signal...
+  Low: Lognormal | bootstrap KS p=0.0010 | BEST_AIC_BUT_GOF_CAUTION
+  Medium: Lognormal | bootstrap KS p=0.6723 | SUPPORTED_CANDIDATE
+  High: Lognormal | bootstrap KS p=0.9730 | SUPPORTED_CANDIDATE
+
+[5] Preparing primary tercile scenario samples...
+  Low: n=46; range=34-218 days
+  Medium: n=46; range=17-389 days
+  High: n=44; range=48-408 days
+
+[6] Diagnosing empirical distributional shape...
+  Low: mean=60.37; median=43.50; skewness=2.351; excess kurtosis=6.542
+  Medium: mean=115.46; median=83.50; skewness=1.417; excess kurtosis=1.765
+  High: mean=145.32; median=126.00; skewness=1.470; excess kurtosis=2.551
+
+[7] Auditing concentration and repeated durations...
+  Low: unique values=28/46; observations in repeated values=56.52%; largest single-value share=10.87%
+  Medium: unique values=39/46; observations in repeated values=28.26%; largest single-value share=6.52%
+  High: unique values=43/44; observations in repeated values=4.55%; largest single-value share=4.55%
+
+  NOTE: Integer-day ties are expected and are not treated as measurement errors.
+
+[8] Locating maximum empirical-vs-fitted CDF discrepancies...
+  Low:
+    Lognormal    KS=0.1867; location=50.0 days; empirical position=0.630
+    Weibull      KS=0.2435; location=34.0 days; empirical position=0.022
+    Gamma        KS=0.2129; location=50.0 days; empirical position=0.630
+    Exponential  KS=0.4306; location=34.0 days; empirical position=0.022
+  Medium:
+    Lognormal    KS=0.0796; location=70.0 days; empirical position=0.435
+    Weibull      KS=0.1123; location=84.0 days; empirical position=0.522
+    Gamma        KS=0.1108; location=70.0 days; empirical position=0.435
+    Exponential  KS=0.2269; location=33.0 days; empirical position=0.043
+  High:
+    Lognormal    KS=0.0574; location=60.0 days; empirical position=0.136
+    Weibull      KS=0.0935; location=182.0 days; empirical position=0.795
+    Gamma        KS=0.0714; location=132.0 days; empirical position=0.568
+    Exponential  KS=0.2813; location=48.0 days; empirical position=0.023
+
+[9] Comparing empirical and fitted quantiles...
+  Low | Lognormal: mean absolute quantile error=8.66 days; maximum=12.35 days
+  Medium | Lognormal: mean absolute quantile error=8.61 days; maximum=18.25 days
+  High | Lognormal: mean absolute quantile error=5.38 days; maximum=15.41 days
+
+[10] Auditing upper-tail structure...
+  Low: P90=108.00; P95=124.50; max=218.00; above 1.5*IQR fence=5
+  Medium: P90=240.50; P95=277.00; max=389.00; above 1.5*IQR fence=2
+  High: P90=242.80; P95=285.45; max=408.00; above 1.5*IQR fence=2
+
+[11] Evaluating Lognormal sensitivity to upper-tail observations...
+  Low: full KS=0.1867; remove-max KS=0.1864; <=P95 KS=0.1858
+  Medium: full KS=0.0796; remove-max KS=0.0768; <=P95 KS=0.0740
+  High: full KS=0.0574; remove-max KS=0.0631; <=P95 KS=0.0735
+
+  NOTE: These are sensitivity refits only. No observation is removed from the analytical sample.
+
+[12] Diagnosing internal structure of the Low scenario...
+  Low-scenario procedures: 46
+  Distinct query-count values: 22
+  Minimum query count: 0
+  Maximum query count: 30
+  Most frequent query-count value: 6 (n=4)
+  Within-Low Spearman rho=0.0616; p=0.684022
+  Within-Low Kendall tau=0.0499; p=0.634585
+
+  NOTE: This is an internal heterogeneity diagnostic. It does not redefine the Low threshold.
+
+[13] Comparing empirical and Lognormal leave-one-out predictive scores...
+  Low: mean log-score Lognormal=-4.6695; empirical=-3.5341; empirical-better share=76.09%
+  Medium: mean log-score Lognormal=-5.6093; empirical=-4.1780; empirical-better share=100.00%
+  High: mean log-score Lognormal=-5.6622; empirical=-4.4274; empirical-better share=100.00%
+
+  NOTE: The empirical comparator is a diagnostic benchmark, not a selected simulation model.
+
+[14] Building Low-scenario procedure-level diagnostic audit...
+  Procedure-level Low audit rows: 46
+
+[15] Building scientific diagnostic framework...
+  Diagnostic framework created.
+
+[16] Saving reproducible diagnostic outputs...
+  Output workbook: 10_1_distribution_diagnostics.xlsx
+  Log file: 10_distribution_diagnostics.log
+
+==============================================================================
+DISTRIBUTION-DIAGNOSTICS AUDIT
+==============================================================================
+Master analytical procedures:          137
+Available total award times:           136
+Primary scenario definition:           Terciles
+Low observations diagnosed:            46
+Medium observations diagnosed:         46
+High observations diagnosed:           44
+
+LOW-SCENARIO DIAGNOSTIC SNAPSHOT
+------------------------------------------------------------------------------
+Lognormal maximum CDF discrepancy:     0.1867
+Maximum discrepancy location:          50.0 days
+Empirical position at discrepancy:     0.630
+Repeated-duration observation share:   56.52%
+Upper-IQR-fence observations:          5
+Full Lognormal KS:                     0.1867
+Lognormal KS after <=P95 sensitivity:  0.1858
+Within-Low Spearman rho:               0.0616
+
+SCIENTIFIC SCOPE
+- Script 10 diagnoses the distributional mismatch identified in Script 09.
+- No new probability distribution is introduced or selected.
+- No distribution is searched opportunistically to obtain a non-significant goodness-of-fit test.
+- The primary tercile thresholds remain unchanged.
+- Repeated integer-day durations are quantified but are not treated automatically as data errors.
+- Tail-restricted refits are sensitivity diagnostics only; no observations are deleted.
+- The empirical predictive representation is a diagnostic benchmark, not a selected stochastic model.
+- The master analytical sample remains unchanged at n=137.
+- No Monte Carlo award-time simulation is performed.
+- No discrete-event simulation is performed.
+- No causal interpretation is imposed.
+
+==============================================================================
+PIPELINE STATUS: COMPLETE
+==============================================================================
