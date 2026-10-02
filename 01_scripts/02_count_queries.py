@@ -1,81 +1,187 @@
+import os
 import time
 import json
 import re
 import unicodedata
 from pathlib import Path
-import fitz
-from google import genai
-from google.genai import types
+
 import pandas as pd
+import pymupdf
 
-API_KEY = "TU_API_KEY_DE_GEMINI"
-MODELO_GEMINI = "gemini-3.8-flash"
 
-CARPETA_PDFS = Path(r"D:\00_THESIS_ALAN_BRUCE\CORRER CÓDIGO PARA CONSULTAS Y OBSERVACIONES\02_pdfs_descargados")
-CARPETA_DESCARTADOS = CARPETA_PDFS / "descartados"
-CARPETA_RESULTADOS = Path(r"D:\00_THESIS_ALAN_BRUCE\CORRER CÓDIGO PARA CONSULTAS Y OBSERVACIONES\03_resultados")
+# =============================================================================
+# PROJECT CONFIGURATION
+# =============================================================================
 
-EXCEL_SALIDA = CARPETA_RESULTADOS / "conteos_consultas.xlsx"
-EXCEL_ESTADISTICAS = CARPETA_RESULTADOS / "estadisticas_procesamiento.xlsx"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-MAX_REINTENTOS_GEMINI = 4
-ESPERA_BASE = 15
-PAUSA_ENTRE_PDFS = 1
+PDF_DIR = PROJECT_ROOT / "05_pdfs"
+RESULTS_DIR = PROJECT_ROOT / "02_results"
+LOGS_DIR = PROJECT_ROOT / "03_logs"
 
-PROMPT_GEMINI = """
-Eres un asistente experto en analizar documentos de licitaciones publicas del Peru.
+SAMPLE_FILE = RESULTS_DIR / "00_1_sample_selection.xlsx"
+DOWNLOAD_STATUS_FILE = RESULTS_DIR / "01_1_download_status.xlsx"
 
-En el PDF adjunto encontraras un documento de la etapa "Absolucion de Consultas y Observaciones" de un procedimiento de seleccion.
+OUTPUT_FILE = RESULTS_DIR / "02_1_query_counts.xlsx"
+SUMMARY_FILE = RESULTS_DIR / "02_2_processing_summary.xlsx"
+LOG_FILE = LOGS_DIR / "02_count_queries.log"
 
-Necesito que analices el documento y me digas:
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+PDF_DIR.mkdir(parents=True, exist_ok=True)
 
-1. CUANTAS consultas y observaciones contiene en TOTAL. Cuenta el numero mas alto que aparezca numerado.
-2. QUE TIPO de documento es:
-   - "PLIEGO" si es un Pliego de Absolucion de Consultas y Observaciones.
-   - "ACTA_NO_FORMULACION" si es un Acta que certifica que NO se formularon consultas ni observaciones.
-   - "ACTA" si es otro tipo de acta.
-   - "OTRO" si es un documento diferente.
-3. Una NOTA breve (maximo 100 caracteres).
 
-Responde UNICAMENTE con un objeto JSON valido, sin texto adicional:
-{"total": <numero entero>, "tipo_documento": "<PLIEGO|ACTA_NO_FORMULACION|ACTA|OTRO>", "notas": "<breve descripcion>"}
-"""
+# =============================================================================
+# PROCESSING CONFIGURATION
+# =============================================================================
 
-def normalizar(texto):
-    texto = texto.lower()
-    texto = unicodedata.normalize("NFKD", texto)
-    texto = "".join(c for c in texto if not unicodedata.combining(c))
-    return texto
+AI_PROVIDER = os.getenv("AI_PROVIDER", "none").strip().lower()
+AI_MODEL = os.getenv("AI_MODEL", "").strip()
+AI_API_KEY = os.getenv("AI_API_KEY", "").strip()
 
-def extraer_texto_pdf(ruta_pdf):
-    doc = fitz.open(ruta_pdf)
-    paginas = []
-    for pagina in doc:
-        paginas.append(pagina.get_text("text"))
-    numero_paginas = len(doc)
-    doc.close()
-    return "\n".join(paginas), numero_paginas
+MAX_AI_RETRIES = 4
+BASE_WAIT_SECONDS = 15
+PAUSE_BETWEEN_PDFS = 0.2
 
-def detectar_acta_sin_consultas(texto):
-    t = normalizar(texto)
-    frases = [
-        "no se registraron formulacion de consultas y observaciones",
-        "no se registraron consultas y observaciones",
-        "no se formularon consultas ni observaciones",
-        "no se formularon consultas y observaciones",
-        "no se registraron consultas ni observaciones",
-        "no se registraron formulacion de consultas",
+
+# =============================================================================
+# LOGGING
+# =============================================================================
+
+LOG_LINES = []
+
+
+def log(message=""):
+    text = str(message)
+    print(text)
+    LOG_LINES.append(text)
+
+
+def save_log():
+    LOG_FILE.write_text(
+        "\n".join(LOG_LINES) + "\n",
+        encoding="utf-8"
+    )
+
+
+# =============================================================================
+# TEXT UTILITIES
+# =============================================================================
+
+def normalize_text(text):
+    text = str(text).lower()
+    text = unicodedata.normalize("NFKD", text)
+
+    text = "".join(
+        character
+        for character in text
+        if not unicodedata.combining(character)
+    )
+
+    text = re.sub(r"\s+", " ", text)
+
+    return text.strip()
+
+
+def safe_integer(value):
+    if pd.isna(value):
+        return None
+
+    try:
+        return int(float(value))
+    except (TypeError, ValueError):
+        return None
+
+
+def extract_procedure_code(pdf_path):
+    match = re.match(
+        r"^(\d+)",
+        pdf_path.stem
+    )
+
+    if not match:
+        return None
+
+    return int(match.group(1))
+
+
+# =============================================================================
+# PDF TEXT EXTRACTION
+# =============================================================================
+
+def extract_pdf_text(pdf_path):
+    document = pymupdf.open(pdf_path)
+
+    try:
+        pages = [
+            page.get_text("text")
+            for page in document
+        ]
+
+        page_count = len(document)
+
+    finally:
+        document.close()
+
+    return "\n".join(pages), page_count
+
+
+# =============================================================================
+# NO-FORMULATION ACT DETECTION
+# =============================================================================
+
+def detect_no_formulation_act(text):
+    normalized = normalize_text(text)
+
+    patterns = (
+        "acta de no formulacion",
         "no se formularon consultas",
-    ]
-    for frase in frases:
-        if frase in t:
-            return True
-    if ("acta de no" in t and "consultas" in t and "observaciones" in t):
-        return True
-    return False
+        "no se registraron consultas",
+        "no formulacion de consultas",
+        "no se registraron formulacion de consultas",
+        "no se registraron formulaciones de consultas",
+        "no se registraron consultas y observaciones",
+        "no se registraron consultas ni observaciones",
+        "no se formularon consultas y observaciones",
+        "no se formularon consultas ni observaciones",
+    )
 
-def detectar_registros_consultas(texto):
-    patron = re.compile(
+    if any(
+        pattern in normalized
+        for pattern in patterns
+    ):
+        return True
+
+    has_query_context = (
+        "consulta" in normalized
+    )
+
+    has_observation_context = (
+        "observacion" in normalized
+    )
+
+    has_no_formulation = (
+        "no formulacion" in normalized
+        or "no se formularon" in normalized
+        or "no se registro" in normalized
+        or "no se registraron" in normalized
+    )
+
+    return (
+        has_no_formulation
+        and (
+            has_query_context
+            or has_observation_context
+        )
+    )
+
+
+# =============================================================================
+# LOCAL QUERY / OBSERVATION DETECTION
+# =============================================================================
+
+def detect_query_records(text):
+    pattern = re.compile(
         r"""
         \bNro\.?
         \s*
@@ -87,286 +193,1517 @@ def detectar_registros_consultas(texto):
         Observaci[oó]n
         \s*:
         """,
-        re.IGNORECASE | re.DOTALL | re.VERBOSE
+        re.IGNORECASE
+        | re.DOTALL
+        | re.VERBOSE
     )
-    encontrados = patron.findall(texto)
-    numeros = [int(n) for n in encontrados]
-    return sorted(set(numeros))
 
-def analizar_local(ruta_pdf):
+    matches = pattern.findall(text)
+
+    numbers = [
+        int(number)
+        for number in matches
+    ]
+
+    return sorted(set(numbers))
+
+
+# =============================================================================
+# LOCAL DOCUMENT ANALYSIS
+# =============================================================================
+
+def analyze_locally(pdf_path):
     try:
-        texto, paginas = extraer_texto_pdf(ruta_pdf)
-    except Exception as e:
-        return (None, None, "PyMuPDF", "BAJA", "REQUIERE_OCR", f"Error lectura: {str(e)[:80]}")
-
-    if len(texto.strip()) < 50:
-        return (None, None, "PyMuPDF", "BAJA", "REQUIERE_OCR", "PDF sin texto suficiente")
-
-    if detectar_acta_sin_consultas(texto):
-        return (0, "ACTA_NO_FORMULACION", "PyMuPDF", "ALTA", "OK", "Acta sin consultas")
-
-    numeros = detectar_registros_consultas(texto)
-
-    if not numeros:
-        return (None, None, "PyMuPDF", "BAJA", "REVISAR", "No se encontraron registros")
-
-    primero = min(numeros)
-    ultimo = max(numeros)
-    unicos = len(numeros)
-
-    esperado = set(range(1, ultimo + 1))
-    encontrado = set(numeros)
-    faltantes = sorted(esperado - encontrado)
-
-    if primero == 1 and unicos == ultimo and not faltantes:
-        return (ultimo, "PLIEGO", "PyMuPDF", "ALTA", "OK", f"Secuencia 1-{ultimo} completa")
-    else:
-        return (ultimo, "PLIEGO", "PyMuPDF", "MEDIA", "REVISAR", f"Secuencia incompleta: faltan {len(faltantes)}")
-
-def contar_con_gemini(client, ruta_pdf):
-    archivo_remoto = None
-    try:
-        archivo_remoto = client.files.upload(file=str(ruta_pdf))
-
-        intentos_espera = 0
-        while archivo_remoto.state.name == "PROCESSING":
-            time.sleep(2)
-            archivo_remoto = client.files.get(name=archivo_remoto.name)
-            intentos_espera += 1
-            if intentos_espera > 30:
-                return (None, None, "GEMINI", "BAJA", "TIMEOUT", "Timeout esperando procesamiento")
-
-        if archivo_remoto.state.name == "FAILED":
-            return (None, None, "GEMINI", "BAJA", "ERROR_UPLOAD", "Fallo en Gemini")
-
-        respuesta = client.models.generate_content(
-            model=MODELO_GEMINI,
-            contents=[
-                types.Part.from_uri(file_uri=archivo_remoto.uri, mime_type="application/pdf"),
-                PROMPT_GEMINI
-            ]
+        text, page_count = extract_pdf_text(
+            pdf_path
         )
 
-        texto_respuesta = respuesta.text.strip()
+    except Exception as error:
+        return {
+            "total": None,
+            "document_type": None,
+            "method": "PYMUPDF",
+            "confidence": "LOW",
+            "status": "READ_ERROR",
+            "notes": (
+                f"PDF read error: "
+                f"{str(error)[:100]}"
+            ),
+            "pages": None,
+        }
 
-        try:
-            client.files.delete(name=archivo_remoto.name)
-        except:
-            pass
+    if len(text.strip()) < 50:
+        return {
+            "total": None,
+            "document_type": None,
+            "method": "PYMUPDF",
+            "confidence": "LOW",
+            "status": "INSUFFICIENT_TEXT",
+            "notes": (
+                "PDF contains insufficient "
+                "extractable text"
+            ),
+            "pages": page_count,
+        }
 
-        if "```" in texto_respuesta:
-            texto_respuesta = texto_respuesta.split("```")[1]
-            if texto_respuesta.startswith("json"):
-                texto_respuesta = texto_respuesta[4:]
-            texto_respuesta = texto_respuesta.strip()
+    if detect_no_formulation_act(text):
+        return {
+            "total": 0,
+            "document_type":
+                "ACTA_NO_FORMULACION",
+            "method": "PYMUPDF",
+            "confidence": "HIGH",
+            "status": "OK",
+            "notes": (
+                "No-formulation act verified "
+                "from document text"
+            ),
+            "pages": page_count,
+        }
 
-        datos = json.loads(texto_respuesta)
-        total = int(datos.get("total", 0))
-        tipo = datos.get("tipo_documento", "OTRO")
-        notas = datos.get("notas", "")
+    numbers = detect_query_records(text)
 
-        return (total, tipo, "GEMINI", "ALTA", "OK", notas)
+    if not numbers:
+        return {
+            "total": None,
+            "document_type": None,
+            "method": "PYMUPDF",
+            "confidence": "LOW",
+            "status": "NO_RECORDS_DETECTED",
+            "notes": (
+                "No query/observation records "
+                "detected locally"
+            ),
+            "pages": page_count,
+        }
 
-    except Exception as e:
-        if archivo_remoto:
+    first_number = min(numbers)
+    last_number = max(numbers)
+    unique_count = len(numbers)
+
+    expected_numbers = set(
+        range(1, last_number + 1)
+    )
+
+    detected_numbers = set(numbers)
+
+    missing_numbers = sorted(
+        expected_numbers
+        - detected_numbers
+    )
+
+    if (
+        first_number == 1
+        and unique_count == last_number
+        and not missing_numbers
+    ):
+        return {
+            "total": last_number,
+            "document_type": "PLIEGO",
+            "method": "PYMUPDF",
+            "confidence": "HIGH",
+            "status": "OK",
+            "notes": (
+                f"Complete sequential numbering "
+                f"1-{last_number}"
+            ),
+            "pages": page_count,
+        }
+
+    return {
+        "total": last_number,
+        "document_type": "PLIEGO",
+        "method": "PYMUPDF",
+        "confidence": "MEDIUM",
+        "status": "REVIEW_REQUIRED",
+        "notes": (
+            f"Incomplete numbering: "
+            f"{unique_count} unique records "
+            f"detected up to {last_number}; "
+            f"{len(missing_numbers)} missing"
+        ),
+        "pages": page_count,
+    }
+
+
+# =============================================================================
+# AI PROMPT
+# =============================================================================
+
+AI_PROMPT = """
+You are analyzing an official Peruvian public-procurement document
+from SEACE.
+
+Determine:
+
+1. The TOTAL number of queries and observations contained in the
+   document.
+
+2. The document type:
+   - PLIEGO
+   - ACTA_NO_FORMULACION
+   - ACTA
+   - OTRO
+
+3. A brief note of no more than 100 characters.
+
+Rules:
+
+- For a standard Pliego de Absolucion de Consultas y Observaciones,
+  use the highest sequential record number only when the document
+  structure supports that interpretation.
+
+- Return total = 0 ONLY when the document explicitly establishes
+  that no queries or observations were submitted.
+
+- If the total cannot be determined reliably, return null.
+
+Return ONLY valid JSON:
+
+{
+  "total": <integer or null>,
+  "tipo_documento":
+      "<PLIEGO|ACTA_NO_FORMULACION|ACTA|OTRO>",
+  "notas": "<brief note>"
+}
+"""
+
+
+# =============================================================================
+# GEMINI ADAPTER
+# =============================================================================
+
+def analyze_with_gemini(pdf_path):
+    try:
+        from google import genai
+        from google.genai import types
+
+    except ImportError:
+        return {
+            "total": None,
+            "document_type": None,
+            "method": "GEMINI",
+            "confidence": "LOW",
+            "status": "DEPENDENCY_MISSING",
+            "notes": (
+                "google-genai package is not installed"
+            ),
+        }
+
+    if not AI_API_KEY:
+        return {
+            "total": None,
+            "document_type": None,
+            "method": "GEMINI",
+            "confidence": "LOW",
+            "status": "API_KEY_MISSING",
+            "notes": "AI_API_KEY is not configured",
+        }
+
+    if not AI_MODEL:
+        return {
+            "total": None,
+            "document_type": None,
+            "method": "GEMINI",
+            "confidence": "LOW",
+            "status": "MODEL_MISSING",
+            "notes": "AI_MODEL is not configured",
+        }
+
+    client = genai.Client(
+        api_key=AI_API_KEY
+    )
+
+    remote_file = None
+
+    try:
+        remote_file = client.files.upload(
+            file=str(pdf_path)
+        )
+
+        waiting_cycles = 0
+
+        while (
+            remote_file.state.name
+            == "PROCESSING"
+        ):
+            time.sleep(2)
+
+            remote_file = client.files.get(
+                name=remote_file.name
+            )
+
+            waiting_cycles += 1
+
+            if waiting_cycles > 30:
+                return {
+                    "total": None,
+                    "document_type": None,
+                    "method": "GEMINI",
+                    "confidence": "LOW",
+                    "status": "TIMEOUT",
+                    "notes": (
+                        "Timeout while processing PDF"
+                    ),
+                }
+
+        if (
+            remote_file.state.name
+            == "FAILED"
+        ):
+            return {
+                "total": None,
+                "document_type": None,
+                "method": "GEMINI",
+                "confidence": "LOW",
+                "status": "UPLOAD_FAILED",
+                "notes": (
+                    "AI provider could not process PDF"
+                ),
+            }
+
+        response = (
+            client.models.generate_content(
+                model=AI_MODEL,
+                contents=[
+                    types.Part.from_uri(
+                        file_uri=remote_file.uri,
+                        mime_type="application/pdf",
+                    ),
+                    AI_PROMPT,
+                ],
+            )
+        )
+
+        response_text = (
+            response.text.strip()
+        )
+
+        if "```" in response_text:
+            parts = response_text.split("```")
+
+            if len(parts) >= 2:
+                response_text = parts[1]
+
+                if response_text.startswith(
+                    "json"
+                ):
+                    response_text = (
+                        response_text[4:]
+                    )
+
+                response_text = (
+                    response_text.strip()
+                )
+
+        data = json.loads(
+            response_text
+        )
+
+        raw_total = data.get("total")
+
+        if raw_total is None:
+            total = None
+        else:
+            total = int(raw_total)
+
+        document_type = str(
+            data.get(
+                "tipo_documento",
+                "OTRO"
+            )
+        ).strip()
+
+        notes = str(
+            data.get(
+                "notas",
+                ""
+            )
+        ).strip()[:100]
+
+        valid_types = {
+            "PLIEGO",
+            "ACTA_NO_FORMULACION",
+            "ACTA",
+            "OTRO",
+        }
+
+        if (
+            document_type
+            not in valid_types
+        ):
+            return {
+                "total": None,
+                "document_type":
+                    document_type,
+                "method": "GEMINI",
+                "confidence": "LOW",
+                "status":
+                    "INVALID_RESPONSE",
+                "notes": (
+                    "Invalid document type "
+                    "returned by AI"
+                ),
+            }
+
+        if (
+            total == 0
+            and document_type
+            != "ACTA_NO_FORMULACION"
+        ):
+            return {
+                "total": None,
+                "document_type":
+                    document_type,
+                "method": "GEMINI",
+                "confidence": "LOW",
+                "status":
+                    "ZERO_NOT_VERIFIED",
+                "notes": (
+                    "Zero rejected because "
+                    "absence was not documented"
+                ),
+            }
+
+        if total is None:
+            return {
+                "total": None,
+                "document_type":
+                    document_type,
+                "method": "GEMINI",
+                "confidence": "LOW",
+                "status":
+                    "REVIEW_REQUIRED",
+                "notes": (
+                    notes
+                    or
+                    "AI could not determine "
+                    "a reliable total"
+                ),
+            }
+
+        if total < 0:
+            return {
+                "total": None,
+                "document_type":
+                    document_type,
+                "method": "GEMINI",
+                "confidence": "LOW",
+                "status":
+                    "INVALID_RESPONSE",
+                "notes": (
+                    "Negative total rejected"
+                ),
+            }
+
+        return {
+            "total": total,
+            "document_type":
+                document_type,
+            "method": "GEMINI",
+            "confidence": "HIGH",
+            "status": "OK",
+            "notes": notes,
+        }
+
+    except Exception as error:
+        error_text = str(error)
+
+        if (
+            "503" in error_text
+            or "UNAVAILABLE" in error_text
+        ):
+            status = "RETRY_503"
+
+        elif (
+            "429" in error_text
+            or "RESOURCE_EXHAUSTED"
+            in error_text
+        ):
+            status = "RETRY_429"
+
+        elif (
+            "500" in error_text
+            or "INTERNAL" in error_text
+        ):
+            status = "RETRY_500"
+
+        else:
+            status = "PERMANENT_ERROR"
+
+        return {
+            "total": None,
+            "document_type": None,
+            "method": "GEMINI",
+            "confidence": "LOW",
+            "status": status,
+            "notes": error_text[:100],
+        }
+
+    finally:
+        if remote_file is not None:
             try:
-                client.files.delete(name=archivo_remoto.name)
-            except:
+                client.files.delete(
+                    name=remote_file.name
+                )
+            except Exception:
                 pass
 
-        error_str = str(e)
 
-        if "503" in error_str or "UNAVAILABLE" in error_str:
-            return (None, None, "GEMINI", "BAJA", "REINTENTAR_503", "Gemini saturado")
-        if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str:
-            return (None, None, "GEMINI", "BAJA", "REINTENTAR_429", "Rate limit")
-        if "500" in error_str or "INTERNAL" in error_str:
-            return (None, None, "GEMINI", "BAJA", "REINTENTAR_500", "Error servidor")
+# =============================================================================
+# AI ROUTER
+# =============================================================================
 
-        return (None, None, "GEMINI", "BAJA", "ERROR_PERMANENTE", error_str[:80])
+def analyze_with_ai(pdf_path):
+    if AI_PROVIDER in (
+        "",
+        "none",
+        "off",
+        "disabled",
+    ):
+        return {
+            "total": None,
+            "document_type": None,
+            "method": "AI_DISABLED",
+            "confidence": "LOW",
+            "status": "AI_DISABLED",
+            "notes": (
+                "No AI fallback configured"
+            ),
+        }
 
-def contar_con_gemini_reintentos(client, ruta_pdf):
-    for intento in range(MAX_REINTENTOS_GEMINI):
-        total, tipo, metodo, confianza, estado, notas = contar_con_gemini(client, ruta_pdf)
+    if AI_PROVIDER == "gemini":
+        return analyze_with_gemini(
+            pdf_path
+        )
 
-        if estado == "OK":
-            return (total, tipo, metodo, confianza, estado, notas)
+    return {
+        "total": None,
+        "document_type": None,
+        "method": (
+            AI_PROVIDER.upper()
+        ),
+        "confidence": "LOW",
+        "status":
+            "UNSUPPORTED_PROVIDER",
+        "notes": (
+            f"AI provider '{AI_PROVIDER}' "
+            "does not yet have an adapter"
+        ),
+    }
 
-        if estado.startswith("REINTENTAR"):
-            espera = ESPERA_BASE * (intento + 1)
-            print(f"      [Reintento {intento+1}/{MAX_REINTENTOS_GEMINI}] {estado} -> Esperando {espera}s...")
-            time.sleep(espera)
+
+def analyze_with_ai_retries(
+    pdf_path
+):
+    for attempt in range(
+        MAX_AI_RETRIES
+    ):
+        result = analyze_with_ai(
+            pdf_path
+        )
+
+        if (
+            result["status"]
+            == "OK"
+        ):
+            return result
+
+        if (
+            result["status"]
+            .startswith("RETRY_")
+        ):
+            wait_seconds = (
+                BASE_WAIT_SECONDS
+                * (attempt + 1)
+            )
+
+            log(
+                f"      AI retry "
+                f"{attempt + 1}/"
+                f"{MAX_AI_RETRIES}: "
+                f"{result['status']} -> "
+                f"waiting {wait_seconds}s"
+            )
+
+            time.sleep(
+                wait_seconds
+            )
+
             continue
 
-        return (total, tipo, metodo, confianza, estado, notas)
+        return result
 
-    return (None, None, "GEMINI", "BAJA", "ERROR_MAX_REINTENTOS", "Fallo tras todos los reintentos")
+    return {
+        "total": None,
+        "document_type": None,
+        "method": (
+            AI_PROVIDER.upper()
+        ),
+        "confidence": "LOW",
+        "status":
+            "MAX_RETRIES_EXCEEDED",
+        "notes": (
+            "AI failed after all retries"
+        ),
+    }
+
+
+# =============================================================================
+# SAMPLE VALIDATION
+# =============================================================================
+
+def load_expected_procedures():
+    if not SAMPLE_FILE.exists():
+        raise FileNotFoundError(
+            "Script 00 output not found: "
+            f"{SAMPLE_FILE}"
+        )
+
+    sample = pd.read_excel(
+        SAMPLE_FILE
+    )
+
+    if (
+        "procedure_code"
+        not in sample.columns
+    ):
+        raise KeyError(
+            "Script 00 output is missing "
+            "required column: "
+            "procedure_code"
+        )
+
+    codes = []
+
+    for value in (
+        sample["procedure_code"]
+        .dropna()
+        .tolist()
+    ):
+        code = safe_integer(
+            value
+        )
+
+        if code is not None:
+            codes.append(code)
+
+    if (
+        len(codes)
+        != len(set(codes))
+    ):
+        raise ValueError(
+            "Script 00 output contains "
+            "duplicate procedure codes."
+        )
+
+    return codes
+
+
+# =============================================================================
+# PDF DIRECTORY AUDIT
+# =============================================================================
+
+def audit_pdf_directory(
+    expected_codes
+):
+    pdf_files = sorted(
+        PDF_DIR.glob("*.pdf")
+    )
+
+    code_to_files = {}
+
+    for pdf_path in pdf_files:
+        code = extract_procedure_code(
+            pdf_path
+        )
+
+        if code is None:
+            continue
+
+        code_to_files.setdefault(
+            code,
+            []
+        ).append(pdf_path)
+
+    expected_set = set(
+        expected_codes
+    )
+
+    available_set = set(
+        code_to_files
+    )
+
+    missing_codes = sorted(
+        expected_set
+        - available_set
+    )
+
+    unexpected_codes = sorted(
+        available_set
+        - expected_set
+    )
+
+    duplicate_codes = sorted(
+        code
+        for code, files
+        in code_to_files.items()
+        if len(files) > 1
+    )
+
+    return (
+        pdf_files,
+        code_to_files,
+        missing_codes,
+        unexpected_codes,
+        duplicate_codes,
+    )
+
+
+# =============================================================================
+# RESUMABLE PROCESSING
+# =============================================================================
+
+def load_previous_results():
+    previous_results = {}
+
+    if not OUTPUT_FILE.exists():
+        return previous_results
+
+    try:
+        dataframe = pd.read_excel(
+            OUTPUT_FILE
+        )
+
+        required_columns = {
+            "procedure_code",
+            "file_name",
+            "count_status",
+        }
+
+        if not (
+            required_columns
+            .issubset(
+                dataframe.columns
+            )
+        ):
+            return previous_results
+
+        for _, row in (
+            dataframe.iterrows()
+        ):
+            if (
+                row.get(
+                    "count_status"
+                )
+                != "OK"
+            ):
+                continue
+
+            file_name = str(
+                row.get(
+                    "file_name",
+                    ""
+                )
+            ).strip()
+
+            if file_name:
+                previous_results[
+                    file_name
+                ] = row.to_dict()
+
+    except Exception as error:
+        log(
+            "  Warning: previous "
+            "Script 02 output could "
+            "not be loaded: "
+            f"{error}"
+        )
+
+    return previous_results
+
+
+def save_partial_results(
+    results
+):
+    dataframe = pd.DataFrame(
+        results
+    )
+
+    dataframe.to_excel(
+        OUTPUT_FILE,
+        index=False
+    )
+
+
+# =============================================================================
+# PROCESS ONE DOCUMENT
+# =============================================================================
+
+def process_document(
+    pdf_path
+):
+    local_result = analyze_locally(
+        pdf_path
+    )
+
+    log(
+        "      Local: "
+        f"total="
+        f"{local_result['total']} | "
+        f"type="
+        f"{local_result['document_type']} | "
+        f"confidence="
+        f"{local_result['confidence']} | "
+        f"status="
+        f"{local_result['status']}"
+    )
+
+    if (
+        local_result["status"]
+        == "OK"
+        and
+        local_result["confidence"]
+        == "HIGH"
+    ):
+        return local_result
+
+    if AI_PROVIDER in (
+        "",
+        "none",
+        "off",
+        "disabled",
+    ):
+        return {
+            **local_result,
+            "status":
+                "REVIEW_REQUIRED",
+        }
+
+    log(
+        "      AI fallback: "
+        f"{AI_PROVIDER}"
+    )
+
+    ai_result = (
+        analyze_with_ai_retries(
+            pdf_path
+        )
+    )
+
+    log(
+        "      AI: "
+        f"total={ai_result['total']} | "
+        f"type="
+        f"{ai_result['document_type']} | "
+        f"status="
+        f"{ai_result['status']}"
+    )
+
+    if (
+        ai_result["status"]
+        == "OK"
+    ):
+        ai_result["pages"] = (
+            local_result.get(
+                "pages"
+            )
+        )
+
+        return ai_result
+
+    return {
+        "total": None,
+        "document_type": (
+            local_result.get(
+                "document_type"
+            )
+            or
+            ai_result.get(
+                "document_type"
+            )
+        ),
+        "method": (
+            f"PYMUPDF+"
+            f"{AI_PROVIDER.upper()}"
+        ),
+        "confidence": "LOW",
+        "status":
+            "REVIEW_REQUIRED",
+        "notes": (
+            "Local analysis unresolved; "
+            f"AI status: "
+            f"{ai_result['status']}. "
+            f"{ai_result['notes']}"
+        )[:200],
+        "pages": (
+            local_result.get(
+                "pages"
+            )
+        ),
+    }
+
+
+# =============================================================================
+# PROCESSING SUMMARY
+# =============================================================================
+
+def save_processing_summary(
+    dataframe
+):
+    method_summary = (
+        dataframe[
+            "processing_method"
+        ]
+        .value_counts(
+            dropna=False
+        )
+        .rename_axis(
+            "processing_method"
+        )
+        .reset_index(
+            name="count"
+        )
+    )
+
+    method_summary[
+        "percentage"
+    ] = (
+        method_summary["count"]
+        / len(dataframe)
+        * 100
+    ).round(2)
+
+    status_summary = (
+        dataframe[
+            "count_status"
+        ]
+        .value_counts(
+            dropna=False
+        )
+        .rename_axis(
+            "count_status"
+        )
+        .reset_index(
+            name="count"
+        )
+    )
+
+    type_summary = (
+        dataframe[
+            "document_type"
+        ]
+        .value_counts(
+            dropna=False
+        )
+        .rename_axis(
+            "document_type"
+        )
+        .reset_index(
+            name="count"
+        )
+    )
+
+    successful = dataframe[
+        dataframe[
+            "count_status"
+        ] == "OK"
+    ].copy()
+
+    descriptive_statistics = (
+        successful[
+            "queries_observations_count"
+        ]
+        .describe(
+            percentiles=[
+                0.25,
+                0.50,
+                0.75,
+                0.90,
+                0.95,
+            ]
+        )
+        .rename(
+            "value"
+        )
+        .reset_index()
+        .rename(
+            columns={
+                "index":
+                    "statistic"
+            }
+        )
+    )
+
+    with pd.ExcelWriter(
+        SUMMARY_FILE,
+        engine="openpyxl"
+    ) as writer:
+        method_summary.to_excel(
+            writer,
+            sheet_name="methods",
+            index=False
+        )
+
+        status_summary.to_excel(
+            writer,
+            sheet_name="status",
+            index=False
+        )
+
+        type_summary.to_excel(
+            writer,
+            sheet_name="document_types",
+            index=False
+        )
+
+        descriptive_statistics.to_excel(
+            writer,
+            sheet_name="descriptive_stats",
+            index=False
+        )
+
+
+# =============================================================================
+# MAIN PIPELINE
+# =============================================================================
 
 def main():
-    print("=" * 70)
-    print(" CONTEO DE CONSULTAS Y OBSERVACIONES - VERSION DEFINITIVA v7")
-    print(" Lee PDFs de carpeta principal Y de descartados")
-    print("=" * 70)
+    log("=" * 78)
+    log(
+        "QUERY AND OBSERVATION COUNT "
+        "- ROAD INFRASTRUCTURE TENDERS"
+    )
+    log("=" * 78)
+    log(
+        "Source documents: "
+        "Script 01 SEACE acquisition output"
+    )
+    log(
+        "Input directory: 05_pdfs"
+    )
+    log()
 
-    client = genai.Client(api_key=API_KEY)
-    print("Cliente Gemini configurado.")
+    # -------------------------------------------------------------------------
+    # 1. Validate analytical sample
+    # -------------------------------------------------------------------------
 
-    pdfs_principales = sorted(CARPETA_PDFS.glob("*.pdf"))
-    print(f"PDFs en carpeta principal: {len(pdfs_principales)}")
+    log(
+        "[1] Validating "
+        "analytical sample..."
+    )
 
-    pdfs_descartados = []
-    if CARPETA_DESCARTADOS.exists():
-        pdfs_descartados = sorted(CARPETA_DESCARTADOS.glob("*.pdf"))
-        print(f"PDFs en carpeta descartados: {len(pdfs_descartados)}")
+    expected_codes = (
+        load_expected_procedures()
+    )
 
-    todos_los_pdfs = [(p, "principal") for p in pdfs_principales] + [(p, "descartado") for p in pdfs_descartados]
-    print(f"TOTAL de PDFs a procesar: {len(todos_los_pdfs)}")
+    log(
+        "  Expected procedures "
+        "from Script 00: "
+        f"{len(expected_codes)}"
+    )
 
-    procesados_previos = {}
-    if EXCEL_SALIDA.exists():
-        try:
-            df_prev = pd.read_excel(EXCEL_SALIDA)
-            for _, fila in df_prev.iterrows():
-                if fila.get("estado_conteo") == "OK":
-                    procesados_previos[str(fila["nombre_archivo"])] = fila.to_dict()
-            print(f"PDFs ya procesados OK: {len(procesados_previos)}")
-        except Exception as e:
-            print(f"Aviso: no se pudo leer Excel previo: {e}")
+    # -------------------------------------------------------------------------
+    # 2. Audit PDF input
+    # -------------------------------------------------------------------------
 
-    resultados = []
-    for i, (pdf, origen) in enumerate(todos_los_pdfs):
-        nombre = pdf.stem
-        codigo = nombre.split("_")[0]
-        tipo_por_nombre = "ACTA" if "_ACTA" in nombre else ("OTRO" if "_OTRO" in nombre else "PLIEGO")
+    log()
+    log(
+        "[2] Auditing "
+        "Script 01 document output..."
+    )
 
-        print(f"\n[{i+1}/{len(todos_los_pdfs)}] Procesando: {nombre} (origen: {origen})")
+    (
+        pdf_files,
+        code_to_files,
+        missing_codes,
+        unexpected_codes,
+        duplicate_codes,
+    ) = audit_pdf_directory(
+        expected_codes
+    )
 
-        if nombre in procesados_previos:
-            print(f"      Ya procesado OK. Saltando.")
-            resultados.append(procesados_previos[nombre])
+    represented_codes = (
+        set(expected_codes)
+        & set(code_to_files)
+    )
+
+    log(
+        f"  PDF files found: "
+        f"{len(pdf_files)}"
+    )
+
+    log(
+        "  Expected procedures "
+        "represented: "
+        f"{len(represented_codes)}"
+    )
+
+    log(
+        f"  Missing procedures: "
+        f"{len(missing_codes)}"
+    )
+
+    log(
+        f"  Unexpected procedures: "
+        f"{len(unexpected_codes)}"
+    )
+
+    log(
+        "  Duplicate procedure "
+        "documents: "
+        f"{len(duplicate_codes)}"
+    )
+
+    if missing_codes:
+        log(
+            "  Missing procedure codes: "
+            + ", ".join(
+                map(
+                    str,
+                    missing_codes
+                )
+            )
+        )
+
+    if unexpected_codes:
+        log(
+            "  Unexpected procedure codes: "
+            + ", ".join(
+                map(
+                    str,
+                    unexpected_codes
+                )
+            )
+        )
+
+    if duplicate_codes:
+        log(
+            "  Duplicate procedure codes: "
+            + ", ".join(
+                map(
+                    str,
+                    duplicate_codes
+                )
+            )
+        )
+
+    if (
+        missing_codes
+        or unexpected_codes
+        or duplicate_codes
+    ):
+        raise RuntimeError(
+            "05_pdfs does not match "
+            "the Script 00 analytical "
+            "sample. Resolve the document "
+            "audit before counting."
+        )
+
+    # -------------------------------------------------------------------------
+    # 3. Configure processing
+    # -------------------------------------------------------------------------
+
+    log()
+    log(
+        "[3] Configuring "
+        "processing methods..."
+    )
+
+    log(
+        "  Primary method: PyMuPDF"
+    )
+
+    if AI_PROVIDER in (
+        "",
+        "none",
+        "off",
+        "disabled",
+    ):
+        log(
+            "  AI fallback: disabled"
+        )
+
+    else:
+        log(
+            "  AI fallback provider: "
+            f"{AI_PROVIDER}"
+        )
+
+        log(
+            "  AI model: "
+            f"{AI_MODEL or 'NOT SET'}"
+        )
+
+        if not AI_API_KEY:
+            log(
+                "  Warning: AI_API_KEY "
+                "is not configured."
+            )
+
+    previous_results = (
+        load_previous_results()
+    )
+
+    log(
+        "  Previous verified results: "
+        f"{len(previous_results)}"
+    )
+
+    # -------------------------------------------------------------------------
+    # 4. Process documents
+    # -------------------------------------------------------------------------
+
+    log()
+    log(
+        "[4] Processing "
+        "PDF documents..."
+    )
+
+    results = []
+
+    ordered_pdfs = [
+        code_to_files[code][0]
+        for code in expected_codes
+    ]
+
+    for index, pdf_path in enumerate(
+        ordered_pdfs,
+        start=1
+    ):
+        procedure_code = (
+            extract_procedure_code(
+                pdf_path
+            )
+        )
+
+        file_name = (
+            pdf_path.name
+        )
+
+        log()
+        log(
+            f"[{index}/"
+            f"{len(ordered_pdfs)}] "
+            f"Procedure "
+            f"{procedure_code} | "
+            f"{file_name}"
+        )
+
+        if (
+            file_name
+            in previous_results
+        ):
+            log(
+                "      Existing verified "
+                "count: reused"
+            )
+
+            results.append(
+                previous_results[
+                    file_name
+                ]
+            )
+
             continue
 
-        print(f"      [Metodo LOCAL] Extrayendo texto...")
-        total, tipo, metodo, confianza, estado, notas = analizar_local(pdf)
-        print(f"      Local: total={total}, tipo={tipo}, confianza={confianza}, estado={estado}")
+        result = process_document(
+            pdf_path
+        )
 
-        if confianza != "ALTA" or estado != "OK":
-            print(f"      [Metodo GEMINI] Usando IA...")
-            total_g, tipo_g, metodo_g, confianza_g, estado_g, notas_g = contar_con_gemini_reintentos(client, pdf)
+        # ---------------------------------------------------------------------
+        # Filename/content consistency safeguard
+        # ---------------------------------------------------------------------
 
-            if estado_g == "OK":
-                total = total_g
-                tipo = tipo_g
-                metodo = "GEMINI"
-                confianza = confianza_g
-                estado = estado_g
-                notas = notas_g
-                print(f"      Gemini OK: total={total}, tipo={tipo}")
-            else:
-                if total is None:
-                    total = 0
-                metodo = "LOCAL+GEMINI_FALLIDO"
-                estado = estado_g
-                notas = notas_g
-                print(f"      Gemini fallo: {estado}")
+        if (
+            "_ACTA"
+            in pdf_path.stem.upper()
+        ):
+            if not (
+                result["status"]
+                == "OK"
+                and
+                result[
+                    "document_type"
+                ]
+                == "ACTA_NO_FORMULACION"
+                and
+                result["total"]
+                == 0
+            ):
+                result = {
+                    **result,
+                    "total": None,
+                    "confidence": "LOW",
+                    "status":
+                        "REVIEW_REQUIRED",
+                    "notes": (
+                        "Filename identifies "
+                        "a no-formulation act, "
+                        "but document content "
+                        "did not verify it."
+                    ),
+                }
 
-        resultados.append({
-            "codigoconvocatoria": codigo,
-            "nombre_archivo": nombre,
-            "origen": origen,
-            "tipo_por_nombre": tipo_por_nombre,
-            "tipo_documento": tipo if tipo else "",
-            "total_consultas_observaciones": total if total is not None else 0,
-            "metodo": metodo,
-            "confianza": confianza,
-            "estado_conteo": estado,
-            "notas": notas if notas else ""
-        })
+        results.append(
+            {
+                "procedure_code":
+                    procedure_code,
 
-        if (i + 1) % 10 == 0:
-            df_parcial = pd.DataFrame(resultados)
-            df_parcial.to_excel(EXCEL_SALIDA, index=False)
-            print(f"      *** Guardado parcial ***")
+                "file_name":
+                    file_name,
 
-        time.sleep(PAUSA_ENTRE_PDFS)
+                "document_type":
+                    result.get(
+                        "document_type"
+                    )
+                    or "",
 
-    df = pd.DataFrame(resultados)
-    df.to_excel(EXCEL_SALIDA, index=False)
+                "queries_observations_count":
+                    result.get(
+                        "total"
+                    ),
 
-    print("\n" + "=" * 70)
-    print(" RESUMEN FINAL")
-    print("=" * 70)
-    print(f"Resultados guardados en: {EXCEL_SALIDA}")
-    print(f"Total de PDFs procesados: {len(resultados)}")
+                "processing_method":
+                    result.get(
+                        "method"
+                    )
+                    or "",
 
-    total_pdfs = len(df)
-    ok = df[df["estado_conteo"] == "OK"]
-    errores = df[df["estado_conteo"] != "OK"]
+                "confidence":
+                    result.get(
+                        "confidence"
+                    )
+                    or "",
 
-    print(f"\nConteo exitoso: {len(ok)} ({len(ok)/total_pdfs*100:.1f}%)")
-    print(f"Con errores: {len(errores)} ({len(errores)/total_pdfs*100:.1f}%)")
+                "count_status":
+                    result.get(
+                        "status"
+                    )
+                    or "",
 
-    print("\nDistribucion por ORIGEN:")
-    conteo_origen = df["origen"].value_counts()
-    for origen, cantidad in conteo_origen.items():
-        print(f"  {origen}: {cantidad}")
+                "pages":
+                    result.get(
+                        "pages"
+                    ),
 
-    print("\nDistribucion por METODO:")
-    conteo_metodo = df["metodo"].value_counts()
-    for metodo, cantidad in conteo_metodo.items():
-        porcentaje = cantidad / total_pdfs * 100
-        print(f"  {metodo}: {cantidad} ({porcentaje:.1f}%)")
+                "notes":
+                    result.get(
+                        "notes"
+                    )
+                    or "",
+            }
+        )
 
-    print("\nDistribucion por ESTADO:")
-    conteo_estado = df["estado_conteo"].value_counts()
-    for estado, cantidad in conteo_estado.items():
-        porcentaje = cantidad / total_pdfs * 100
-        print(f"  {estado}: {cantidad} ({porcentaje:.1f}%)")
+        if index % 10 == 0:
+            save_partial_results(
+                results
+            )
 
-    print("\nDistribucion por TIPO DE DOCUMENTO:")
-    conteo_tipo = df["tipo_documento"].value_counts()
-    for tipo, cantidad in conteo_tipo.items():
-        if tipo:
-            print(f"  {tipo}: {cantidad}")
+            log(
+                "      Partial results "
+                "saved."
+            )
 
-    if len(errores) > 0:
-        print("\n" + "=" * 70)
-        print(" PDFs CON PROBLEMAS")
-        print("=" * 70)
-        print(errores[["codigoconvocatoria", "nombre_archivo", "origen", "metodo", "estado_conteo"]].to_string())
+        time.sleep(
+            PAUSE_BETWEEN_PDFS
+        )
 
-    print("\n" + "=" * 70)
-    print(" ESTADISTICAS DE CONSULTAS Y OBSERVACIONES")
-    print("=" * 70)
+    # -------------------------------------------------------------------------
+    # 5. Save outputs
+    # -------------------------------------------------------------------------
 
-    con_conteo = df[df["estado_conteo"] == "OK"]
-    if len(con_conteo) > 0:
-        print(f"  Media: {con_conteo['total_consultas_observaciones'].mean():.2f}")
-        print(f"  Mediana: {con_conteo['total_consultas_observaciones'].median()}")
-        print(f"  Maximo: {con_conteo['total_consultas_observaciones'].max()}")
-        print(f"  Minimo: {con_conteo['total_consultas_observaciones'].min()}")
-        print(f"  Desv. estandar: {con_conteo['total_consultas_observaciones'].std():.2f}")
+    log()
+    log(
+        "[5] Saving "
+        "Script 02 outputs..."
+    )
 
-        print("\n  Percentiles:")
-        for p in [25, 50, 75, 90, 95]:
-            valor = con_conteo['total_consultas_observaciones'].quantile(p/100)
-            print(f"    P{p}: {valor:.2f}")
+    dataframe = pd.DataFrame(
+        results
+    )
 
-    print("\n" + "=" * 70)
-    print(" GUARDANDO EXCEL DE ESTADISTICAS")
-    print("=" * 70)
+    dataframe.to_excel(
+        OUTPUT_FILE,
+        index=False
+    )
 
-    estadisticas = pd.DataFrame({
-        "Metodo": conteo_metodo.index.tolist(),
-        "Cantidad": conteo_metodo.values.tolist(),
-        "Porcentaje": [f"{c/total_pdfs*100:.1f}%" for c in conteo_metodo.values]
-    })
-    estadisticas.to_excel(EXCEL_ESTADISTICAS, index=False)
-    print(f"Estadisticas guardadas en: {EXCEL_ESTADISTICAS}")
+    save_processing_summary(
+        dataframe
+    )
 
-    print("\n" + "=" * 70)
-    print(" FIN DEL PROCESAMIENTO")
-    print("=" * 70)
+    log(
+        f"  Counts workbook: "
+        f"{OUTPUT_FILE.name}"
+    )
+
+    log(
+        f"  Summary workbook: "
+        f"{SUMMARY_FILE.name}"
+    )
+
+    # -------------------------------------------------------------------------
+    # 6. Final audit
+    # -------------------------------------------------------------------------
+
+    successful = dataframe[
+        dataframe[
+            "count_status"
+        ] == "OK"
+    ].copy()
+
+    review = dataframe[
+        dataframe[
+            "count_status"
+        ] != "OK"
+    ].copy()
+
+    pliegos = successful[
+        successful[
+            "document_type"
+        ] == "PLIEGO"
+    ]
+
+    no_formulation_acts = (
+        successful[
+            successful[
+                "document_type"
+            ]
+            == "ACTA_NO_FORMULACION"
+        ]
+    )
+
+    verified_zero = (
+        successful[
+            (
+                successful[
+                    "queries_observations_count"
+                ] == 0
+            )
+            &
+            (
+                successful[
+                    "document_type"
+                ]
+                == "ACTA_NO_FORMULACION"
+            )
+        ]
+    )
+
+    log()
+    log("=" * 78)
+    log(
+        "QUERY / OBSERVATION "
+        "COUNT AUDIT"
+    )
+    log("=" * 78)
+
+    log(
+        "Expected procedures:              "
+        f"{len(expected_codes)}"
+    )
+
+    log(
+        "PDF documents processed:          "
+        f"{len(dataframe)}"
+    )
+
+    log(
+        "Pliegos successfully processed:   "
+        f"{len(pliegos)}"
+    )
+
+    log(
+        "No-formulation acts:              "
+        f"{len(no_formulation_acts)}"
+    )
+
+    log(
+        "Successfully counted:             "
+        f"{len(successful)}"
+    )
+
+    log(
+        "Verified zero counts:             "
+        f"{len(verified_zero)}"
+    )
+
+    log(
+        "Manual review required:           "
+        f"{len(review)}"
+    )
+
+    if len(review) > 0:
+        log()
+        log(
+            "PROCEDURES REQUIRING REVIEW"
+        )
+        log("-" * 78)
+
+        for _, row in (
+            review.iterrows()
+        ):
+            log(
+                f"  "
+                f"{int(row['procedure_code'])}"
+                f" | "
+                f"{row['file_name']}"
+                f" | "
+                f"{row['count_status']}"
+                f" | "
+                f"{row['notes']}"
+            )
+
+    log()
+    log("=" * 78)
+
+    pipeline_complete = (
+        len(dataframe)
+        == len(expected_codes)
+        and
+        len(successful)
+        == len(expected_codes)
+        and
+        len(review)
+        == 0
+    )
+
+    if pipeline_complete:
+        log(
+            "PIPELINE STATUS: COMPLETE"
+        )
+
+    else:
+        log(
+            "PIPELINE STATUS: INCOMPLETE"
+        )
+
+    log("=" * 78)
+
+    save_log()
+
+
+# =============================================================================
+# EXECUTION
+# =============================================================================
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+
+    except Exception as error:
+        log()
+        log("=" * 78)
+        log(
+            "PIPELINE FAILED"
+        )
+        log("=" * 78)
+
+        log(
+            f"{type(error).__name__}: "
+            f"{error}"
+        )
+
+        save_log()
+
+        raise
