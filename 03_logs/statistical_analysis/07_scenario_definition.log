@@ -1,0 +1,117 @@
+==============================================================================
+SCENARIO-DEFINITION DIAGNOSTICS - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Input: Script 03 integrated analytical dataset
+Purpose: Compare reproducible alternatives for defining low, medium, and high query/observation scenarios before stochastic modeling
+
+[1] Validating Script 03 input...
+  Input file: 03_1_integrated_dataset.xlsx
+  Input file found.
+
+[2] Reading analytical dataset...
+  Rows: 137
+  Columns: 18
+
+[3] Validating analytical contract...
+  Master analytical sample verified: 137
+  queries_observations_count coverage: 137/137
+  total_award_time_days coverage: 136/137
+
+[4] Establishing continuous-variable reference...
+  n: 137
+  Minimum: 0
+  P25: 23.000
+  Median: 60.000
+  P75: 134.000
+  Maximum: 403
+  NOTE: The continuous variable remains the reference representation; categorization is evaluated diagnostically.
+
+[5] Defining tercile-based scenarios...
+  Raw tercile quantiles: 31.000, 106.000
+  Low: 46 procedures
+  Medium: 46 procedures
+  High: 45 procedures
+
+[6] Defining P25/P75 scenarios...
+  P25 threshold: 23.000
+  P75 threshold: 134.000
+  Low: 36 procedures
+  Medium: 67 procedures
+  High: 34 procedures
+
+[7] Defining data-driven three-cluster partition...
+  Cut 1: 107.500
+  Cut 2: 248.500
+  Observed boundary 1: 106 / 109
+  Observed boundary 2: 233 / 264
+  Low: 92 procedures
+  Medium: 37 procedures
+  High: 8 procedures
+  NOTE: The data-driven partition minimizes within-cluster dispersion in query counts; it does not use award time and does not automatically define the preferred scientific scenarios.
+
+[8] Summarizing scenario characteristics...
+  Terciles:
+    Low: n=46; queries=0-30; award-time median=43.50
+    Medium: n=46; queries=33-106; award-time median=83.50
+    High: n=45; queries=109-403; award-time median=126.00
+  P25_P75:
+    Low: n=36; queries=0-23; award-time median=46.00
+    Medium: n=67; queries=24-134; award-time median=82.00
+    High: n=34; queries=135-403; award-time median=132.00
+  Data_driven_1D:
+    Low: n=92; queries=0-106; award-time median=55.50
+    Medium: n=37; queries=109-233; award-time median=123.50
+    High: n=8; queries=264-403; award-time median=134.50
+
+[9] Evaluating award-time separation across scenario definitions...
+  Terciles: H=41.1857; p=1.13931e-09; epsilon²=0.2946; group sizes=46/46/44
+  P25_P75: H=34.4909; p=3.23886e-08; epsilon²=0.2443; group sizes=36/67/33
+  Data_driven_1D: H=25.1653; p=3.43109e-06; epsilon²=0.1742; group sizes=92/36/8
+
+  NOTE: Kruskal-Wallis evaluates whether award-time distributions differ across groups. It does not establish causality and is not used here to automatically select a method.
+
+[10] Building threshold audit...
+  All candidate scenario definitions use only queries_observations_count.
+  total_award_time_days is not used to determine thresholds.
+
+[11] Auditing agreement between scenario definitions...
+  Terciles vs P25_P75: 84.67% same assignments
+  Terciles vs Data_driven_1D: 39.42% same assignments
+  P25_P75 vs Data_driven_1D: 40.15% same assignments
+
+[12] Preparing procedure-level scenario audit...
+  Procedures assigned identically by all methods: 44/137 (32.12%)
+
+[13] Building methodological decision framework...
+  Decision framework created.
+  NOTE: No automatic ranking or final scenario definition is imposed in this script.
+
+[14] Saving reproducible scenario-definition diagnostics...
+  Output workbook: 07_1_scenario_definition.xlsx
+  Log file: 07_scenario_definition.log
+
+==============================================================================
+SCENARIO-DEFINITION DIAGNOSTICS AUDIT
+==============================================================================
+Master analytical procedures:          137
+Query-count coverage:                  137
+Total-award-time coverage:             136
+P25/P75 thresholds:                    23.000 / 134.000
+Tercile thresholds:                    31.000 / 106.000
+Data-driven thresholds:                107.500 / 248.500
+
+SCIENTIFIC SCOPE
+- The continuous query/observation count remains the reference representation.
+- Three candidate scenario definitions are compared.
+- Scenario thresholds are defined without using the award-time outcome.
+- Kruskal-Wallis comparisons are diagnostic and do not establish causality.
+- No scenario-definition method is automatically selected.
+- No observations are deleted.
+- No probability distribution is selected.
+- No stochastic simulation is performed.
+- No Monte Carlo procedure is performed.
+- No discrete-event simulation is performed.
+
+==============================================================================
+PIPELINE STATUS: COMPLETE
+==============================================================================
