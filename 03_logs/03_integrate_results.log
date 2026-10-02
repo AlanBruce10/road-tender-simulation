@@ -1,0 +1,71 @@
+==============================================================================
+RESULT INTEGRATION - ROAD INFRASTRUCTURE TENDERS
+==============================================================================
+Input 1: Script 00 analytical sample
+Input 2: Script 02 query/observation counts
+
+[1] Validating input files...
+  Script 00 input: 00_1_sample_selection.xlsx
+  Script 02 input: 02_1_query_counts.xlsx
+
+[2] Reading source datasets...
+  Script 00 rows: 137
+  Script 02 rows: 137
+
+[3] Validating required columns...
+  Required columns verified.
+
+[4] Normalizing procedure codes...
+  procedure_code normalized to integer.
+
+[5] Auditing procedure-code uniqueness...
+  Script 00 unique procedures: 137
+  Script 02 unique procedures: 137
+
+[6] Auditing Script 02 processing status...
+  OK: 137
+  All Script 02 procedures have status OK and a valid count.
+
+[7] Auditing procedure correspondence...
+  Procedures in Script 00: 137
+  Procedures in Script 02: 137
+  Procedures present in both: 137
+  Script 00 only: 0
+  Script 02 only: 0
+
+[8] Preparing query/observation variables...
+  Empty Script 00 placeholder removed.
+  Script 02 count retained as the definitive queries_observations_count variable.
+
+[9] Integrating Script 00 and Script 02 outputs...
+  Rows after integration: 137
+  Matched rows: 137
+  Left-only rows: 0
+  Right-only rows: 0
+
+[10] Validating integrated dataset...
+  Unique procedures: 137
+  Missing query/observation counts: 0
+  Duplicate procedure codes: 0
+  Invalid processing statuses: 0
+
+[11] Saving integrated dataset...
+  Dataset: 03_1_integrated_dataset.xlsx
+
+==============================================================================
+RESULT INTEGRATION AUDIT
+==============================================================================
+Script 00 procedures:             137
+Script 02 procedures:             137
+Matched procedures:               137
+Final integrated procedures:      137
+Pliegos:                          136
+No-formulation acts:              1
+Positive counts:                  136
+Verified zero counts:             1
+Missing counts:                   0
+Duplicate procedure codes:        0
+
+==============================================================================
+PIPELINE STATUS: COMPLETE
+==============================================================================
