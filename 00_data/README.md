@@ -1,45 +1,68 @@
 # Source Data
 
-This directory contains the input data required to reproduce the sample-selection stage of the computational pipeline.
+This directory contains the raw input data required to reproduce the sample-selection stage of the computational pipeline.
 
-The source datasets are obtained from the **OECE-SEACE Open Data Portal (Peru)** and cover public procurement procedures from **2020 to 2025**.
+The source datasets originate from the **OECE-SEACE Open Data Portal (Peru)** and cover public procurement procedures from **2020 to 2025**.
 
-> **Note:** Raw datasets are not stored in this repository. They must be downloaded from the official source before running the pipeline.
+> **Important:** Raw source datasets are intentionally not distributed through this repository. Researchers reproducing the study must download them from the official OECE-SEACE source and place them locally in this directory before running the pipeline.
 
 ---
 
 ## Data Source
 
-**Official source:** OECE-SEACE Open Data Portal  
-**Dataset categories:** Procurement Notice Data and Contract Award Data  
+**Source:** OECE-SEACE Open Data Portal, Peru  
 **Study period:** 2020–2025  
+**Source categories:** Procurement Notice Data and Contract Award Data  
 **File format:** Microsoft Excel (`.xlsx`)  
-**Total source datasets:** 12
+**Required source files:** 12
 
-The analysis requires two datasets for each year:
+Two complementary source datasets are required for each study year:
 
 - **Procurement Notice Data** (`Datos de la Convocatoria`)
 - **Contract Award Data** (`Datos de la Adjudicación`)
 
-These datasets provide the procurement information required for sample construction, including procedure characteristics, contractual object, dates, reference amounts, and award information.
+These are parallel source datasets. They are linked computationally during sample construction; Contract Award Data should not be interpreted as a sequential filtering stage after Procurement Notice Data.
+
+---
+
+## Required Data
+
+For every year from 2020 through 2025, download:
+
+1. one Procurement Notice dataset; and
+2. one Contract Award dataset.
+
+The complete local input therefore consists of:
+
+| Dataset | Years | Files |
+|---|---:|---:|
+| Procurement Notice Data | 2020–2025 | 6 |
+| Contract Award Data | 2020–2025 | 6 |
+| **Total** | **2020–2025** | **12** |
+
+These datasets provide the procurement characteristics, contractual-object information, reference amounts, procedure identifiers, dates, and award information required to reconstruct the analytical population.
 
 ---
 
 ## Manual Data Acquisition
 
-The 12 source datasets are downloaded manually from the OECE-SEACE Open Data Portal before executing the computational pipeline.
-
 ### 1. Procurement Notice Data
 
-Access the OECE-SEACE Open Data Portal and select **“Datos de la Convocatoria”** (Procurement Notice Data).
+Access the OECE-SEACE Open Data Portal and select:
+
+**Datos de la Convocatoria**  
+(*Procurement Notice Data*)
 
 ![Access to procurement notice data](../04_screenshots/01_open_data_portal_procurement_notices.png)
 
-For each year from **2020 to 2025**, select **“Descargar todos los procesos”** (Download All Procedures).
+For each year from **2020 to 2025**, select:
+
+**Descargar todos los procesos**  
+(*Download All Procedures*)
 
 ![Download procurement notice data](../04_screenshots/02_download_procurement_notices.png)
 
-Download one Excel dataset for each year:
+Download one Excel file for each year:
 
 - 2020
 - 2021
@@ -48,36 +71,33 @@ Download one Excel dataset for each year:
 - 2024
 - 2025
 
-This produces **six Procurement Notice datasets**.
+This produces six Procurement Notice datasets.
 
 ### 2. Contract Award Data
 
-Return to the OECE-SEACE Open Data Portal and select **“Datos de la Adjudicación”** (Contract Award Data).
+Return to the OECE-SEACE Open Data Portal and select:
+
+**Datos de la Adjudicación**  
+(*Contract Award Data*)
 
 ![Access to contract award data](../04_screenshots/03_open_data_portal_contract_awards.png)
 
-For each year from **2020 to 2025**, select **“Descargar todos los procesos”** (Download All Procedures).
+For each year from **2020 to 2025**, again select:
+
+**Descargar todos los procesos**  
+(*Download All Procedures*)
 
 ![Download contract award data](../04_screenshots/04_download_contract_awards.png)
 
-Download one Excel dataset for each year:
+Download one Excel file for each year from 2020 through 2025.
 
-- 2020
-- 2021
-- 2022
-- 2023
-- 2024
-- 2025
-
-This produces **six Contract Award datasets**.
-
-The complete input therefore consists of **12 source Excel files**.
+This produces six Contract Award datasets.
 
 ---
 
-## Expected Source Files
+## Expected File Names
 
-The OECE-SEACE Open Data Portal provides the downloaded datasets using the following naming patterns:
+The OECE-SEACE portal generates files using naming patterns similar to:
 
 ```text
 CONOSCE_CONVOCATORIAS2020_*.xlsx
@@ -99,9 +119,15 @@ CONOSCE_CONVOCATORIAS2025_*.xlsx
 CONOSCE_ADJUDICACIONES2025_*.xlsx
 ```
 
-The final suffix may vary depending on the file generated by the portal.
+The suffix generated by the portal may vary.
 
-Place the 12 downloaded Excel files directly inside `00_data/`.
+No manual file renaming is required.
+
+---
+
+## Local Directory Structure
+
+Place all 12 downloaded Excel files directly inside `00_data/`.
 
 The expected local structure is:
 
@@ -122,75 +148,131 @@ The expected local structure is:
 └── CONOSCE_ADJUDICACIONES2025_*.xlsx
 ```
 
-**No file renaming is required.**
+The raw `.xlsx` files remain local and are excluded from version control.
 
 ---
 
 ## Reproducibility Requirements
 
-The sample-selection script automatically identifies the corresponding Procurement Notice and Contract Award datasets for each year from **2020 to 2025**.
+For each year from 2020 to 2025, `00_data/` must contain:
 
-For each year, `00_data/` must contain:
+- exactly one `CONOSCE_CONVOCATORIAS{year}_*.xlsx` file; and
+- exactly one `CONOSCE_ADJUDICACIONES{year}_*.xlsx` file.
 
-- exactly **one** `CONOSCE_CONVOCATORIAS{year}_*.xlsx` file; and
-- exactly **one** `CONOSCE_ADJUDICACIONES{year}_*.xlsx` file.
-
-The raw Excel datasets are excluded from version control because they are obtained separately from the official OECE-SEACE source.
-
-Once all 12 source datasets are available in `00_data/`, execute the sample-selection script from the repository root:
+Once the 12 datasets are available, run the sample-selection stage from the repository root:
 
 ```bash
-python 01_scripts/00_filtro_muestra.py
+python 01_scripts/00_select_sample.py
 ```
 
-The generated outputs are written to:
+The script automatically identifies the annual source files and performs the reproducible linkage and sample-selection procedure.
+
+Generated analytical outputs are written to:
 
 ```text
 02_results/
 ```
 
----
-
-## Data Flow
-
-The source-data stage of the pipeline follows this sequence:
+and execution information is recorded under:
 
 ```text
-OECE-SEACE Open Data Portal
+03_logs/
+```
+
+---
+
+## Source Linkage
+
+The two source families are combined using the procurement procedure/item identifiers used by the computational pipeline.
+
+Conceptually, the data architecture is:
+
+```text
+PROCUREMENT NOTICE DATA                 CONTRACT AWARD DATA
+      2020–2025                              2020–2025
+          │                                      │
+          └──────────────────┬───────────────────┘
+                             │
+                             ▼
+                       RECORD LINKAGE
+                             │
+                             ▼
+                    ANALYTICAL POPULATION
+                             │
+                             ▼
+                    SAMPLE-SELECTION RULES
+                             │
+                             ▼
+                       FINAL SAMPLE
+```
+
+The detailed linkage diagnostics and methodological sample-selection funnel are generated automatically by `00_select_sample.py` and stored with the corresponding Script 00 results.
+
+---
+
+## Study Sample Construction
+
+The reproducible selection procedure ultimately identifies **137 eligible road-infrastructure public tender procedures** for the 2020–2025 study period.
+
+The methodological filtering sequence is:
+
+```text
+Analytical population
+        336,106
             │
             ▼
- Procurement Notice Data
-       (2020–2025)
+Contractual object = Works
+         63,781
             │
-            ├──────────────┐
-            │              │
-            ▼              ▼
-     6 Excel files   Contract Award Data
-                         (2020–2025)
-                              │
-                              ▼
-                        6 Excel files
-                              │
-              ┌───────────────┘
-              ▼
-        12 source datasets
-              │
-              ▼
-           00_data/
-              │
-              ▼
-  01_scripts/00_filtro_muestra.py
-              │
-              ▼
-          02_results/
+            ▼
+Road infrastructure
+          9,755
+            │
+            ▼
+Reference amount > PEN 25 million
+            231
+            │
+            ▼
+Public Tender
+            148
+            │
+            ▼
+Exclusion criteria
+            137
+            │
+            ▼
+FINAL ANALYTICAL SAMPLE
+            137
 ```
+
+The complete auditable counts, source diagnostics, linkage diagnostics, and procedure-level selection information are generated by the pipeline rather than manually encoded in downstream analyses.
+
+---
+
+## Why Raw Data Are Not Included
+
+The raw OECE-SEACE Excel files are intentionally excluded from the public repository.
+
+Instead, the repository provides:
+
+- the official data provenance;
+- the acquisition procedure;
+- screenshots documenting the download workflow;
+- expected file naming conventions;
+- the computational code used to process the source files;
+- intermediate and final analytical outputs;
+- and execution logs supporting reproducibility.
+
+This approach avoids redistributing the raw source datasets while preserving a transparent path for independent reconstruction of the analytical sample.
 
 ---
 
 ## Data Provenance
 
-All raw procurement data used in this stage originate from the official **OECE-SEACE Open Data Portal**.
+All raw procurement records used in this stage originate from the official **OECE-SEACE Open Data Portal**.
 
-The 12 Excel datasets covering **2020–2025** constitute the primary data inputs for the sample-selection stage and the subsequent computational pipeline.
+The 12 annual source datasets covering 2020–2025 constitute the primary inputs from which the study population is reconstructed.
 
-The repository does not distribute copies of these raw datasets. Instead, it documents their provenance, acquisition procedure, expected naming convention, and location within the reproducible project structure.
+Researchers seeking to reproduce the study should obtain fresh copies from the official source, place them in `00_data/`, and execute the computational pipeline in the documented order.
+
+For the complete computational workflow, see the repository-level `README.md` and `01_scripts/README.md`.
