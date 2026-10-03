@@ -14,7 +14,7 @@ The study examines public road-infrastructure procurement procedures registered 
 
 The computational workflow reconstructs the study population from official open procurement data, retrieves procedure-level documentation, quantifies consultations and observations as an empirical proxy for pre-award information asymmetry / informational friction, constructs award-time variables, evaluates their statistical relationship, defines information-asymmetry scenarios, fits stochastic representations, performs Monte Carlo and discrete-event simulations, conducts temporal validation and robustness analyses, and consolidates the resulting scientific evidence.
 
-The final analytical population comprises **137 eligible public road-infrastructure tender procedures**.
+The final selection yielded a **master analytical sample of 137 eligible public road-infrastructure tender procedures**.
 
 ---
 
@@ -68,7 +68,7 @@ The reproducible selection protocol begins with the linked analytical procuremen
 | After exclusions | 137 |
 | **Final analytical population** | **137** |
 
-The resulting **137 unique procurement procedures** constitute the master analytical population preserved throughout the downstream pipeline.
+The resulting **137 unique procurement procedures** constitute the master analytical sample preserved throughout the downstream pipeline.
 
 Technical source and linkage audits are retained separately from the methodological selection funnel.
 
@@ -416,8 +416,8 @@ The two models are complementary representations rather than interchangeable est
 The stochastic architecture was evaluated using a prespecified temporal split:
 
 ```text
-Training:    2020–2023
-Validation:  2024–2025
+Training period:          2020–2023 (n = 69)
+Temporal holdout period:  2024–2025 (n = 68)
 ```
 
 The continuous relationship remained positive in both periods:
