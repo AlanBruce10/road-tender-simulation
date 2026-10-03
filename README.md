@@ -1,369 +1,771 @@
-# Simulación estocástica del efecto de la asimetría de información en la incertidumbre de los plazos de adjudicación en licitaciones de infraestructura vial peruana
+# Stochastic Simulation of Information Asymmetry and Award-Time Uncertainty in Peruvian Road Infrastructure Tenders
 
-**Autor:** Br. Alan Bruce Hurtado Zavaleta  
-**Asesor:** Mg. Arq. José Franklin Gonzales Culqui  
-**Universidad:** Universidad Nacional Toribio Rodríguez de Mendoza de Amazonas (UNTRM)  
-**Año:** 2026  
+[![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Reproducible Research](https://img.shields.io/badge/Reproducible-Research-brightgreen.svg)](#reproducibility)
 
----
+## Overview
 
-## Descripción
+This repository contains the complete reproducible computational pipeline developed for the research project:
 
-Este repositorio contiene el código fuente, los resultados y la evidencia de ejecución del pipeline computacional desarrollado para la tesis:
+> **Stochastic Simulation of the Effect of Information Asymmetry on Award-Time Uncertainty in Peruvian Road Infrastructure Tenders**
 
-> **“Simulación estocástica del efecto de la asimetría de información en la incertidumbre de los plazos de adjudicación en licitaciones de infraestructura vial peruana”.**
+The study examines public road-infrastructure procurement procedures registered in the **Peruvian OECE-SEACE public procurement system** during **2020–2025**.
 
-El pipeline procesa información proveniente de los Datos Abiertos del OECE-SEACE correspondiente al periodo **2020-2025** y automatiza las principales etapas de construcción y procesamiento de la base de investigación.
+The computational workflow reconstructs the study population from official open procurement data, retrieves procedure-level documentation, quantifies consultations and observations as an empirical proxy for pre-award information asymmetry / informational friction, constructs award-time variables, evaluates their statistical relationship, defines information-asymmetry scenarios, fits stochastic representations, performs Monte Carlo and discrete-event simulations, conducts temporal validation and robustness analyses, and consolidates the resulting scientific evidence.
 
-El procedimiento permite:
-
-1. Filtrar el universo de procedimientos de selección y construir una muestra censal de **137 procesos de licitación pública de infraestructura vial**.
-2. Localizar y descargar automáticamente la documentación asociada a los procedimientos desde el SEACE.
-3. Identificar y contabilizar las consultas y observaciones formuladas durante la etapa correspondiente del procedimiento.
-4. Integrar los conteos obtenidos con la base principal de investigación.
-5. Clasificar los procedimientos en escenarios de **baja, media y alta asimetría informativa**.
-6. Preparar la información necesaria para el análisis estadístico y la posterior simulación estocástica de los plazos de adjudicación.
-
-El propósito de la investigación es analizar el efecto de la asimetría de información sobre la incertidumbre de los plazos de adjudicación y generar evidencia que contribuya a la planificación precontractual de proyectos de infraestructura vial.
+The final analytical population comprises **137 eligible public road-infrastructure tender procedures**.
 
 ---
 
-## Estructura del repositorio
+## Research Objective
+
+The general objective of the study is to develop a stochastic simulation model to evaluate the relationship between information asymmetry and the variability of award times in Peruvian public road-infrastructure procurement.
+
+The study addresses four specific objectives:
+
+1. **Identify** road-infrastructure tender procedures satisfying the predefined eligibility criteria during 2020–2025.
+2. **Classify** procurement procedures into Low, Medium, and High information-asymmetry scenarios according to the volume of consultations and observations.
+3. **Model stochastically** the award-time behavior of each scenario using Monte Carlo simulation and discrete-event simulation.
+4. **Validate and assess the robustness** of the stochastic architecture using empirical, temporal, distributional, and sensitivity-based evidence.
+
+The analysis is **observational**. Statistical associations and stochastic differences are therefore not interpreted as causal effects.
+
+---
+
+## Data Source
+
+The study uses public procurement information from the **OECE-SEACE Open Data Portal (Peru)** for the period **2020–2025**.
+
+Two complementary source families are used during sample reconstruction:
+
+- procurement notices; and
+- contract awards.
+
+The source datasets are linked using procedure-item identifiers before applying the study eligibility criteria.
+
+The raw annual source files are **not distributed in this repository**. They must be independently downloaded from the official public source.
+
+Detailed source-data acquisition and reconstruction instructions are available in:
 
 ```text
-.
+00_data/README.md
+```
+
+---
+
+## Study Population and Sample Selection
+
+The reproducible selection protocol begins with the linked analytical procurement population and sequentially applies the predefined eligibility criteria.
+
+| Selection stage | Unique procedures |
+|---|---:|
+| Analytical procurement population | 336,106 |
+| Contractual object = Works | 63,781 |
+| Road infrastructure | 9,755 |
+| Reference amount > PEN 25 million | 231 |
+| Public Tender | 148 |
+| After exclusions | 137 |
+| **Final analytical population** | **137** |
+
+The resulting **137 unique procurement procedures** constitute the master analytical population preserved throughout the downstream pipeline.
+
+Technical source and linkage audits are retained separately from the methodological selection funnel.
+
+---
+
+## Core Analytical Variables
+
+The computational pipeline reconstructs four variables central to the analysis:
+
+```text
+queries_observations_count
+total_award_time_days
+query_stage_duration_days
+evaluation_stage_duration_days
+```
+
+### Information-asymmetry proxy
+
+`queries_observations_count` represents the number of consultations and observations registered during the tender process.
+
+It is used as the primary empirical proxy for **pre-award information asymmetry / informational friction**.
+
+This variable should therefore be interpreted as an observable procurement-process proxy rather than as a direct measurement of latent information asymmetry.
+
+### Primary stochastic outcome
+
+`total_award_time_days` represents the elapsed award time reconstructed from the procurement timeline and constitutes the primary stochastic outcome.
+
+Award-time information is available for **136 of the 137 procedures**.
+
+### Stage-level temporal variables
+
+The process-decomposition analysis additionally uses:
+
+- `query_stage_duration_days`
+- `evaluation_stage_duration_days`
+
+Complete two-stage temporal decompositions are available for **109 of the 137 procedures (79.56%)**.
+
+Missing temporal information is retained explicitly and is not automatically imputed.
+
+---
+
+## Repository Structure
+
+```text
+road-tender-simulation/
+│
+├── 00_data/
+│   └── README.md
+│
 ├── 01_scripts/
-│   ├── 00_filtro_muestra.py
-│   ├── 01_descargar_pdfs.py
-│   ├── 02_contar_consultas.py
-│   ├── 03_integrar_resultados.py
-│   └── 04_calcular_escenarios.py
+│   ├── statistical_analysis/
+│   ├── stochastic_modeling/
+│   ├── model_validation/
+│   ├── robustness_analysis/
+│   ├── final_synthesis/
+│   ├── 00_select_sample.py
+│   ├── 01_download_pdfs.py
+│   ├── 02_count_queries.py
+│   ├── 03_integrate_results.py
+│   └── README.md
 │
 ├── 02_results/
-│   └── BASE_FINAL_CON_CONTEOS.xlsx
+│   ├── statistical_analysis/
+│   ├── stochastic_modeling/
+│   ├── model_validation/
+│   ├── robustness_analysis/
+│   ├── final_synthesis/
+│   ├── 00_1_sample_selection.xlsx
+│   ├── 00_2_sample_selection_flow.xlsx
+│   ├── 01_1_download_status.xlsx
+│   ├── 02_1_query_counts.xlsx
+│   ├── 02_2_processing_summary.xlsx
+│   ├── 03_1_integrated_dataset.xlsx
+│   └── README.md
 │
 ├── 03_logs/
-│   └── log_descarga_masiva_v7.txt
 │
 ├── 04_screenshots/
-│   ├── 01_captura_busqueda_seace.png
-│   ├── 02_captura_ficha_proceso.png
-│   ├── 03_captura_documentos_etapa.png
-│   └── 04_captura_pliego_absolucion.png
 │
-├── README.md
+├── 05_pdfs/
+│   ├── .gitkeep
+│   └── README.md
+│
+├── .gitignore
 ├── LICENSE
-└── .gitignore
+└── README.md
 ```
 
----
+The repository separates source reconstruction, executable code, analytical outputs, execution logs, visual evidence, and locally reconstructed procedure documents.
 
-## Pipeline computacional
-
-El procesamiento de los datos se organiza en cinco scripts principales que deben ejecutarse secuencialmente.
-
-| Script | Función | Entrada | Salida |
-|---|---|---|---|
-| `00_filtro_muestra.py` | Filtrado del universo de procedimientos | 12 archivos XLSX (2020-2025) | `BASE_FINAL_137_PROCESOS.xlsx` |
-| `01_descargar_pdfs.py` | Descarga automatizada de documentos del SEACE | `BASE_FINAL_137_PROCESOS.xlsx` | PDFs almacenados localmente |
-| `02_contar_consultas.py` | Extracción y conteo de consultas y observaciones | PDFs descargados | `conteos_consultas.xlsx` |
-| `03_integrar_resultados.py` | Integración de los conteos con la base principal | Base + conteos | `BASE_FINAL_CON_CONTEOS.xlsx` |
-| `04_calcular_escenarios.py` | Clasificación según nivel de asimetría informativa | `BASE_FINAL_CON_CONTEOS.xlsx` | Tablas y resultados por escenario |
-
-### Flujo general
+Detailed script-level documentation is available in:
 
 ```text
-Datos Abiertos OECE-SEACE
-      2020-2025
-          │
-          ▼
-┌──────────────────────────────┐
-│ Script 00                    │
-│ Filtrado del universo        │
-└──────────────┬───────────────┘
-               │
-               ▼
-  BASE_FINAL_137_PROCESOS.xlsx
-               │
-               ▼
-┌──────────────────────────────┐
-│ Script 01                    │
-│ Descarga de documentos       │
-│ desde el SEACE               │
-└──────────────┬───────────────┘
-               │
-               ▼
-       Documentos PDF
-               │
-               ▼
-┌──────────────────────────────┐
-│ Script 02                    │
-│ Conteo de consultas y        │
-│ observaciones                │
-└──────────────┬───────────────┘
-               │
-               ▼
-      conteos_consultas.xlsx
-               │
-               ▼
-┌──────────────────────────────┐
-│ Script 03                    │
-│ Integración de resultados    │
-└──────────────┬───────────────┘
-               │
-               ▼
- BASE_FINAL_CON_CONTEOS.xlsx
-               │
-               ▼
-┌──────────────────────────────┐
-│ Script 04                    │
-│ Clasificación en escenarios  │
-│ de asimetría informativa     │
-└──────────────┬───────────────┘
-               │
-               ▼
-      Resultados finales
+01_scripts/README.md
+```
+
+Detailed analytical-output documentation is available in:
+
+```text
+02_results/README.md
 ```
 
 ---
 
-## Requisitos
+## Computational Pipeline
 
-El pipeline fue desarrollado en **Python**.
+The final workflow consists of **20 sequentially numbered scripts (00–19)**.
 
-### Versión recomendada
+### Stage 1 — Sample Selection and Data Reconstruction
 
-- Python 3.11.7 o superior
+| Script | Purpose |
+|---|---|
+| `00_select_sample.py` | Reconstruct the eligible road-infrastructure procurement population |
+| `01_download_pdfs.py` | Retrieve procedure-level SEACE documents |
+| `02_count_queries.py` | Extract and count consultations and observations |
+| `03_integrate_results.py` | Integrate procurement, temporal, and information-asymmetry variables |
 
-### Principales librerías
+These scripts produce the master analytical dataset containing the **137 eligible procedures**.
 
-- `pandas`
-- `numpy`
-- `playwright`
-- `pymupdf`
-- `google-genai`
-- `openpyxl`
+---
 
-### Instalación
+### Stage 2 — Statistical Analysis
 
-Ejecutar:
+| Script | Purpose |
+|---|---|
+| `04_exploratory_analysis.py` | Descriptive statistics, data-quality diagnostics, and initial association analysis |
+| `05_missing_data_analysis.py` | Evaluate missing temporal information and potential systematic missingness |
+| `06_relationship_diagnostics.py` | Assess continuous relationships between consultation/observation volume and award time |
+| `07_scenario_definition.py` | Define the primary Low/Medium/High information-asymmetry scenarios |
+| `08_scenario_robustness.py` | Evaluate alternative scenario definitions |
+| `09_distribution_fitting.py` | Fit candidate probability distributions |
+| `10_distribution_diagnostics.py` | Diagnose distributional adequacy and tail behavior |
+| `11_methodological_assessment.py` | Consolidate methodological decisions before stochastic simulation |
 
-```bash
-pip install pandas numpy playwright pymupdf google-genai openpyxl
+This stage establishes the empirical and distributional architecture subsequently used by the stochastic models.
+
+---
+
+### Stage 3 — Stochastic Modeling
+
+| Script | Purpose |
+|---|---|
+| `12_model_specification.py` | Specify the stochastic model architecture |
+| `13_monte_carlo_convergence.py` | Evaluate Monte Carlo numerical convergence and simulation-size adequacy |
+| `14_monte_carlo_simulation.py` | Run the final direct award-time Monte Carlo simulation |
+| `15_discrete_event_assessment.py` | Assess whether stage-level discrete-event simulation is scientifically justified |
+| `16_discrete_event_simulation.py` | Implement the two-stage discrete-event process model |
+
+The final operational Monte Carlo simulation uses **50,000 iterations per scenario**, selected after numerical convergence assessment.
+
+The same operational simulation budget is used for the two-stage discrete-event model for computational comparability, while its numerical behavior is audited separately.
+
+---
+
+### Stage 4 — Model Validation
+
+| Script | Purpose |
+|---|---|
+| `17_model_validation.py` | Evaluate internal fidelity and temporal out-of-sample behavior |
+
+Temporal validation separates:
+
+```text
+Training period:    2020–2023
+Validation period:  2024–2025
 ```
 
-Posteriormente instalar Chromium para Playwright:
+Scenario thresholds used in the temporal validation experiment are estimated using the training period only, preventing validation-period outcomes from determining the classification thresholds.
+
+The full-sample scenario structure remains the primary analytical specification.
+
+---
+
+### Stage 5 — Robustness and Sensitivity Analysis
+
+| Script | Purpose |
+|---|---|
+| `18_robustness_analysis.py` | Stress-test the principal scientific conclusions across prespecified analytical alternatives |
+
+Robustness is evaluated across multiple dimensions, including:
+
+- continuous association across time periods;
+- alternative scenario definitions;
+- Low-scenario probability representation;
+- Monte Carlo versus discrete-event architecture;
+- stage-dependence specification; and
+- temporal transportability.
+
+Sensitivity analyses are not used to retrospectively optimize the primary model.
+
+---
+
+### Stage 6 — Final Scientific Synthesis
+
+| Script | Purpose |
+|---|---|
+| `19_final_synthesis.py` | Integrate the final evidence architecture for scientific reporting |
+
+Script 19 does not fit a new model or alter previous methodological decisions.
+
+It consolidates:
+
+- empirical relationships;
+- scenario evidence;
+- Monte Carlo results;
+- discrete-event results;
+- temporal validation;
+- robustness and sensitivity;
+- methodological limitations;
+- objective-level evidence; and
+- the final scientific interpretation boundaries.
+
+The computational pipeline is therefore complete through final scientific synthesis.
+
+---
+
+## Primary Scenario Definition
+
+The primary scenario specification uses the **tercile-based classification established in the statistical-analysis stage**.
+
+Among the **136 procedures with available total award time**, the final primary analytical groups are:
+
+| Scenario | N | Observed query/observation range | Observed award-time median | Observed P95 |
+|---|---:|---:|---:|---:|
+| Low | 46 | 0–30 | 43.50 days | 124.50 days |
+| Medium | 46 | 33–106 | 83.50 days | 277.00 days |
+| High | 44 | 109–403 | 126.00 days | 285.45 days |
+
+The observed median ordering is:
+
+```text
+Low < Medium < High
+```
+
+Alternative definitions, including **P25/P75** and a **data-driven one-dimensional partition**, are retained as robustness or sensitivity specifications rather than replacements for the primary tercile classification.
+
+---
+
+## Continuous Empirical Relationship
+
+Across the procedures with available total award time (`n = 136`), the relationship between consultation/observation volume and award time is positive:
+
+| Statistic | Estimate | p-value |
+|---|---:|---:|
+| Pearson r | 0.3457 | 3.75 × 10⁻⁵ |
+| Spearman ρ | 0.5453 | 6.67 × 10⁻¹² |
+| Kendall τ | 0.3717 | 1.86 × 10⁻¹⁰ |
+
+Because the variables exhibit non-normality and substantial distributional heterogeneity, the rank-based evidence is especially relevant to the final interpretation.
+
+The observed association is statistically supported but is **not interpreted as causal**.
+
+---
+
+## Probability Representations
+
+Distribution diagnostics resulted in scenario-specific stochastic representations.
+
+The final primary representations are:
+
+| Scenario | Primary representation |
+|---|---|
+| Low | Empirical / nonparametric |
+| Medium | Lognormal |
+| High | Lognormal |
+
+The Low scenario retains an empirical representation because the parametric alternative does not reproduce all relevant distributional features adequately, particularly upper-tail behavior.
+
+A Lognormal representation for Low is retained only as a sensitivity analysis.
+
+---
+
+## Monte Carlo Simulation
+
+The **direct total-duration Monte Carlo model** is the primary stochastic simulation framework.
+
+After numerical convergence assessment, the final operational simulation uses:
+
+```text
+50,000 iterations per scenario
+```
+
+Primary results are:
+
+| Scenario | Representation | Simulated median | Simulated P95 |
+|---|---|---:|---:|
+| Low | Empirical | 43.00 days | 125.00 days |
+| Medium | Lognormal | 90.09 days | 286.33 days |
+| High | Lognormal | 126.51 days | 297.34 days |
+
+Simulation iterations represent stochastic draws from the fitted or empirical representations. They **do not increase the number of independent procurement procedures in the empirical sample**.
+
+---
+
+## Discrete-Event Simulation
+
+A secondary **two-stage discrete-event simulation (DES)** represents each tender as an entity progressing through the observed procurement stages:
+
+```text
+NOTICE
+   │
+   ▼
+Query / integration stage
+   │
+   ▼
+INTEGRATED TERMS
+   │
+   ▼
+Evaluation / award stage
+   │
+   ▼
+AWARD
+```
+
+The DES is based on the **109 procedures with complete stage-level temporal decomposition**.
+
+No unobserved queues, artificial service disciplines, resource constraints, or administrative waiting mechanisms are introduced.
+
+### Dependence preservation
+
+The two observed temporal stages exhibit empirical dependence.
+
+Accordingly, the primary DES preserves the observed dependence structure through **joint empirical resampling of stage-duration pairs within each scenario**.
+
+Independent stage sampling is retained only as a counterfactual sensitivity analysis.
+
+### DES results
+
+| Scenario | Query-stage median | Evaluation-stage median | Total median | P95 |
+|---|---:|---:|---:|---:|
+| Low | 22.00 | 20.00 | 42.00 | 123.00 |
+| Medium | 30.00 | 27.00 | 70.00 | 277.00 |
+| High | 55.00 | 55.00 | 132.00 | 391.00 |
+
+The DES is interpreted as a **secondary process-decomposition model**, whereas the direct total-duration Monte Carlo model remains the primary stochastic reference.
+
+The two models are complementary representations rather than interchangeable estimators.
+
+---
+
+## Temporal Validation
+
+The stochastic architecture was evaluated using a prespecified temporal split:
+
+```text
+Training:    2020–2023
+Validation:  2024–2025
+```
+
+The continuous relationship remained positive in both periods:
+
+| Period | N | Spearman ρ |
+|---|---:|---:|
+| 2020–2023 | 69 | 0.6530 |
+| 2024–2025 | 67 | 0.4706 |
+
+The positive association therefore persists in the temporal holdout period.
+
+Scenario-specific predictive performance, however, is heterogeneous. The validation results are retained as evidence about model transportability rather than used to retrospectively modify the previously selected probability families or scenario definitions.
+
+---
+
+## Robustness and Sensitivity
+
+The final robustness analysis distinguishes conclusions that are stable across analytical alternatives from those that depend materially on modeling choices.
+
+The principal continuous relationship is directionally robust across:
+
+- the complete 2020–2025 analytical period;
+- the 2020–2023 training period; and
+- the 2024–2025 temporal validation period.
+
+The ordered Low–Medium–High award-time pattern also persists under multiple prespecified scenario-classification approaches.
+
+At the same time, the analysis identifies meaningful sensitivity in:
+
+- the stochastic representation of the Low scenario;
+- direct Monte Carlo versus two-stage DES architecture; and
+- the dependence specification used in stage-level simulation.
+
+These sensitivities are reported explicitly rather than optimized away.
+
+---
+
+## Final Evidence Architecture
+
+The completed pipeline establishes the following methodological hierarchy:
+
+```text
+1. Continuous empirical relationship
+            │
+            ▼
+2. Low / Medium / High scenario structure
+            │
+            ▼
+3. Scenario-specific probability representation
+            │
+            ▼
+4. Direct Monte Carlo simulation
+            │
+            ▼
+5. Two-stage discrete-event simulation
+            │
+            ▼
+6. Temporal validation
+            │
+            ▼
+7. Robustness and sensitivity analysis
+            │
+            ▼
+8. Final scientific synthesis
+```
+
+The final model hierarchy retains:
+
+- **Direct total-duration Monte Carlo** as the primary stochastic model;
+- **Empirical/nonparametric representation** for Low;
+- **Lognormal representation** for Medium;
+- **Lognormal representation** for High; and
+- **two-stage DES with joint pair resampling** as the secondary process-decomposition model.
+
+---
+
+## Main Scientific Findings
+
+The completed computational pipeline supports the following principal findings:
+
+1. The final analytical population comprises **137 eligible road-infrastructure public tender procedures** from the 2020–2025 selection protocol.
+
+2. Consultation/observation volume exhibits a positive relationship with total award time, with **Spearman ρ = 0.5453** in the full analytical sample with available award-time information.
+
+3. Observed award-time medians increase across the primary information-asymmetry scenarios from **43.50 days (Low)** to **83.50 days (Medium)** and **126.00 days (High)**.
+
+4. The final direct Monte Carlo model uses **50,000 operational iterations per scenario** after numerical convergence assessment.
+
+5. The primary probability representations are **empirical/nonparametric for Low** and **Lognormal for Medium and High**.
+
+6. Primary Monte Carlo simulated medians are **43.00, 90.09, and 126.51 days** for Low, Medium, and High, respectively.
+
+7. The secondary two-stage DES preserves empirical dependence between query/integration and evaluation/award durations through joint pair resampling.
+
+8. The positive continuous relationship persists in the **2024–2025 temporal validation period**, although scenario-specific predictive performance is heterogeneous.
+
+9. Robustness analysis supports the principal directional relationship while identifying meaningful sensitivity to the Low-scenario representation, stochastic-model architecture, and DES dependence assumptions.
+
+These findings support an **associational interpretation** of the research hypothesis. They do not establish that consultation/observation volume causally determines procurement duration.
+
+---
+
+## Reproducibility
+
+The repository is designed to preserve the computational provenance of the study from source-data reconstruction to final scientific synthesis.
+
+The principal reproducibility layers are:
+
+```text
+00_data/          Source-data reconstruction instructions
+01_scripts/       Executable computational pipeline
+02_results/       Structured analytical outputs
+03_logs/          Execution records
+04_screenshots/   Visual workflow evidence
+05_pdfs/          Local procedure-document reconstruction workspace
+```
+
+Raw OECE-SEACE datasets and downloaded procedure PDFs are intentionally not distributed in the repository.
+
+Instead, the repository documents how these materials can be independently reconstructed from their original public sources.
+
+Derived analytical workbooks, execution logs, methodological audits, and reproducibility metadata are retained to make the transformation from source information to final evidence traceable.
+
+Random seeds and simulation metadata are recorded by the corresponding stochastic-modeling scripts where applicable.
+
+---
+
+## Requirements
+
+The pipeline was developed in **Python**.
+
+A Python 3.11+ environment is recommended.
+
+Core packages used across the workflow include:
+
+```text
+pandas
+numpy
+scipy
+openpyxl
+matplotlib
+statsmodels
+scikit-learn
+playwright
+PyMuPDF
+google-genai
+```
+
+Package requirements vary by pipeline stage.
+
+For the browser-automation component, Playwright also requires a compatible browser installation:
 
 ```bash
 playwright install chromium
 ```
 
----
-
-## Uso
-
-Los scripts deben ejecutarse de manera secuencial debido a que la salida de una etapa constituye la entrada de la siguiente.
-
-### 1. Filtrado de la muestra
-
-```bash
-python 01_scripts/00_filtro_muestra.py
-```
-
-### 2. Descarga de documentos del SEACE
-
-```bash
-python 01_scripts/01_descargar_pdfs.py
-```
-
-### 3. Conteo de consultas y observaciones
-
-```bash
-python 01_scripts/02_contar_consultas.py
-```
-
-### 4. Integración de resultados
-
-```bash
-python 01_scripts/03_integrar_resultados.py
-```
-
-### 5. Clasificación en escenarios
-
-```bash
-python 01_scripts/04_calcular_escenarios.py
-```
+Users reproducing the complete workflow should inspect the corresponding script and stage documentation before execution.
 
 ---
 
-## Metodología para el conteo de consultas y observaciones
+## Running the Pipeline
 
-El Script 02 (`02_contar_consultas.py`) implementa un procedimiento de extracción y conteo de las consultas y observaciones contenidas en los documentos obtenidos del SEACE.
+The scripts are designed to be executed from the repository root.
 
-El procesamiento local mediante **PyMuPDF** constituye el mecanismo principal para la lectura y análisis de los documentos PDF.
+For example:
 
-En aquellos documentos cuya estructura, digitalización o contenido dificulta la determinación automática del número de consultas y observaciones, el pipeline puede utilizar **Gemini como mecanismo complementario de respaldo**.
-
-Este enfoque permite tratar documentos con diferentes estructuras y niveles de legibilidad manteniendo un procedimiento automatizado y reproducible.
-
----
-
-## Configuración de la API Key de Gemini
-
-Para utilizar el mecanismo de respaldo basado en Gemini, cada usuario debe configurar su propia API Key.
-
-La clave puede obtenerse desde Google AI Studio:
-
-https://aistudio.google.com/app/apikey
-
-En el Script 02 debe localizarse la configuración correspondiente:
-
-```python
-API_KEY = "TU_API_KEY_DE_GEMINI"
+```bash
+python 01_scripts/00_select_sample.py
+python 01_scripts/01_download_pdfs.py
+python 01_scripts/02_count_queries.py
+python 01_scripts/03_integrate_results.py
 ```
 
-y reemplazarla por la clave personal:
+Subsequent analytical stages are executed in numerical order from their corresponding subdirectories under `01_scripts/`.
 
-```python
-API_KEY = "su_clave_personal_aqui"
-```
-
-> **Importante:** Una API Key real nunca debe almacenarse públicamente en GitHub ni incorporarse a un repositorio público.
-
-El procesamiento principal mediante PyMuPDF no requiere una API Key. Gemini se utiliza únicamente como mecanismo complementario para documentos que requieren un tratamiento adicional.
-
----
-
-## Resultados principales
-
-La aplicación del pipeline permitió obtener una muestra final de:
-
-**137 procesos de licitación pública de infraestructura vial correspondientes al periodo 2020-2025.**
-
-Para la clasificación del nivel de asimetría informativa se utilizaron los percentiles de la distribución del número de consultas y observaciones:
-
-- **P25 = 23**
-- **P75 = 134**
-
-A partir de estos puntos de corte se definieron tres escenarios:
-
-| Escenario | N | Porcentaje | Media de consultas | Media del plazo (días) | Desv. estándar del plazo (días) |
-|---|---:|---:|---:|---:|---:|
-| Baja asimetría | 36 | 26.3 % | 11.17 | 62.14 | 40.19 |
-| Media asimetría | 67 | 48.9 % | 66.25 | 105.64 | 76.96 |
-| Alta asimetría | 34 | 24.8 % | 220.97 | 156.58 | 86.72 |
-| **Total** | **137** | **100.0 %** | — | — | — |
-
-### Criterios de clasificación
-
-Los escenarios de asimetría informativa se establecen a partir de los percentiles P25 y P75:
-
-- **Baja asimetría:** procedimientos ubicados en el tramo inferior de la distribución.
-- **Media asimetría:** procedimientos comprendidos entre los puntos de corte establecidos.
-- **Alta asimetría:** procedimientos ubicados en el tramo superior de la distribución.
-
-La variable utilizada como indicador observable de asimetría informativa corresponde al **número de consultas y observaciones registradas en el procedimiento de selección**.
-
----
-
-## Evidencia de ejecución
-
-Con el propósito de garantizar la trazabilidad y reproducibilidad del procesamiento, el repositorio incluye evidencia de las diferentes etapas de ejecución.
-
-### Log de descarga
+The complete execution sequence and the purpose of every script are documented in:
 
 ```text
-03_logs/log_descarga_masiva_v7.txt
+01_scripts/README.md
 ```
 
-Este archivo registra información generada durante el proceso automatizado de descarga de documentos.
+Because later scripts depend on outputs generated by earlier stages, the numerical execution order should be preserved when reproducing the complete analysis from source data.
 
-### Base de datos final
+---
+
+## Procedure-Level PDF Reconstruction
+
+Procedure documents retrieved from SEACE are used to reconstruct consultation and observation counts.
+
+These PDFs are stored locally under:
 
 ```text
-02_results/BASE_FINAL_CON_CONTEOS.xlsx
+05_pdfs/
 ```
 
-Contiene la base consolidada utilizada para el análisis posterior de los 137 procedimientos seleccionados.
+but are intentionally excluded from version control.
 
-### Capturas del SEACE
+The repository instead provides a documented and reproducible workflow for obtaining the procedure-level evidence from the original public procurement platform.
 
-La carpeta:
+See:
 
 ```text
-04_screenshots/
+05_pdfs/README.md
 ```
 
-contiene evidencia visual del procedimiento utilizado para localizar y acceder a la documentación en el SEACE.
+for the reconstruction protocol.
 
-Las capturas incluidas son:
+---
 
-| Archivo | Evidencia |
+## Results and Audit Outputs
+
+The `02_results/` directory contains the structured outputs generated throughout the computational pipeline, including:
+
+- sample-selection audits;
+- download-status records;
+- consultation/observation counts;
+- the integrated analytical dataset;
+- descriptive and diagnostic statistics;
+- missing-data analyses;
+- scenario definitions and robustness analyses;
+- distribution-fitting and diagnostic outputs;
+- Monte Carlo convergence evidence;
+- Monte Carlo simulation outputs;
+- discrete-event assessment and simulation outputs;
+- temporal model-validation evidence;
+- robustness and sensitivity results; and
+- the final scientific synthesis.
+
+The final synthesis is stored in:
+
+```text
+02_results/final_synthesis/19_1_final_synthesis.xlsx
+```
+
+Detailed output documentation is available in:
+
+```text
+02_results/README.md
+```
+
+Execution records are stored separately under:
+
+```text
+03_logs/
+```
+
+This separation prevents analytical results from being conflated with runtime evidence.
+
+---
+
+## Scientific Scope and Interpretation
+
+Several interpretation boundaries are intentionally preserved throughout the repository:
+
+- the empirical study population remains **137 procedures**;
+- simulation iterations do not create additional independent empirical observations;
+- missing temporal values are not automatically imputed;
+- the primary scenario thresholds are not redefined after observing simulation or validation results;
+- probability families are not re-selected to improve validation performance;
+- temporal validation outcomes are not used to retrospectively optimize the primary models;
+- the DES does not introduce unobserved administrative mechanisms;
+- robustness and sensitivity results are reported separately from primary results; and
+- statistical association is not interpreted as causal identification.
+
+These constraints are part of the analytical design and are retained throughout the final scientific synthesis.
+
+---
+
+## Research Status
+
+The computational research pipeline is complete through:
+
+```text
+Sample selection
+        ↓
+Data reconstruction
+        ↓
+Statistical analysis
+        ↓
+Scenario definition
+        ↓
+Distribution diagnostics
+        ↓
+Stochastic-model specification
+        ↓
+Monte Carlo convergence
+        ↓
+Monte Carlo simulation
+        ↓
+Discrete-event assessment
+        ↓
+Discrete-event simulation
+        ↓
+Temporal model validation
+        ↓
+Robustness and sensitivity analysis
+        ↓
+Final scientific synthesis
+```
+
+The repository is therefore ready to support the **Results, Discussion, and scientific reporting phases** of the research.
+
+---
+
+## Citation
+
+If this repository, its computational workflow, or its derived results are used in academic work, please cite the associated research:
+
+> Hurtado Zavaleta, A. B. (2026). *Stochastic simulation of the effect of information asymmetry on award-time uncertainty in Peruvian road infrastructure tenders*. Universidad Nacional Toribio Rodríguez de Mendoza de Amazonas.
+
+Citation metadata may be updated following publication of the corresponding scientific article.
+
+---
+
+## Author
+
+**Alan Bruce Hurtado Zavaleta**  
+Universidad Nacional Toribio Rodríguez de Mendoza de Amazonas (UNTRM)  
+Peru
+
+GitHub: `@AlanBruce10`
+
+---
+
+## License
+
+This repository is distributed under the **MIT License**.
+
+See:
+
+```text
+LICENSE
+```
+
+for the complete license terms.
+
+---
+
+## Repository Documentation
+
+For detailed information about individual components of the project, see:
+
+| Documentation | Purpose |
 |---|---|
-| `01_captura_busqueda_seace.png` | Búsqueda del procedimiento en el SEACE |
-| `02_captura_ficha_proceso.png` | Acceso a la ficha del procedimiento de selección |
-| `03_captura_documentos_etapa.png` | Visualización de los documentos correspondientes a la etapa |
-| `04_captura_pliego_absolucion.png` | Identificación del documento de consultas y observaciones |
+| `README.md` | Overall scientific and computational architecture |
+| `00_data/README.md` | Reconstruction of OECE-SEACE source datasets |
+| `01_scripts/README.md` | Complete executable pipeline and script sequence |
+| `02_results/README.md` | Analytical outputs and result provenance |
+| `05_pdfs/README.md` | Reconstruction of procedure-level SEACE documents |
 
-### Visualización de las capturas
-
-#### 1. Búsqueda del procedimiento en el SEACE
-
-![Búsqueda del procedimiento en el SEACE](04_screenshots/01_captura_busqueda_seace.png)
-
-#### 2. Ficha del procedimiento de selección
-
-![Ficha del procedimiento de selección](04_screenshots/02_captura_ficha_proceso.png)
-
-#### 3. Documentos de la etapa
-
-![Documentos de la etapa](04_screenshots/03_captura_documentos_etapa.png)
-
-#### 4. Pliego de consultas y observaciones
-
-![Pliego de consultas y observaciones](04_screenshots/04_captura_pliego_absolucion.png)
-
----
-
-## Reproducibilidad y trazabilidad
-
-La estructura del repositorio permite mantener separadas las principales etapas del procesamiento:
-
-- **Código fuente:** `01_scripts/`
-- **Resultados:** `02_results/`
-- **Registros de ejecución:** `03_logs/`
-- **Evidencia visual:** `04_screenshots/`
-
-Esta organización permite rastrear el procesamiento desde los datos originales hasta la generación de la base consolidada y los escenarios de asimetría informativa.
-
-Los scripts están numerados de acuerdo con su orden de ejecución para facilitar la reproducción del procedimiento computacional.
-
----
-
-## Fuente de datos
-
-Los datos utilizados corresponden a procedimientos de contratación pública registrados en el **OECE-SEACE**, para el periodo de estudio **2020-2025**.
-
-El repositorio contiene los scripts utilizados para el procesamiento de la información y los resultados derivados necesarios para garantizar la trazabilidad metodológica de la investigación.
-
----
-
-## Licencia
-
-Este proyecto está bajo la **Licencia MIT**. Consulte el archivo `LICENSE` para más detalles.
-
----
-
-## Contacto
-
-**Autor:** Alan Bruce Hurtado Zavaleta  
-**Correo:** 4571604421@untrm.edu.pe  
-**GitHub:** [@AlanBruce10](https://github.com/AlanBruce10)
-
----
-
-## Citación
-
-Si utiliza este código o los resultados derivados del pipeline con fines académicos, se recomienda citar la investigación asociada:
-
-**Hurtado Zavaleta, A. B. (2026).** *Simulación estocástica del efecto de la asimetría de información en la incertidumbre de los plazos de adjudicación en licitaciones de infraestructura vial peruana*. Universidad Nacional Toribio Rodríguez de Mendoza de Amazonas.
+Together, these five documentation layers describe the complete path from official public procurement records to the final reproducible scientific evidence.
