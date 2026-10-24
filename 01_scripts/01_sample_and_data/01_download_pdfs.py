@@ -1,4 +1,20 @@
+"""Acquire published SEACE schedules and query-response PDFs for Script 00 selection.
+
+Place in 01_scripts/01_sample_and_data/. Default: up to 50 pending cases.
+Use --all for one sequential pass over all pending cases; rerun to resume.
+Canonical PDFs: 05_pdfs/<code>.pdf or <code>_ACTA.pdf.
+Dependencies: pandas, openpyxl, playwright, pymupdf.
+Dates remain labeled as schedules or document publications, not verified event dates.
+No query/observation count is assigned here.
+"""
 import sys
+import os
+import hashlib
+import shutil
+import argparse
+import json
+import re
+from datetime import datetime, timezone
 import time
 import unicodedata
 from pathlib import Path
@@ -11,19 +27,18 @@ from playwright.sync_api import sync_playwright
 # PROJECT PATHS
 # =============================================================================
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-
-RESULTS_DIR = PROJECT_ROOT / "02_results"
-LOGS_DIR = PROJECT_ROOT / "03_logs"
-PDFS_DIR = PROJECT_ROOT / "05_pdfs"
-
-RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-LOGS_DIR.mkdir(parents=True, exist_ok=True)
-PDFS_DIR.mkdir(parents=True, exist_ok=True)
-
-INPUT_FILE = RESULTS_DIR / "00_1_sample_selection.xlsx"
-STATUS_FILE = RESULTS_DIR / "01_1_download_status.xlsx"
-LOG_FILE = LOGS_DIR / "01_download_pdfs.log"
+# Paths are configured by main(); importing this module creates no directories.
+PROJECT_ROOT = RESULTS_DIR = LOGS_DIR = PDFS_DIR = None
+INPUT_FILE = STATUS_FILE = LOG_FILE = None
+PILOT_ROW = None
+BATCH_ROOT = STATE_DIR = RUN_DIR = None
+PDF_INDEX = {}
+EXISTING_ISSUES = []
+CURRENT_NOMENCLATURE = ""
+SCHEMA_VERSION = "1.0-batch-acquisition"
+SCHEDULE_RESULT = {}
+DOCUMENT_RECORDS = []
+DOCUMENT_AUDIT = {}
 
 
 # =============================================================================
@@ -40,10 +55,6 @@ DOWNLOAD_TIMEOUT_MS = 30000
 PAGE_TIMEOUT_MS = 60000
 
 # Script 00 standardized analytical schema
-EXPECTED_INPUT_COLUMNS = {
-    "procedure_code",
-    "notice_date",
-}
 
 
 # =============================================================================
@@ -85,59 +96,6 @@ def normalize_text(text):
 # INPUT VALIDATION
 # =============================================================================
 
-def validate_input_file():
-    if not INPUT_FILE.exists():
-        raise FileNotFoundError(
-            f"Required Script 00 output not found: {INPUT_FILE.name}"
-        )
-
-    dataframe = pd.read_excel(INPUT_FILE)
-
-    missing_columns = EXPECTED_INPUT_COLUMNS - set(dataframe.columns)
-
-    if missing_columns:
-        raise KeyError(
-            "Input dataset is missing required columns: "
-            + ", ".join(sorted(missing_columns))
-        )
-
-    if dataframe["procedure_code"].isna().any():
-        raise ValueError(
-            "Input dataset contains missing procurement procedure codes."
-        )
-
-    duplicated_codes = (
-        dataframe["procedure_code"]
-        .duplicated()
-        .sum()
-    )
-
-    if duplicated_codes > 0:
-        raise ValueError(
-            "Input dataset contains duplicated procurement procedure codes: "
-            f"{duplicated_codes}"
-        )
-
-    dataframe["notice_date"] = pd.to_datetime(
-        dataframe["notice_date"],
-        errors="coerce",
-    )
-
-    missing_dates = dataframe["notice_date"].isna().sum()
-
-    if missing_dates > 0:
-        raise ValueError(
-            "Input dataset contains invalid or missing procurement notice "
-            f"dates: {missing_dates}"
-        )
-
-    dataframe["search_year"] = (
-        dataframe["notice_date"]
-        .dt.year
-        .astype(int)
-    )
-
-    return dataframe
 
 
 # =============================================================================
@@ -146,7 +104,7 @@ def validate_input_file():
 
 def validate_pdf_content(pdf_path, expected_document_type):
     try:
-        import fitz
+        import pymupdf as fitz
 
         document = fitz.open(str(pdf_path))
 
@@ -433,43 +391,36 @@ def search_document_in_year(page, code, year):
         # ---------------------------------------------------------------------
 
         rows = page.locator("tr")
-
-        result_row = None
-
-        procedure_prefixes = (
-            "LP-",
-            "CP-",
-            "AS-",
-            "AM-",
-            "AD-",
-            "CD-",
-        )
-
+        matching_rows = []
         for index in range(rows.count()):
-            try:
-                row_text = rows.nth(index).inner_text().strip()
-
-                if (
-                    any(
-                        prefix in row_text
-                        for prefix in procedure_prefixes
-                    )
-                    and len(row_text) > 50
-                ):
-                    result_row = rows.nth(index)
-                    break
-
-            except Exception:
-                pass
-
-        if result_row is None:
-            return {
-                "status": "RESULT_ROW_NOT_FOUND",
-                "path": None,
-                "document_type": None,
-                "validation": None,
-                "source_filename": None,
-            }
+            row = rows.nth(index)
+            if row.locator("tr").count():
+                continue
+            controls = row.locator("img, input[type='image']")
+            if any("ficha" in (controls.nth(j).get_attribute("src") or "").lower() for j in range(controls.count())):
+                if row.is_visible():
+                    matching_rows.append(row)
+        if len(matching_rows) != 1:
+            return {"status": "AMBIGUOUS_OR_MISSING_RESULT", "path": None,
+                    "document_type": None, "validation": f"detail_rows={len(matching_rows)}",
+                    "source_filename": None}
+        result_row = matching_rows[0]
+        global CURRENT_NOMENCLATURE
+        search_cells = result_row.locator(":scope > td").all_inner_texts()
+        search_text = result_row.inner_text()
+        (RESULTS_DIR / "search_result.txt").write_text(search_text, encoding="utf-8")
+        CURRENT_NOMENCLATURE = search_cells[3].strip() if len(search_cells) > 3 else ""
+        expected_description = compact(PILOT_ROW.get("procedure_description", ""))
+        actual_description = compact(search_cells[6]) if len(search_cells) > 6 else ""
+        expected_entity = compact(PILOT_ROW.get("entity_name", ""))
+        actual_entity = compact(search_cells[1]) if len(search_cells) > 1 else ""
+        identity_ok = (expected_description and actual_description == expected_description
+                       and expected_entity and actual_entity == expected_entity
+                       and CURRENT_NOMENCLATURE)
+        if not identity_ok:
+            return {"status": "SEARCH_IDENTITY_NOT_VERIFIED", "path": None,
+                    "document_type": None, "validation": "Source description/entity mismatch or missing nomenclature",
+                    "source_filename": None}
 
         # ---------------------------------------------------------------------
         # OPEN PROCEDURE DETAILS
@@ -518,6 +469,8 @@ def search_document_in_year(page, code, year):
         if pages_after > pages_before:
             detail_page = page.context.pages[-1]
 
+        capture_schedule(detail_page, code, year)
+
         # ---------------------------------------------------------------------
         # OPEN DOCUMENT SECTION
         # ---------------------------------------------------------------------
@@ -545,8 +498,16 @@ def search_document_in_year(page, code, year):
             }
 
         try:
-            documents_button.first.click()
-            detail_page.wait_for_timeout(4000)
+            # SEACE can open the fieldset expanded. Clicking an expanded
+            # legend collapses it, leaving hidden DOM rows readable but
+            # preventing genuine paginator interaction.
+            document_box = detail_page.locator('[id="tbFicha:dtDocumentos"]')
+            if not document_box.is_visible():
+                legend = detail_page.locator("legend").filter(has_text="Ver documentos por Etapa")
+                if legend.count() != 1:
+                    raise RuntimeError("Document fieldset legend is missing or ambiguous")
+                legend.click()
+            document_box.wait_for(state="visible", timeout=15000)
 
         except Exception:
             if detail_page != page:
@@ -563,11 +524,23 @@ def search_document_in_year(page, code, year):
                 "source_filename": None,
             }
 
+        try:
+            collect_document_publications(detail_page)
+        except Exception as exc:
+            DOCUMENT_AUDIT["status"] = "INCOMPLETE"
+            DOCUMENT_AUDIT["error"] = f"{type(exc).__name__}: {str(exc)[:200]}"
+            log(f"    Document-list audit incomplete: {exc}")
+        save_pilot_outputs(None)
+
+        reused = reuse_existing_pdf(code, CURRENT_NOMENCLATURE)
+        if reused is not None:
+            return reused
+
         # ---------------------------------------------------------------------
         # IDENTIFY TARGET DOCUMENT
         # ---------------------------------------------------------------------
 
-        document_rows = detail_page.locator("tr")
+        document_rows = detail_page.locator('[id="tbFicha:dtDocumentos_data"] > tr')
 
         target_row = None
         document_type = None
@@ -721,7 +694,7 @@ def search_document_in_year(page, code, year):
                     "source_filename": source_filename,
                 }
 
-            download.save_as(str(output_path))
+            download.save_as(str(RESULTS_DIR / output_filename))
 
         except Exception as error:
             if detail_page != page:
@@ -746,13 +719,13 @@ def search_document_in_year(page, code, year):
         # ---------------------------------------------------------------------
 
         is_valid, validation_status = validate_pdf_content(
-            output_path,
+            RESULTS_DIR / output_filename,
             document_type,
         )
 
         if not is_valid:
-            if output_path.exists():
-                output_path.unlink()
+            # Retain acquired evidence even if text validation is inconclusive.
+            pass
 
             if detail_page != page:
                 try:
@@ -762,7 +735,7 @@ def search_document_in_year(page, code, year):
 
             return {
                 "status": "PDF_VALIDATION_FAILED",
-                "path": None,
+                "path": RESULTS_DIR / output_filename,
                 "document_type": document_type,
                 "validation": validation_status,
                 "source_filename": source_filename,
@@ -774,8 +747,18 @@ def search_document_in_year(page, code, year):
             except Exception:
                 pass
 
+        acquired = RESULTS_DIR / output_filename
+        identity = pdf_identity(acquired, CURRENT_NOMENCLATURE)
+        if identity == "MISMATCH":
+            return {"status": "PDF_IDENTITY_MISMATCH", "path": acquired,
+                    "document_type": document_type, "validation": identity,
+                    "source_filename": source_filename}
+        install_pdf(acquired, output_path)
         return {
             "status": "OK",
+            "identity_validation": identity,
+            "sha256": digest(output_path),
+            "acquisition_mode": "DOWNLOADED",
             "path": output_path,
             "document_type": document_type,
             "validation": validation_status,
@@ -799,431 +782,540 @@ def search_document_in_year(page, code, year):
 # SEARCH STRATEGY
 # =============================================================================
 
-def download_with_year_search(page, code, base_year):
-    candidate_years = [
-        base_year,
-        base_year + 1,
-        base_year - 1,
-        base_year + 2,
-        base_year - 2,
-    ]
-
-    attempts = []
-
-    for year in candidate_years:
-        result = search_document_in_year(
-            page,
-            code,
-            year,
-        )
-
-        attempts.append(
-            f"{year}:{result['status']}"
-        )
-
-        log(
-            f"      {year}: "
-            f"{result['status']}"
-        )
-
-        if result["status"] == "OK":
-            result["year_found"] = year
-            result["attempts"] = " | ".join(attempts)
-            return result
-
-        if result["status"] in {
-            "YEAR_NOT_AVAILABLE",
-            "PROCEDURE_NOT_FOUND",
-            "RESULT_ROW_NOT_FOUND",
-        }:
-            continue
-
-        if result["status"] in {
-            "DOCUMENT_SECTION_NOT_FOUND",
-            "DOCUMENT_SECTION_OPEN_ERROR",
-        }:
-            log("      Retrying the same year once...")
-
-            time.sleep(5)
-
-            retry_result = search_document_in_year(
-                page,
-                code,
-                year,
-            )
-
-            attempts.append(
-                f"{year}:RETRY:{retry_result['status']}"
-            )
-
-            log(
-                f"      {year} retry: "
-                f"{retry_result['status']}"
-            )
-
-            if retry_result["status"] == "OK":
-                retry_result["year_found"] = year
-                retry_result["attempts"] = (
-                    " | ".join(attempts)
-                )
-                return retry_result
-
-        # If the procedure was found but the target document
-        # could not be retrieved, preserve the evidence and stop
-        # searching unrelated years.
-        if result["status"] in {
-            "TARGET_DOCUMENT_NOT_FOUND",
-            "DOWNLOAD_LINK_NOT_FOUND",
-            "UNSUPPORTED_DOWNLOAD_FORMAT",
-            "DOWNLOAD_ERROR",
-            "PDF_VALIDATION_FAILED",
-            "PROCEDURE_ICON_NOT_FOUND",
-            "CODE_FIELD_ERROR",
-            "SEARCH_BUTTON_NOT_FOUND",
-            "YEAR_SELECTION_ERROR",
-            "GENERAL_ERROR",
-        }:
-            result["year_found"] = year
-            result["attempts"] = " | ".join(attempts)
-            return result
-
-    return {
-        "status": "PROCEDURE_NOT_FOUND_IN_SEARCH_YEARS",
-        "path": None,
-        "document_type": None,
-        "validation": None,
-        "source_filename": None,
-        "year_found": None,
-        "attempts": " | ".join(attempts),
-    }
 
 
 # =============================================================================
 # OUTPUT
 # =============================================================================
 
-def save_status(results):
-    dataframe = pd.DataFrame(results)
-
-    dataframe.to_excel(
-        STATUS_FILE,
-        index=False,
-    )
 
 
-def print_final_summary(results, expected_count):
-    dataframe = pd.DataFrame(results)
 
-    successful = dataframe[
-        dataframe["download_status"] == "OK"
-    ]
-
-    failed = dataframe[
-        dataframe["download_status"] != "OK"
-    ]
-
-    pliegos = successful[
-        successful["document_type"] == "PLIEGO"
-    ]
-
-    acts = successful[
-        successful["document_type"]
-        == "ACTA_NO_FORMULACION"
-    ]
-
-    log()
-    log("=" * 78)
-    log("FINAL DOWNLOAD AUDIT")
-    log("=" * 78)
-
-    log(
-        f"Expected procedures:              "
-        f"{expected_count:,}"
-    )
-
-    log(
-        f"Successfully retrieved:           "
-        f"{len(successful):,}"
-    )
-
-    log(
-        f"Pliegos:                          "
-        f"{len(pliegos):,}"
-    )
-
-    log(
-        f"Acts of no formulation:           "
-        f"{len(acts):,}"
-    )
-
-    log(
-        f"Missing or failed:                "
-        f"{len(failed):,}"
-    )
-
-    log(
-        f"PDF files in 05_pdfs:             "
-        f"{len(list(PDFS_DIR.glob('*.pdf'))):,}"
-    )
-
-    if len(failed) > 0:
-        log()
-        log("PROCEDURES REQUIRING REVIEW")
-        log("-" * 78)
-
-        for _, row in failed.iterrows():
-            log(
-                f"  {row['procedure_code']} | "
-                f"{row['download_status']} | "
-                f"{row['search_attempts']}"
-            )
-
-    log()
-    log("=" * 78)
-
-    if (
-        len(successful) == expected_count
-        and len(list(PDFS_DIR.glob("*.pdf")))
-        == expected_count
-    ):
-        log("PIPELINE STATUS: COMPLETE")
-    else:
-        log("PIPELINE STATUS: INCOMPLETE")
-
-    log("=" * 78)
 
 
 # =============================================================================
-# MAIN PIPELINE
+# PILOT SCHEDULE EXTRACTION
 # =============================================================================
+DATE_TOKEN = re.compile(r"\b\d{1,2}/\d{1,2}/\d{4}(?:\s+\d{1,2}:\d{2}(?::\d{2})?)?\b")
+STAGE_WORDS = ("convocatoria", "registro de participantes", "consulta", "observacion",
+               "absolucion", "integracion", "presentacion de", "evaluacion", "calificacion", "buena pro")
+
+
+def extract_schedule_rows(tables):
+    """Read stage/start/end rows, excluding layout tables and document listings."""
+    records = []
+    stage_prefix = re.compile(r"^(?:convocatoria|registro de participantes|formulacion de consultas|absolucion de consultas|integracion de (?:las )?bases|presentacion de (?:ofertas|propuestas)|evaluacion|calificacion|otorgamiento de la buena pro)\b")
+    for table_index, rows in enumerate(tables):
+        for row_index, cells in enumerate(rows):
+            if len(cells) != 3:
+                continue
+            label = " ".join(cells[0].split())
+            if len(label) > 220 or DATE_TOKEN.search(label):
+                continue
+            if not stage_prefix.search(normalize_text(label)):
+                continue
+            start = DATE_TOKEN.fullmatch(cells[1].strip())
+            end = DATE_TOKEN.fullmatch(cells[2].strip())
+            if start is None or end is None:
+                continue
+            records.append({"table_index": table_index, "row_index": row_index,
+                            "stage_label": label, "cells": cells,
+                            "raw_text": " | ".join(cells),
+                            "date_tokens": [start.group(0), end.group(0)]})
+    return records
+
+
+def unique_boundary(records, predicate, last=False):
+    values = []
+    for record in records:
+        if predicate(normalize_text(record.get("stage_label", record["raw_text"]))):
+            dates = record["date_tokens"]
+            values.append(dates[-1] if last else dates[0])
+    distinct = list(dict.fromkeys(values))
+    return distinct[0] if len(distinct) == 1 else None
+
+
+def capture_schedule(page, code, year):
+    global SCHEDULE_RESULT
+    page.wait_for_load_state("domcontentloaded")
+    text = page.locator("body").inner_text()
+    (RESULTS_DIR / "procedure_detail.txt").write_text(text, encoding="utf-8")
+    (RESULTS_DIR / "procedure_detail.html").write_text(page.content(), encoding="utf-8")
+    try:
+        page.screenshot(path=str(RESULTS_DIR / "procedure_detail.png"), full_page=True)
+    except Exception as exc:
+        log(f"    Screenshot unavailable: {type(exc).__name__}")
+    tables = page.locator("table").evaluate_all("""tables => tables.map(table =>
+        Array.from(table.rows).filter(row => row.closest('table') === table)
+        .map(row => Array.from(row.cells).map(cell => cell.innerText.trim())))""")
+    records = extract_schedule_rows(tables)
+    (RESULTS_DIR / "schedule_raw.json").write_text(json.dumps(
+        {"procedure_code": code, "search_year": year, "url": page.url,
+         "retrieved_at_utc": datetime.now(timezone.utc).isoformat(), "tables": tables,
+         "schedule_rows": records}, ensure_ascii=False, indent=2), encoding="utf-8")
+    if not CURRENT_NOMENCLATURE or compact(CURRENT_NOMENCLATURE) not in compact(text):
+        raise RuntimeError("Detail nomenclature does not match the verified search row")
+    # Search description/entity and detail nomenclature establish the identity chain.
+    source_entity = normalize_text(PILOT_ROW.get("entity_name", ""))
+    normalized_page = normalize_text(text)
+    code_seen = bool(re.search(r"(?<!\d)" + re.escape(code) + r"(?!\d)", text))
+    entity_seen = bool(source_entity and source_entity != "nan" and source_entity in normalized_page)
+    SCHEDULE_RESULT = {
+        "procedure_code": code, "identity_code_seen": code_seen,
+        "identity_entity_seen": entity_seen,
+        "identity_status": "source_search_and_detail_matched",
+        "nomenclature": CURRENT_NOMENCLATURE,
+        "schedule_status": "EXTRACTED" if records else "SCHEDULE_NOT_LOCATED",
+        "query_open_raw": unique_boundary(records, lambda t: "formulacion" in t and ("consulta" in t or "observacion" in t)),
+        "query_close_raw": unique_boundary(records, lambda t: "formulacion" in t and ("consulta" in t or "observacion" in t), last=True),
+        "absolution_raw": unique_boundary(records, lambda t: "absolucion" in t, last=True),
+        "integration_raw": unique_boundary(records, lambda t: "integracion" in t, last=True),
+        "award_raw": unique_boundary(records, lambda t: "otorgamiento" in t and "buena pro" in t, last=True),
+        "date_nature": "published_schedule_not_verified_actual_events",
+        "schedule_rows": len(records),
+    }
+    # Calendar-day differences remain schedule-based until verified externally.
+    for field in ("query_open", "query_close", "absolution", "integration", "award"):
+        raw = SCHEDULE_RESULT[field + "_raw"]
+        SCHEDULE_RESULT[field + "_date"] = pd.to_datetime(raw, dayfirst=True, errors="coerce")
+    for name, start, end in [("query_to_award_calendar_days", "query_close", "award"),
+                             ("absolution_calendar_days", "query_close", "absolution"),
+                             ("integration_calendar_days", "absolution", "integration"),
+                             ("post_integration_calendar_days", "integration", "award")]:
+        first, last = SCHEDULE_RESULT[start + "_date"], SCHEDULE_RESULT[end + "_date"]
+        SCHEDULE_RESULT[name] = (last.normalize() - first.normalize()).days if pd.notna(first) and pd.notna(last) else None
+    SCHEDULE_RESULT["chronology_alert"] = any(
+        value is not None and value < 0 for key, value in SCHEDULE_RESULT.items() if key.endswith("calendar_days"))
+    atomic_json(RESULTS_DIR / "schedule_summary.json", SCHEDULE_RESULT)
+    save_pilot_outputs(None)
+    log(f"    Schedule rows extracted: {len(records)}; evidence saved before PDF acquisition.")
+
+
+def publication_records(cells_rows, page_number):
+    records = []
+    for cells in cells_rows:
+        if len(cells) < 6 or not cells[0].strip().isdigit():
+            continue
+        tokens = DATE_TOKEN.findall(cells[4])
+        records.append({"page_number": page_number, "document_number": cells[0].strip(),
+                        "stage": cells[1].strip(), "document_name": cells[2].strip(),
+                        "publication_raw": cells[4].strip(),
+                        "publication_date": pd.to_datetime(tokens[0], dayfirst=True, errors="coerce") if len(tokens) == 1 else pd.NaT,
+                        "date_nature": "document_publication_not_automatically_event_date"})
+    return records
+
+
+def collect_document_publications(page):
+    global DOCUMENT_RECORDS
+    box = page.locator('[id="tbFicha:dtDocumentos"]')
+    box.wait_for(state="visible", timeout=15000)
+    data = box.locator('tbody[id$="_data"]')
+    def move(control):
+        before = data.inner_text()
+        control.click()
+        page.wait_for_function("""previous => {
+            const body = document.getElementById('tbFicha:dtDocumentos_data');
+            return body && body.innerText !== previous;
+        }""", arg=before, timeout=15000)
+    first = box.locator('.ui-paginator-first').first
+    if first.count() and 'ui-state-disabled' not in (first.get_attribute('class') or ''):
+        move(first)
+    seen = set()
+    DOCUMENT_RECORDS = []
+    completed = False
+    pages = 0
+    try:
+        for page_number in range(1, 101):
+            raw = data.inner_text()
+            if raw in seen:
+                raise RuntimeError("Repeated document page; pagination did not advance")
+            seen.add(raw)
+            pages = page_number
+            cells = data.locator('tr').evaluate_all("rows => rows.map(row => Array.from(row.cells).map(c => c.innerText.trim()))")
+            DOCUMENT_RECORDS.extend(publication_records(cells, page_number))
+            (RESULTS_DIR / f"document_list_page_{page_number:03d}.html").write_text(box.inner_html(), encoding="utf-8")
+            next_button = box.locator('.ui-paginator-next').first
+            if not next_button.count() or 'ui-state-disabled' in (next_button.get_attribute('class') or ''):
+                completed = True
+                break
+            move(next_button)
+    finally:
+        DOCUMENT_AUDIT.update(status="COMPLETE" if completed else "INCOMPLETE", pages_read=pages, documents=len(DOCUMENT_RECORDS))
+        (RESULTS_DIR / "document_publications.json").write_text(json.dumps(
+            {"audit": DOCUMENT_AUDIT, "documents": DOCUMENT_RECORDS}, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+        # Return to the target document's page before reusing the working downloader.
+        first = box.locator('.ui-paginator-first').first
+        if first.count() and 'ui-state-disabled' not in (first.get_attribute('class') or ''):
+            move(first)
+        targets = [r for r in DOCUMENT_RECORDS if 'absolucion de consultas' in normalize_text(r['stage'])
+                   and ('pliego de absolucion' in normalize_text(r['document_name']) or 'acta de no formulacion' in normalize_text(r['document_name']))]
+        if targets:
+            target_page = targets[0]['page_number']
+            for _ in range(1, target_page):
+                move(box.locator('.ui-paginator-next').first)
+    log(f"    Document-list pages: {pages}; documents: {len(DOCUMENT_RECORDS)}; status: {DOCUMENT_AUDIT['status']}")
+
+
+def save_pilot_outputs(download):
+    payload = {"schema_version": SCHEMA_VERSION, "procedure_code": str(PILOT_ROW["procedure_code"]),
+               "schedule": SCHEDULE_RESULT, "document_list": DOCUMENT_AUDIT,
+               "publications": DOCUMENT_RECORDS, "document": download,
+               "evidence_directory": str(RESULTS_DIR), "updated_at_utc": utc_now()}
+    atomic_json(RESULTS_DIR / "acquisition.json", payload)
+
+
+# =============================================================================
+# DURABLE STATE, EXISTING FILE AUDIT, AND RESUMABLE BATCH EXECUTION
+# =============================================================================
+def utc_now():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def compact(value):
+    if value is None or pd.isna(value):
+        return ""
+    return re.sub(r"[^a-z0-9]", "", normalize_text(value))
+
+
+def json_default(value):
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, (datetime, pd.Timestamp)):
+        return value.isoformat()
+    if value is pd.NA or value is pd.NaT:
+        return None
+    if hasattr(value, 'item'):
+        return value.item()
+    raise TypeError(f"Not JSON serializable: {type(value).__name__}")
+
+
+def atomic_json(path, payload):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(path.name + '.tmp')
+    temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2,
+                                   default=json_default), encoding='utf-8')
+    os.replace(temporary, path)
+
+
+def digest(path):
+    h = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b''):
+            h.update(block)
+    return h.hexdigest()
+
+
+def pdf_identity(path, nomenclature):
+    import pymupdf
+    try:
+        with pymupdf.open(path) as doc:
+            text = '\n'.join(doc[i].get_text() for i in range(min(3, len(doc))))
+        if compact(nomenclature) in compact(text):
+            return 'NOMENCLATURE_MATCH'
+        # Compare only explicitly labeled nomenclatures, not unrelated procedure references.
+        match = re.search(r'nomenclatura\s*:?\s*([A-Z]{2,4}[-\w./]+)', text, re.I)
+        if match and compact(match.group(1)) != compact(nomenclature):
+            return 'MISMATCH'
+        return 'NOT_IDENTIFIABLE_FROM_TEXT'
+    except Exception:
+        return 'UNREADABLE'
+
+
+def build_pdf_index(selected_codes):
+    index = {}
+    for path in sorted(PDFS_DIR.rglob('*')):
+        if not path.is_file() or path.suffix.lower() != '.pdf' or 'unverified_existing' in path.parts:
+            continue
+        match = re.fullmatch(r'(\d+)(_ACTA)?(?:\s*\(\d+\))?', path.stem, flags=re.I)
+        if not match:
+            EXISTING_ISSUES.append({'path': str(path), 'issue': 'UNRECOGNIZED_FILENAME'})
+            continue
+        code = match.group(1)
+        if code not in selected_codes:
+            EXISTING_ISSUES.append({'path': str(path), 'issue': 'CODE_OUTSIDE_CURRENT_SELECTION'})
+            continue
+        index.setdefault(code, []).append((path, 'ACTA_NO_FORMULACION' if match.group(2) else 'PLIEGO'))
+    return index
+
+
+def install_pdf(source, destination):
+    if source.resolve() == destination.resolve():
+        return
+    # Preserve bytes of an earlier file even when it has the wrong contents.
+    if destination.exists():
+        if digest(source) == digest(destination):
+            return
+        archive = PDFS_DIR / 'unverified_existing'
+        archive.mkdir(exist_ok=True)
+        backup = archive / (destination.stem + '_' + datetime.now().strftime('%Y%m%d_%H%M%S_%f') + '.pdf')
+        shutil.copy2(destination, backup)
+    staged = destination.with_suffix('.pdf.part')
+    shutil.copy2(source, staged)
+    os.replace(staged, destination)
+
+
+def reuse_existing_pdf(code, nomenclature):
+    # Prefer a nomenclature match; retain content-only files with explicit identity alert.
+    reusable = []
+    for path, document_type in PDF_INDEX.get(code, []):
+        valid, validation = validate_pdf_content(path, document_type)
+        identity = pdf_identity(path, nomenclature)
+        if not valid or identity in {'MISMATCH', 'UNREADABLE'}:
+            EXISTING_ISSUES.append({'procedure_code': code, 'path': str(path),
+                                    'issue': validation if not valid else identity})
+            continue
+        reusable.append((identity != 'NOMENCLATURE_MATCH', path, document_type, validation, identity))
+    if not reusable:
+        return None
+    _, source, document_type, validation, identity = sorted(reusable, key=lambda r: (r[0], str(r[1])))[0]
+    canonical = PDFS_DIR / (f'{code}_ACTA.pdf' if document_type == 'ACTA_NO_FORMULACION' else f'{code}.pdf')
+    install_pdf(source, canonical)
+    log(f'    Reused existing document: {canonical.name} | {identity}')
+    return {'status': 'OK', 'path': canonical, 'document_type': document_type,
+            'validation': validation, 'identity_validation': identity,
+            'source_filename': source.name, 'acquisition_mode': 'EXISTING_REUSED',
+            'sha256': digest(canonical)}
+
+
+def source_signature(row):
+    fields = ['procedure_code', 'procedure_description', 'entity_name', 'notice_date']
+    text = json.dumps({k: str(row.get(k, '')) for k in fields}, sort_keys=True)
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def load_state(code):
+    path = STATE_DIR / f'{code}.json'
+    return json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
+
+
+def document_still_available(state):
+    doc = state.get('document') or {}
+    path = Path(doc.get('path') or '')
+    return doc.get('status') == 'OK' and path.is_file() and digest(path) == doc.get('sha256')
+
+
+def fiche_complete(state):
+    return (state.get('schedule', {}).get('schedule_status') == 'EXTRACTED'
+            and state.get('schedule', {}).get('identity_status') == 'source_search_and_detail_matched'
+            and state.get('document_list', {}).get('status') == 'COMPLETE')
+
+
+def restore_fiche(state):
+    global SCHEDULE_RESULT, DOCUMENT_AUDIT, DOCUMENT_RECORDS, CURRENT_NOMENCLATURE
+    SCHEDULE_RESULT = state.get('schedule', {})
+    DOCUMENT_AUDIT = state.get('document_list', {})
+    DOCUMENT_RECORDS = state.get('publications', [])
+    CURRENT_NOMENCLATURE = SCHEDULE_RESULT.get('nomenclature', '')
+
+
+def export_status(codes):
+    records, stage_rows, publications = [], [], []
+    for code in codes:
+        state = load_state(code)
+        if not state:
+            records.append({'procedure_code': code, 'acquisition_status': 'NOT_ATTEMPTED'})
+            continue
+        doc = state.get('document') or {}
+        schedule = state.get('schedule') or {}
+        flat = {'procedure_code': code, 'acquisition_status': state.get('acquisition_status'),
+                'attempts': state.get('attempts'), 'updated_at_utc': state.get('updated_at_utc'),
+                'document_list_status': state.get('document_list', {}).get('status'),
+                'evidence_directory': state.get('evidence_directory'), 'error': state.get('error', '')}
+        flat.update(schedule)
+        flat.update({'document_' + k: str(v) if isinstance(v, Path) else v for k, v in doc.items()})
+        records.append(flat)
+        evidence = Path(state.get('evidence_directory', '')) / 'schedule_raw.json'
+        if evidence.is_file():
+            for r in json.loads(evidence.read_text(encoding='utf-8')).get('schedule_rows', []):
+                dates = r['date_tokens']
+                stage_rows.append({'procedure_code': code, 'stage': r.get('stage_label'),
+                                   'start_raw': dates[0], 'end_raw': dates[-1],
+                                   'start_date': pd.to_datetime(dates[0], dayfirst=True, errors='coerce'),
+                                   'end_date': pd.to_datetime(dates[-1], dayfirst=True, errors='coerce'),
+                                   'raw_text': r['raw_text']})
+        publications.extend({'procedure_code': code, **r} for r in state.get('publications', []))
+    # CSV and JSON remain available even if Excel is open in Windows.
+    pd.DataFrame(records).to_csv(BATCH_ROOT / '01_1_acquisition_status.csv', index=False, encoding='utf-8-sig')
+    atomic_json(BATCH_ROOT / '01_4_existing_pdf_audit.json', EXISTING_ISSUES)
+    target = BATCH_ROOT / '01_1_acquisition_status.xlsx'
+    temporary = BATCH_ROOT / '01_1_acquisition_status.tmp.xlsx'
+    try:
+        with pd.ExcelWriter(temporary, engine='openpyxl') as writer:
+            for name, rows in [('procedure_status', records), ('schedule_stages', stage_rows),
+                               ('document_publications', publications), ('existing_pdf_audit', EXISTING_ISSUES)]:
+                pd.DataFrame(rows).to_excel(writer, sheet_name=name, index=False)
+        os.replace(temporary, target)
+    except PermissionError:
+        log('    Close acquisition Excel to refresh it; JSON checkpoints and CSV are saved.')
+    return records
+
 
 def main():
-    log("=" * 78)
-    log("SEACE DOCUMENT ACQUISITION - ROAD INFRASTRUCTURE TENDERS")
-    log("=" * 78)
-    log("Source: OECE-SEACE")
-    log("Input: Script 00 sample-selection output")
-    log()
-
-    log("[1] Validating Script 00 output...")
-
-    sample = validate_input_file()
-
-    expected_count = len(sample)
-
-    log(
-        f"  Procedures to process: "
-        f"{expected_count:,}"
-    )
-
-    log()
-    log("[2] Preparing document directory...")
-
-    existing_pdfs = list(PDFS_DIR.glob("*.pdf"))
-
-    if existing_pdfs:
-        log(
-            f"  Existing PDFs detected: "
-            f"{len(existing_pdfs):,}"
-        )
-        log(
-            "  Existing valid filenames will be "
-            "checked before downloading."
-        )
-    else:
-        log("  No existing PDFs detected.")
-
-    results = []
-
-    log()
-    log("[3] Starting automated SEACE acquisition...")
-
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(
-            headless=False
-        )
-
-        context = browser.new_context(
-            viewport={
-                "width": 1600,
-                "height": 950,
-            },
-            accept_downloads=True,
-        )
-
-        page = context.new_page()
-
-        for position, (_, row) in enumerate(
-            sample.iterrows(),
-            start=1,
-        ):
-            code = str(
-                int(row["procedure_code"])
-            )
-
-            base_year = int(
-                row["search_year"]
-            )
-
-            log()
-            log(
-                f"[{position}/{expected_count}] "
-                f"Procedure {code} "
-                f"(base year {base_year})"
-            )
-
-            existing_pliego = (
-                PDFS_DIR / f"{code}.pdf"
-            )
-
-            existing_acta = (
-                PDFS_DIR / f"{code}_ACTA.pdf"
-            )
-
-            existing_path = None
-            existing_type = None
-
-            if existing_pliego.exists():
-                existing_path = existing_pliego
-                existing_type = "PLIEGO"
-
-            elif existing_acta.exists():
-                existing_path = existing_acta
-                existing_type = "ACTA_NO_FORMULACION"
-
-            if existing_path is not None:
-                valid, validation = validate_pdf_content(
-                    existing_path,
-                    existing_type,
-                )
-
-                if valid:
-                    log(
-                        f"      Existing verified PDF: "
-                        f"{existing_path.name}"
-                    )
-
-                    results.append({
-                        "procedure_code": code,
-                        "base_year": base_year,
-                        "year_found": "",
-                        "document_type": existing_type,
-                        "output_filename": existing_path.name,
-                        "source_filename": "",
-                        "content_validation": validation,
-                        "download_status": "OK",
-                        "acquisition_mode": "EXISTING_VERIFIED",
-                        "search_attempts": "",
-                    })
-
-                    save_status(results)
-                    continue
-
-                log(
-                    "      Existing PDF failed validation; "
-                    "downloading again."
-                )
-
-                existing_path.unlink()
-
-            result = download_with_year_search(
-                page,
-                code,
-                base_year,
-            )
-
-            output_filename = ""
-
-            if result["path"] is not None:
-                output_filename = result["path"].name
-
-            results.append({
-                "procedure_code": code,
-                "base_year": base_year,
-                "year_found": (
-                    result["year_found"]
-                    if result["year_found"] is not None
-                    else ""
-                ),
-                "document_type": (
-                    result["document_type"]
-                    if result["document_type"] is not None
-                    else ""
-                ),
-                "output_filename": output_filename,
-                "source_filename": (
-                    result["source_filename"]
-                    if result["source_filename"] is not None
-                    else ""
-                ),
-                "content_validation": (
-                    result["validation"]
-                    if result["validation"] is not None
-                    else ""
-                ),
-                "download_status": result["status"],
-                "acquisition_mode": "DOWNLOADED",
-                "search_attempts": result["attempts"],
-            })
-
-            # Save after every procedure so progress is preserved
-            # if SEACE or the local execution is interrupted.
-            save_status(results)
-
-            close_extra_pages(
-                context,
-                page,
-            )
-
-            if position < expected_count:
-                time.sleep(
-                    PAUSE_BETWEEN_PROCEDURES
-                )
-
-        browser.close()
-
-    log()
-    log("[4] Saving acquisition audit...")
-
-    save_status(results)
-
-    log(
-        f"  Status workbook: "
-        f"{STATUS_FILE.name}"
-    )
-
-    log(
-        f"  Log file: "
-        f"{LOG_FILE.name}"
-    )
-
-    print_final_summary(
-        results,
-        expected_count,
-    )
-
-    save_log()
+    global PROJECT_ROOT, BATCH_ROOT, STATE_DIR, RUN_DIR, RESULTS_DIR, LOGS_DIR, PDFS_DIR
+    global INPUT_FILE, STATUS_FILE, LOG_FILE, PILOT_ROW, PDF_INDEX
+    global SCHEDULE_RESULT, DOCUMENT_AUDIT, DOCUMENT_RECORDS, CURRENT_NOMENCLATURE
+    parser = argparse.ArgumentParser(description='Resumable SEACE schedule and target-PDF acquisition. Does not count queries.')
+    parser.add_argument('--project-root', type=Path)
+    parser.add_argument('--batch-size', type=int, default=50, help='Maximum pending procedures attempted in this execution')
+    parser.add_argument('--all', action='store_true', help='Attempt all pending procedures sequentially')
+    parser.add_argument('--procedure-code', help='Restrict this execution to one selected code')
+    parser.add_argument('--year', type=int, help='Search year override; requires --procedure-code')
+    parser.add_argument('--refresh-fiches', action='store_true', help='Revisit fiches even when saved; reuse PDFs')
+    parser.add_argument('--headless', action='store_true')
+    args = parser.parse_args()
+    if args.batch_size < 1:
+        parser.error('batch-size must be positive')
+    if args.year and not args.procedure_code:
+        parser.error('--year requires --procedure-code')
+    PROJECT_ROOT = args.project_root.resolve() if args.project_root else next(
+        (p for p in Path(__file__).resolve().parents if (p / '00_data').is_dir()), None)
+    if PROJECT_ROOT is None:
+        parser.error('Cannot locate project root; use --project-root PATH')
+    INPUT_FILE = PROJECT_ROOT / '02_results' / '01_sample_and_data' / '00_1_sample_selection.xlsx'
+    BATCH_ROOT = PROJECT_ROOT / '02_results' / '01_sample_and_data' / '01_acquisition'
+    STATE_DIR = BATCH_ROOT / 'state'
+    LOGS_DIR = PROJECT_ROOT / '03_logs' / '01_sample_and_data'
+    PDFS_DIR = PROJECT_ROOT / '05_pdfs'
+    stamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
+    RUN_DIR = BATCH_ROOT / 'runs' / stamp
+    for folder in (STATE_DIR, RUN_DIR, LOGS_DIR, PDFS_DIR):
+        folder.mkdir(parents=True, exist_ok=True)
+    LOG_FILE = LOGS_DIR / f'01_download_pdfs_{stamp}.log'
+    lock = BATCH_ROOT / 'acquisition.lock'
+    # OS-owned locks release automatically after a crash or power interruption.
+    lock_stream = lock.open('a+b')
+    lock_stream.seek(0, os.SEEK_END)
+    if lock_stream.tell() == 0:
+        lock_stream.write(b'0'); lock_stream.flush()
+    lock_stream.seek(0)
+    try:
+        if os.name == 'nt':
+            import msvcrt
+            msvcrt.locking(lock_stream.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(lock_stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError as exc:
+        lock_stream.close()
+        raise RuntimeError('Another acquisition instance is already running for this project') from exc
+    try:
+        sample = pd.read_excel(INPUT_FILE, dtype={'procedure_code': 'string'})
+        required = {'procedure_code', 'notice_date', 'procedure_description', 'entity_name'}
+        if not required.issubset(sample.columns):
+            raise ValueError(f'Missing input columns: {sorted(required-set(sample.columns))}')
+        sample['procedure_code'] = sample.procedure_code.str.strip().str.replace(r'\.0$', '', regex=True)
+        if sample.procedure_code.isna().any() or sample.procedure_code.duplicated().any() or not sample.procedure_code.str.fullmatch(r'\d+').all():
+            raise ValueError('Procedure codes must be unique, nonmissing digits')
+        codes = sample.procedure_code.tolist()
+        PDF_INDEX = build_pdf_index(set(codes))
+        prior_audit = BATCH_ROOT / '01_4_existing_pdf_audit.json'
+        if prior_audit.exists():
+            EXISTING_ISSUES.extend(json.loads(prior_audit.read_text(encoding='utf-8')))
+        todo = []
+        for _, row in sample.iterrows():
+            code = row.procedure_code
+            if args.procedure_code and code != args.procedure_code:
+                continue
+            state = load_state(code)
+            unchanged = state.get('source_signature') == source_signature(row)
+            if unchanged and fiche_complete(state) and document_still_available(state) and not args.refresh_fiches:
+                continue
+            todo.append(row.to_dict())
+        if args.procedure_code and args.procedure_code not in codes:
+            raise ValueError('Requested procedure is not in the Script 00 selection')
+        # Never let repeated failures at the start starve unattempted procedures.
+        todo.sort(key=lambda row: (load_state(row['procedure_code']).get('attempts', 0), row['procedure_code']))
+        if not args.all:
+            todo = todo[:args.batch_size]
+        log(f'SEACE ACQUISITION | {SCHEMA_VERSION} | selected={len(codes)} | to attempt={len(todo)}')
+        log(f'Canonical PDF directory: {PDFS_DIR}')
+        if todo:
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch(headless=args.headless)
+                try:
+                    for position, row in enumerate(todo, 1):
+                        code = row['procedure_code']; PILOT_ROW = row
+                        previous = load_state(code)
+                        RESULTS_DIR = RUN_DIR / code; RESULTS_DIR.mkdir()
+                        STATUS_FILE = RESULTS_DIR / 'unused.xlsx'
+                        SCHEDULE_RESULT = {}; DOCUMENT_AUDIT = {}; DOCUMENT_RECORDS = []; CURRENT_NOMENCLATURE = ''
+                        state = {'procedure_code': code, 'source_signature': source_signature(row),
+                                 'attempts': previous.get('attempts', 0) + 1, 'acquisition_status': 'IN_PROGRESS',
+                                 'updated_at_utc': utc_now(), 'evidence_directory': str(RESULTS_DIR)}
+                        atomic_json(STATE_DIR / f'{code}.json', {**previous, **state})
+                        context = None
+                        log(f'[{position}/{len(todo)}] {code}')
+                        try:
+                            # A completed fiche remains reusable even if only the PDF failed.
+                            if (previous.get('source_signature') == source_signature(row)
+                                    and fiche_complete(previous) and not args.refresh_fiches):
+                                restore_fiche(previous)
+                                result = reuse_existing_pdf(code, CURRENT_NOMENCLATURE)
+                                if result is not None:
+                                    state['evidence_directory'] = previous['evidence_directory']
+                                else:
+                                    result = None
+                            else:
+                                result = None
+                            if result is None:
+                                notice = pd.to_datetime(row.get('notice_date'), errors='coerce')
+                                year = args.year if args.year else int(notice.year) if pd.notna(notice) else None
+                                if year is None:
+                                    raise ValueError('Notice year unavailable: rerun this code with --year YYYY')
+                                context = browser.new_context(viewport={'width': 1600, 'height': 950}, accept_downloads=True)
+                                result = search_document_in_year(context.new_page(), code, year)
+                                # An existing verified document remains usable even when the live site fails.
+                                if result.get('status') != 'OK' and document_still_available(previous):
+                                    state['live_document_error'] = result
+                                    result = previous['document']
+                            state.update(schedule=SCHEDULE_RESULT, document_list=DOCUMENT_AUDIT,
+                                         publications=DOCUMENT_RECORDS, document=result)
+                            if not fiche_complete(state) and fiche_complete(previous) and previous.get('source_signature') == state['source_signature']:
+                                state.update(schedule=previous['schedule'], document_list=previous['document_list'],
+                                             publications=previous['publications'], evidence_directory=previous['evidence_directory'])
+                            technical_done = fiche_complete(state) and result.get('status') == 'OK'
+                            state['acquisition_status'] = 'ACQUIRED' if technical_done else 'PARTIAL_OR_FAILED'
+                            state['document_identity_review'] = result.get('identity_validation') != 'NOMENCLATURE_MATCH'
+                            state['updated_at_utc'] = utc_now()
+                            atomic_json(STATE_DIR / f'{code}.json', state)
+                            log(f"    {state['acquisition_status']} | PDF={result.get('status')} | identity={result.get('identity_validation', '')}")
+                        except Exception as exc:
+                            # Recovery evidence is written before any global Excel export.
+                            state.update(schedule=SCHEDULE_RESULT, document_list=DOCUMENT_AUDIT,
+                                         publications=DOCUMENT_RECORDS, acquisition_status='PARTIAL_OR_FAILED',
+                                         error=f'{type(exc).__name__}: {exc}', updated_at_utc=utc_now())
+                            atomic_json(STATE_DIR / f'{code}.json', state)
+                            log(f'    FAILED: {exc}')
+                        finally:
+                            if context:
+                                context.close()
+                            save_log()
+                        if position % 10 == 0:
+                            export_status(codes)
+                        if position < len(todo):
+                            time.sleep(PAUSE_BETWEEN_PROCEDURES)
+                finally:
+                    browser.close()
+        records = export_status(codes)
+        done = sum(r.get('acquisition_status') == 'ACQUIRED' for r in records)
+        log(f'ACQUIRED: {done}/{len(codes)} | Remaining or failed: {len(codes)-done}')
+        log(f'Status workbook: {BATCH_ROOT / "01_1_acquisition_status.xlsx"}')
+        log('Run the same command to continue. No query counts are assigned in this script.')
+    finally:
+        save_log()
+        if os.name == 'nt':
+            import msvcrt
+            lock_stream.seek(0)
+            msvcrt.locking(lock_stream.fileno(), msvcrt.LK_UNLCK, 1)
+        lock_stream.close()
 
 
-# =============================================================================
-# EXECUTION
-# =============================================================================
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     try:
         main()
-
-    except Exception as error:
-        log()
-        log("=" * 78)
-        log("PIPELINE FAILED")
-        log("=" * 78)
-
-        log(
-            f"{type(error).__name__}: "
-            f"{error}"
-        )
-
-        save_log()
-
+    except KeyboardInterrupt:
+        print('Interrupted. Saved per-procedure checkpoints will be used on restart.', file=sys.stderr)
+        sys.exit(130)
+    except Exception as exc:
+        print(f'PIPELINE FAILED: {type(exc).__name__}: {exc}', file=sys.stderr)
         sys.exit(1)
