@@ -1,172 +1,108 @@
-# SEACE Procedure Documents
+# SEACE PDF Documents
 
-This directory is used locally to store procedure-level PDF documents retrieved from the **SEACE public procurement platform (Peru)** during the reconstruction of consultation and observation counts.
+This directory stores the documents retrieved from public SEACE procedure records:
 
-> **Important:** The PDF files used during the study are intentionally not distributed through this repository. This directory is documented so that the procedure-level evidence can be independently reconstructed from the original public source.
+- **Query and observation response documents** (*Pliegos de absolución de consultas y observaciones*).
+- **Statements confirming that no queries or observations were submitted** (*Actas de no formulación*).
 
----
+PDFs are not included in this repository. Researchers can obtain them independently by running the acquisition script.
 
-## Purpose
+## Input
 
-The study uses the **number of consultations and observations registered during the tender process** as the primary empirical proxy for pre-award information asymmetry / informational friction.
+Script 01 reads the procedure identifiers selected by Script 00 from:
 
-This information is not obtained exclusively from the annual OECE-SEACE Open Data Excel datasets.
+```text
+02_results/01_sample_and_data/00_1_sample_selection.xlsx
+```
 
-For each procedure in the analytical sample, the computational workflow retrieves and evaluates the relevant SEACE documentation associated with consultations and observations.
+The study's reference selection contains **2,018 unique procedures**. The script processes the identifiers in the local input workbook; it does not apply additional sample-selection criteria.
 
-The resulting procedure-level counts are subsequently integrated into the analytical dataset used by the statistical and stochastic-modeling pipeline.
+## Run the Script
 
----
+Run these commands from the **repository root**, after installing the project dependencies and generating the Script 00 output.
 
-## Local Directory
+### Process a batch
 
-During local execution, downloaded procedure documents are stored under:
+Attempt up to 50 pending procedures:
+
+```bash
+python 01_scripts/01_sample_and_data/01_download_pdfs.py --batch-size 50
+```
+
+Repeat the same command to continue. The batch size can be changed, for example to `--batch-size 100`.
+
+### Process all pending procedures
+
+Attempt all pending procedures in one execution:
+
+```bash
+python 01_scripts/01_sample_and_data/01_download_pdfs.py --all
+```
+
+This performs one pass over the pending procedures. Cases that fail may require another execution.
+
+## Generated Files
+
+PDFs are stored directly in this directory using the procedure code:
 
 ```text
 05_pdfs/
+├── <procedure_code>.pdf
+└── <procedure_code>_ACTA.pdf
 ```
 
-The PDF files themselves are excluded from version control.
+The `_ACTA` suffix identifies a statement of no formulation. Query and observation counts are extracted in a subsequent script; Script 01 does not assign them.
 
-Therefore, a local working copy may contain substantially more files than the public GitHub directory.
+In addition to retrieving PDFs, Script 01 extracts the published schedule and document-publication dates from each procedure record.
 
-This is intentional.
+| Output | Location |
+|---|---|
+| PDFs | `05_pdfs/` |
+| Acquisition report | `02_results/01_sample_and_data/01_acquisition/01_1_acquisition_status.xlsx` |
+| Resume checkpoints | `02_results/01_sample_and_data/01_acquisition/state/` |
+| Captured records and supporting evidence | `02_results/01_sample_and_data/01_acquisition/runs/` |
+| Execution logs | `03_logs/01_sample_and_data/` |
 
----
+Schedule dates and document-publication dates are retained separately. Neither is automatically treated as a verified actual event date.
 
-## Document Retrieval
+## Existing PDFs and Resumption
 
-The procedure-document retrieval workflow uses the SEACE procedure identifier associated with each tender in the analytical sample.
+The script checks existing PDFs, including files in nested pilot directories, before downloading. Suitable files are reused and copied to the standard location when needed. The procedure record is still retrieved if its schedule or document-list information remains pending.
 
-For each procedure, the pipeline attempts to locate the documentation containing the consultation and observation record.
+Progress is saved after each procedure. If execution is interrupted:
 
-Depending on the SEACE record, the relevant evidence may consist of:
+1. Keep the downloaded files and acquisition checkpoints.
+2. Run the same command again.
+3. The script skips completed procedures and attempts pending or failed cases.
 
-- a consultation and observation document containing individual entries; or
-- official procedure documentation indicating that no consultations or observations were submitted.
+The procedure being processed at the moment of interruption may need to be repeated.
 
-The workflow therefore distinguishes between:
+Files with unrecognized names, codes outside the current selection, invalid contents, or identifiable nomenclature mismatches are recorded in the acquisition audit. Files whose identity cannot be established from their text are flagged for review rather than treated as identity-verified.
 
-```text
-Document with consultations/observations
-        │
-        ▼
-Extract and count valid entries
-        │
-        ▼
-Procedure-level count
-```
+## Execution Recommendations
 
-and:
+Full acquisition can take considerable time because each procedure is visited individually. Please allow sufficient time for execution.
 
-```text
-Official evidence of no consultations/observations
-        │
-        ▼
-Procedure-level count = 0
-```
+Processing speed depends on internet connectivity, SEACE responsiveness, document availability, and existing reusable files. **No fixed completion time is guaranteed.**
 
-A value of zero is therefore not automatically interpreted as a missing document or failed extraction.
+During execution:
 
----
+- Keep the computer awake and connected to the internet.
+- Do not close or interact with browser windows opened by the script.
+- Run only one acquisition instance for the same project.
+- Keep the acquisition report closed in Excel so it can be updated.
+- Preserve the generated checkpoint files.
 
-## Role in the Computational Pipeline
+To stop execution, press `Ctrl+C` in the terminal. Rerun the command when ready to continue.
 
-The general data flow is:
+## Check the Results
 
-```text
-OECE-SEACE annual open data
-          │
-          ▼
-Sample selection
-          │
-          ▼
-137 eligible procedures
-          │
-          ▼
-SEACE procedure-level document retrieval
-          │
-          ▼
-Consultation / observation extraction
-          │
-          ▼
-Procedure-level quality control
-          │
-          ▼
-Integrated analytical dataset
-```
+Monitor progress in the terminal and review the acquisition report.
 
-The PDF documents are an **evidence layer**, not the final analytical dataset.
+A message such as `[152/2018]` identifies the procedure currently being attempted within that execution. It does **not** mean that 152 PDFs have been successfully downloaded.
 
-Downstream statistical analyses operate on the structured variables produced by the data-processing pipeline rather than directly on the PDF collection.
+`ACQUIRED` indicates that the script completed its technical acquisition checks. It does not establish that all dates are actual event dates or that every document's identity has been verified.
 
----
+Selecting 2,018 procedures does not guarantee 2,018 successful PDF downloads. Use the report to distinguish completed acquisitions, identity alerts, and pending or failed cases.
 
-## Reproducibility
-
-The public repository preserves the computational workflow required to reconstruct the analytical variables without redistributing the complete local PDF archive.
-
-Reproduction therefore requires:
-
-1. reconstructing the analytical sample from the official OECE-SEACE source data;
-2. retrieving the corresponding public SEACE procedure documents;
-3. processing the documents using the repository scripts;
-4. reviewing the generated extraction and quality-control outputs; and
-5. continuing with the integrated analytical dataset only after the corresponding processing stage has been completed.
-
-The scripts, structured results, execution logs, and documented processing rules provide the reproducibility trail for this stage.
-
----
-
-## Why the PDFs Are Not Included
-
-The complete local PDF collection is intentionally excluded from the GitHub repository.
-
-This design keeps the repository focused on:
-
-- reproducible source acquisition;
-- computational methods;
-- structured analytical outputs;
-- execution logs;
-- methodological decisions;
-- and scientific results.
-
-It also avoids turning the repository into a static archive of source documents that can instead be retrieved from the original public procurement system.
-
-The authoritative source remains **SEACE**.
-
----
-
-## Analytical Interpretation
-
-The extracted consultation and observation count is used as an empirical indicator in the study.
-
-The repository does **not** assume that all consultations or observations are substantively identical.
-
-The primary analysis uses their observed volume as the quantitative proxy defined by the study design.
-
-Accordingly, the pipeline supports conclusions about the statistical association between this quantitative indicator and procurement award-time behavior.
-
-It does not interpret the semantic content of individual consultations and observations, and it does not establish a causal effect of information asymmetry on procurement duration.
-
----
-
-## Downstream Use
-
-After document processing and integration, the analytical workflow evaluates:
-
-- the continuous relationship between consultation/observation volume and award time;
-- Low, Medium, and High information-asymmetry scenarios;
-- scenario-specific stochastic representations;
-- Monte Carlo simulation;
-- a secondary two-stage discrete-event representation;
-- temporal model validation; and
-- robustness and sensitivity analyses.
-
-For the complete computational sequence, see:
-
-```text
-../README.md
-../01_scripts/README.md
-../02_results/README.md
-```
+Independent runs may differ if the source datasets or SEACE records change. Compare procedure identifiers and acquisition outcomes, rather than PDF counts alone.
