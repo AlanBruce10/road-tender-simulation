@@ -2,6 +2,9 @@
 
 Place in 01_scripts/01_sample_and_data/. Default: up to 50 pending cases.
 Use --all for one sequential pass over all pending cases; rerun to resume.
+Search source year, previous year, next year only after PROCEDURE_NOT_FOUND.
+An explicit --year restricts the search to that year. Search attempts are saved
+in the document state and exported acquisition status. No manual-review inputs.
 Canonical PDFs: 05_pdfs/<code>.pdf or <code>_ACTA.pdf.
 Dependencies: pandas, openpyxl, playwright, pymupdf.
 Dates remain labeled as schedules or document publications, not verified event dates.
@@ -35,7 +38,7 @@ BATCH_ROOT = STATE_DIR = RUN_DIR = None
 PDF_INDEX = {}
 EXISTING_ISSUES = []
 CURRENT_NOMENCLATURE = ""
-SCHEMA_VERSION = "1.0-batch-acquisition"
+SCHEMA_VERSION = "1.2-automatic-year-fallback"
 SCHEDULE_RESULT = {}
 DOCUMENT_RECORDS = []
 DOCUMENT_AUDIT = {}
@@ -1150,6 +1153,31 @@ def export_status(codes):
     return records
 
 
+def search_with_year_fallback(context, code, year, exact_year=False):
+    """Retry adjacent years only after a completed search with no result."""
+    global SCHEDULE_RESULT, DOCUMENT_AUDIT, DOCUMENT_RECORDS, CURRENT_NOMENCLATURE
+    attempts = []
+    years = [year] if exact_year else [year, year - 1, year + 1]
+    for candidate in years:
+        SCHEDULE_RESULT = {}; DOCUMENT_AUDIT = {}; DOCUMENT_RECORDS = []
+        CURRENT_NOMENCLATURE = ''
+        page = context.new_page()
+        try:
+            result = search_document_in_year(page, code, candidate)
+        finally:
+            if not page.is_closed():
+                page.close()
+        attempts.append({'year': candidate, 'status': result.get('status')})
+        if result.get('status') != 'PROCEDURE_NOT_FOUND':
+            break
+    result = dict(result)
+    result['search_origin_year'] = year
+    result['search_attempts'] = attempts
+    result['search_year_used'] = candidate
+    return result
+
+
+
 def main():
     global PROJECT_ROOT, BATCH_ROOT, STATE_DIR, RUN_DIR, RESULTS_DIR, LOGS_DIR, PDFS_DIR
     global INPUT_FILE, STATUS_FILE, LOG_FILE, PILOT_ROW, PDF_INDEX
@@ -1263,7 +1291,7 @@ def main():
                                 if year is None:
                                     raise ValueError('Notice year unavailable: rerun this code with --year YYYY')
                                 context = browser.new_context(viewport={'width': 1600, 'height': 950}, accept_downloads=True)
-                                result = search_document_in_year(context.new_page(), code, year)
+                                result = search_with_year_fallback(context, code, year, exact_year=args.year is not None)
                                 # An existing verified document remains usable even when the live site fails.
                                 if result.get('status') != 'OK' and document_still_available(previous):
                                     state['live_document_error'] = result
