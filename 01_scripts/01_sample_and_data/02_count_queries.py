@@ -1,378 +1,165 @@
-import os
-import time
+"""Count a single combined Q from verified Script 01 PDFs.
+Run from any directory. No SEACE visits, no imputation, no source changes.
+Outputs retain every selected procedure, including unresolved/missing cases.
+Dependencies: pandas openpyxl pymupdf. Optional OCR: local Tesseract languages.
+Optional Gemini proposals require --allow-ai and environment configuration;
+AI-only totals are retained as proposals, not silently accepted observations.
+"""
+import argparse
+import hashlib
 import json
+import os
 import re
+import sys
+import time
 import unicodedata
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
 import pymupdf
 
-
-# =============================================================================
-# PROJECT CONFIGURATION
-# =============================================================================
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-
-PDF_DIR = PROJECT_ROOT / "05_pdfs"
-RESULTS_DIR = PROJECT_ROOT / "02_results"
-LOGS_DIR = PROJECT_ROOT / "03_logs"
-
-SAMPLE_FILE = RESULTS_DIR / "00_1_sample_selection.xlsx"
-DOWNLOAD_STATUS_FILE = RESULTS_DIR / "01_1_download_status.xlsx"
-
-OUTPUT_FILE = RESULTS_DIR / "02_1_query_counts.xlsx"
-SUMMARY_FILE = RESULTS_DIR / "02_2_processing_summary.xlsx"
-LOG_FILE = LOGS_DIR / "02_count_queries.log"
-
-RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-LOGS_DIR.mkdir(parents=True, exist_ok=True)
-PDF_DIR.mkdir(parents=True, exist_ok=True)
-
-
-# =============================================================================
-# PROCESSING CONFIGURATION
-# =============================================================================
-
-AI_PROVIDER = os.getenv("AI_PROVIDER", "none").strip().lower()
-AI_MODEL = os.getenv("AI_MODEL", "").strip()
-AI_API_KEY = os.getenv("AI_API_KEY", "").strip()
-
+VERSION = '2.0-acquisition-linked-count'
+RULES_VERSION = 'combined-Q-2.0.1'
+AI_PROVIDER = 'none'
+AI_MODEL = os.getenv('AI_MODEL', '').strip()
+AI_API_KEY = os.getenv('AI_API_KEY', '').strip()
 MAX_AI_RETRIES = 4
 BASE_WAIT_SECONDS = 15
-PAUSE_BETWEEN_PDFS = 0.2
-
-
-# =============================================================================
-# LOGGING
-# =============================================================================
-
 LOG_LINES = []
+AI_PROMPT = '''Analyze this SEACE PDF. Count numbered consultation/observation records
+as one combined Q, not sentences or mentions. Use zero only if the document
+explicitly confirms neither queries nor observations were submitted. Missing or
+uncertain is null. Return ONLY JSON with total (integer or null), tipo_documento
+(PLIEGO, ACTA_NO_FORMULACION, ACTA, OTRO), notas (brief supporting explanation).
+Do not infer a total from a final number if numbering is incomplete or resets.'''
 
 
-def log(message=""):
-    text = str(message)
-    print(text)
-    LOG_LINES.append(text)
+def log(message=''):
+    line = str(message)
+    print(line, flush=True)
+    LOG_LINES.append(line)
 
 
-def save_log():
-    LOG_FILE.write_text(
-        "\n".join(LOG_LINES) + "\n",
-        encoding="utf-8"
-    )
+def now():
+    return datetime.now(timezone.utc).isoformat()
 
-
-# =============================================================================
-# TEXT UTILITIES
-# =============================================================================
 
 def normalize_text(text):
-    text = str(text).lower()
-    text = unicodedata.normalize("NFKD", text)
-
-    text = "".join(
-        character
-        for character in text
-        if not unicodedata.combining(character)
-    )
-
-    text = re.sub(r"\s+", " ", text)
-
-    return text.strip()
+    return re.sub(r'\s+', ' ', ''.join(c for c in unicodedata.normalize('NFKD', str(text).lower())
+                                     if not unicodedata.combining(c))).strip()
 
 
-def safe_integer(value):
-    if pd.isna(value):
-        return None
-
-    try:
-        return int(float(value))
-    except (TypeError, ValueError):
-        return None
+def compact(text):
+    return re.sub('[^a-z0-9]', '', normalize_text(text))
 
 
-def extract_procedure_code(pdf_path):
-    match = re.match(
-        r"^(\d+)",
-        pdf_path.stem
-    )
-
-    if not match:
-        return None
-
-    return int(match.group(1))
+def sha256(path):
+    h = hashlib.sha256()
+    with path.open('rb') as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b''):
+            h.update(block)
+    return h.hexdigest()
 
 
-# =============================================================================
-# PDF TEXT EXTRACTION
-# =============================================================================
-
-def extract_pdf_text(pdf_path):
-    document = pymupdf.open(pdf_path)
-
-    try:
-        pages = [
-            page.get_text("text")
-            for page in document
-        ]
-
-        page_count = len(document)
-
-    finally:
-        document.close()
-
-    return "\n".join(pages), page_count
+def atomic_json(path, value):
+    temp = path.with_suffix('.tmp')
+    temp.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding='utf-8')
+    os.replace(temp, path)
 
 
-# =============================================================================
-# NO-FORMULATION ACT DETECTION
-# =============================================================================
+def code_string(value):
+    value = str(value).strip()
+    if re.fullmatch(r'\d+\.0', value):
+        value = value[:-2]
+    if not re.fullmatch(r'\d+', value):
+        raise ValueError(f'Invalid procedure code: {value!r}')
+    return value
 
-def detect_no_formulation_act(text):
+
+RECORD = re.compile(r'\b(?:consulta|observaci[oó]n)\s*:\s*(?:nro\.?|n[°ºo.]|n[uú]mero)\s*:?\s*(\d+)\b', re.I)
+LEGACY_RECORD = re.compile(r'\bNro\.?\s*(\d+)\s*.{0,180}?\bConsulta\s*/\s*Observaci[oó]n\s*:', re.I | re.S)
+ZERO_COMBINED = re.compile(
+    r'\bno\s+se\s+(?:han\s+)?(?:formulado|formularon|registrado|registraron|presentado|presentaron|recibido|recibieron)'
+    r'\s+(?:las\s+|ninguna\s+|ningunas\s+)?consultas?\s*(?:y\s*/\s*o|y/o|ni|y|u|o)\s*observaciones?\b')
+ZERO_TITLE = re.compile(r'\bacta\s+de\s+no\s+formulacion\s+de\s+consultas?\s*(?:y/o|y|ni|o)\s*observaciones?\b')
+
+
+def record_numbers(text):
+    # Prefer the explicit record heading; fallback supports the older layout.
+    matches = list(RECORD.finditer(text))
+    if not matches:
+        matches = list(LEGACY_RECORD.finditer(text))
+    return [int(m.group(1)) for m in matches]
+
+
+def analyze_text(pages):
+    text = '\n'.join(pages)
     normalized = normalize_text(text)
-
-    patterns = (
-        "acta de no formulacion",
-        "no se formularon consultas",
-        "no se registraron consultas",
-        "no formulacion de consultas",
-        "no se registraron formulacion de consultas",
-        "no se registraron formulaciones de consultas",
-        "no se registraron consultas y observaciones",
-        "no se registraron consultas ni observaciones",
-        "no se formularon consultas y observaciones",
-        "no se formularon consultas ni observaciones",
-    )
-
-    if any(
-        pattern in normalized
-        for pattern in patterns
-    ):
-        return True
-
-    has_query_context = (
-        "consulta" in normalized
-    )
-
-    has_observation_context = (
-        "observacion" in normalized
-    )
-
-    has_no_formulation = (
-        "no formulacion" in normalized
-        or "no se formularon" in normalized
-        or "no se registro" in normalized
-        or "no se registraron" in normalized
-    )
-
-    return (
-        has_no_formulation
-        and (
-            has_query_context
-            or has_observation_context
-        )
-    )
+    numbers = record_numbers(text)
+    zero = bool(ZERO_COMBINED.search(normalized) or ZERO_TITLE.search(normalized))
+    pliego = 'pliego de absolucion de consultas y observaciones' in normalized
+    result = {'queries_observations_count': None, 'document_type': 'PLIEGO' if pliego else '',
+              'count_status': 'NO_RECORDS_DETECTED', 'confidence': 'LOW',
+              'record_heading_count': len(numbers), 'unique_record_numbers': len(set(numbers)),
+              'max_record_number': max(numbers) if numbers else None,
+              'missing_record_numbers': '', 'notes': '',
+              'evidence_pages': ','.join(str(i+1) for i,p in enumerate(pages)
+                                       if record_numbers(p) or ZERO_COMBINED.search(normalize_text(p)) or ZERO_TITLE.search(normalize_text(p)))}
+    if zero and numbers:
+        result.update(count_status='CONTRADICTORY_EVIDENCE', notes='Both absence statement and numbered records detected')
+    elif zero and pliego:
+        result.update(count_status='CONTRADICTORY_EVIDENCE', notes='Absence statement inside a pliego; not accepted as a verified zero')
+    elif zero:
+        result.update(queries_observations_count=0, document_type='ACTA_NO_FORMULACION',
+                      count_status='OK', confidence='HIGH', notes='Explicit combined absence statement detected')
+    elif len(text.strip()) < 50:
+        result.update(count_status='INSUFFICIENT_TEXT', notes='Scanned or insufficient extractable text; optional OCR may help')
+    elif numbers:
+        unique = set(numbers)
+        maximum = max(numbers)
+        missing = sorted(set(range(1, maximum+1)) - unique) if maximum <= 100000 else []
+        result['missing_record_numbers'] = ','.join(map(str, missing[:200]))
+        if len(numbers) > 100000 or maximum > 100000:
+            result.update(count_status='NUMBERING_UNRESOLVED', notes='Implausible record numbering; Q remains missing')
+        elif not pliego:
+            result.update(count_status='DOCUMENT_TYPE_UNCONFIRMED', notes='Numbered records without verified pliego title')
+        elif numbers == list(range(1, len(numbers)+1)):
+            result.update(queries_observations_count=len(numbers), count_status='OK', confidence='HIGH',
+                          notes='Combined record headings form a complete ordered sequence 1..Q')
+        else:
+            result.update(count_status='NUMBERING_UNRESOLVED',
+                          notes='Gaps, repeated headings, resets or out-of-order numbering; maximum is diagnostic only')
+    else:
+        result['notes'] = 'No reliable numbered records or combined absence statement'
+    return result
 
 
-# =============================================================================
-# LOCAL QUERY / OBSERVATION DETECTION
-# =============================================================================
-
-def detect_query_records(text):
-    pattern = re.compile(
-        r"""
-        \bNro\.?
-        \s*
-        (\d+)
-        \s*
-        .{0,180}?
-        \bConsulta
-        \s*/\s*
-        Observaci[oó]n
-        \s*:
-        """,
-        re.IGNORECASE
-        | re.DOTALL
-        | re.VERBOSE
-    )
-
-    matches = pattern.findall(text)
-
-    numbers = [
-        int(number)
-        for number in matches
-    ]
-
-    return sorted(set(numbers))
+def extract_and_analyze(path, ocr=False, language='spa'):
+    with pymupdf.open(path) as document:
+        pages = [p.get_text('text', sort=False) for p in document]
+        method = 'PYMUPDF'
+        ocr_note = ''
+        if ocr:
+            for i, page in enumerate(document):
+                if len(pages[i].strip()) < 50:
+                    try:
+                        textpage = page.get_textpage_ocr(language=language, dpi=300, full=True)
+                        pages[i] = page.get_text('text', textpage=textpage)
+                        method = 'PYMUPDF_OCR'
+                    except Exception as exc:
+                        ocr_note += f' OCR page {i+1}: {type(exc).__name__}: {str(exc)[:160]}'
+        result = analyze_text(pages)
+        thin_pages = [i+1 for i, text in enumerate(pages) if len(text.strip()) < 50]
+        if thin_pages:
+            result.update(queries_observations_count=None, count_status='INSUFFICIENT_PAGE_TEXT',
+                          confidence='LOW', notes='Insufficient text on pages ' + ','.join(map(str, thin_pages)) + '; complete document count cannot be verified')
+        result.update(processing_method=method, pages=len(document))
+        result['notes'] += ocr_note
+        return result
 
 
-# =============================================================================
-# LOCAL DOCUMENT ANALYSIS
-# =============================================================================
-
-def analyze_locally(pdf_path):
-    try:
-        text, page_count = extract_pdf_text(
-            pdf_path
-        )
-
-    except Exception as error:
-        return {
-            "total": None,
-            "document_type": None,
-            "method": "PYMUPDF",
-            "confidence": "LOW",
-            "status": "READ_ERROR",
-            "notes": (
-                f"PDF read error: "
-                f"{str(error)[:100]}"
-            ),
-            "pages": None,
-        }
-
-    if len(text.strip()) < 50:
-        return {
-            "total": None,
-            "document_type": None,
-            "method": "PYMUPDF",
-            "confidence": "LOW",
-            "status": "INSUFFICIENT_TEXT",
-            "notes": (
-                "PDF contains insufficient "
-                "extractable text"
-            ),
-            "pages": page_count,
-        }
-
-    if detect_no_formulation_act(text):
-        return {
-            "total": 0,
-            "document_type":
-                "ACTA_NO_FORMULACION",
-            "method": "PYMUPDF",
-            "confidence": "HIGH",
-            "status": "OK",
-            "notes": (
-                "No-formulation act verified "
-                "from document text"
-            ),
-            "pages": page_count,
-        }
-
-    numbers = detect_query_records(text)
-
-    if not numbers:
-        return {
-            "total": None,
-            "document_type": None,
-            "method": "PYMUPDF",
-            "confidence": "LOW",
-            "status": "NO_RECORDS_DETECTED",
-            "notes": (
-                "No query/observation records "
-                "detected locally"
-            ),
-            "pages": page_count,
-        }
-
-    first_number = min(numbers)
-    last_number = max(numbers)
-    unique_count = len(numbers)
-
-    expected_numbers = set(
-        range(1, last_number + 1)
-    )
-
-    detected_numbers = set(numbers)
-
-    missing_numbers = sorted(
-        expected_numbers
-        - detected_numbers
-    )
-
-    if (
-        first_number == 1
-        and unique_count == last_number
-        and not missing_numbers
-    ):
-        return {
-            "total": last_number,
-            "document_type": "PLIEGO",
-            "method": "PYMUPDF",
-            "confidence": "HIGH",
-            "status": "OK",
-            "notes": (
-                f"Complete sequential numbering "
-                f"1-{last_number}"
-            ),
-            "pages": page_count,
-        }
-
-    return {
-        "total": last_number,
-        "document_type": "PLIEGO",
-        "method": "PYMUPDF",
-        "confidence": "MEDIUM",
-        "status": "REVIEW_REQUIRED",
-        "notes": (
-            f"Incomplete numbering: "
-            f"{unique_count} unique records "
-            f"detected up to {last_number}; "
-            f"{len(missing_numbers)} missing"
-        ),
-        "pages": page_count,
-    }
-
-
-# =============================================================================
-# AI PROMPT
-# =============================================================================
-
-AI_PROMPT = """
-You are analyzing an official Peruvian public-procurement document
-from SEACE.
-
-Determine:
-
-1. The TOTAL number of queries and observations contained in the
-   document.
-
-2. The document type:
-   - PLIEGO
-   - ACTA_NO_FORMULACION
-   - ACTA
-   - OTRO
-
-3. A brief note of no more than 100 characters.
-
-Rules:
-
-- For a standard Pliego de Absolucion de Consultas y Observaciones,
-  use the highest sequential record number only when the document
-  structure supports that interpretation.
-
-- Return total = 0 ONLY when the document explicitly establishes
-  that no queries or observations were submitted.
-
-- If the total cannot be determined reliably, return null.
-
-Return ONLY valid JSON:
-
-{
-  "total": <integer or null>,
-  "tipo_documento":
-      "<PLIEGO|ACTA_NO_FORMULACION|ACTA|OTRO>",
-  "notas": "<brief note>"
-}
-"""
-
-
-# =============================================================================
-# GEMINI ADAPTER
-# =============================================================================
-
+# Existing optional provider adapter. Proposals are validated below before export.
 def analyze_with_gemini(pdf_path):
     try:
         from google import genai
@@ -649,11 +436,6 @@ def analyze_with_gemini(pdf_path):
             except Exception:
                 pass
 
-
-# =============================================================================
-# AI ROUTER
-# =============================================================================
-
 def analyze_with_ai(pdf_path):
     if AI_PROVIDER in (
         "",
@@ -691,7 +473,6 @@ def analyze_with_ai(pdf_path):
             "does not yet have an adapter"
         ),
     }
-
 
 def analyze_with_ai_retries(
     pdf_path
@@ -748,962 +529,192 @@ def analyze_with_ai_retries(
         ),
     }
 
-
-# =============================================================================
-# SAMPLE VALIDATION
-# =============================================================================
-
-def load_expected_procedures():
-    if not SAMPLE_FILE.exists():
-        raise FileNotFoundError(
-            "Script 00 output not found: "
-            f"{SAMPLE_FILE}"
-        )
-
-    sample = pd.read_excel(
-        SAMPLE_FILE
-    )
-
-    if (
-        "procedure_code"
-        not in sample.columns
-    ):
-        raise KeyError(
-            "Script 00 output is missing "
-            "required column: "
-            "procedure_code"
-        )
-
-    codes = []
-
-    for value in (
-        sample["procedure_code"]
-        .dropna()
-        .tolist()
-    ):
-        code = safe_integer(
-            value
-        )
-
-        if code is not None:
-            codes.append(code)
-
-    if (
-        len(codes)
-        != len(set(codes))
-    ):
-        raise ValueError(
-            "Script 00 output contains "
-            "duplicate procedure codes."
-        )
-
-    return codes
+def load_acquisition(root, codes):
+    folder = root / '02_results' / '01_sample_and_data' / '01_acquisition'
+    csv_path = folder / '01_1_acquisition_status.csv'
+    fallback = {}
+    if csv_path.exists():
+        frame = pd.read_csv(csv_path, dtype=str, keep_default_na=False)
+        if 'procedure_code' not in frame or frame.procedure_code.duplicated().any():
+            raise ValueError('Acquisition CSV must have unique procedure_code')
+        fallback = {code_string(r['procedure_code']): r for r in frame.to_dict('records')}
+    elif not (folder / 'state').is_dir():
+        raise FileNotFoundError(f'Script 01 acquisition output missing: {folder}')
+    records = {}
+    for code in codes:
+        state_path = folder / 'state' / f'{code}.json'
+        if state_path.exists():
+            state = json.loads(state_path.read_text(encoding='utf-8'))
+            if code_string(state.get('procedure_code', code)) != code:
+                raise ValueError(f'State identity mismatch: {state_path}')
+            records[code] = {'acquisition_status': state.get('acquisition_status', ''),
+                'nomenclature': state.get('schedule', {}).get('nomenclature', ''),
+                **{'document_'+k: v for k,v in (state.get('document') or {}).items()}}
+        else:
+            records[code] = fallback.get(code, {})
+    return records
 
 
-# =============================================================================
-# PDF DIRECTORY AUDIT
-# =============================================================================
-
-def audit_pdf_directory(
-    expected_codes
-):
-    pdf_files = sorted(
-        PDF_DIR.glob("*.pdf")
-    )
-
-    code_to_files = {}
-
-    for pdf_path in pdf_files:
-        code = extract_procedure_code(
-            pdf_path
-        )
-
-        if code is None:
-            continue
-
-        code_to_files.setdefault(
-            code,
-            []
-        ).append(pdf_path)
-
-    expected_set = set(
-        expected_codes
-    )
-
-    available_set = set(
-        code_to_files
-    )
-
-    missing_codes = sorted(
-        expected_set
-        - available_set
-    )
-
-    unexpected_codes = sorted(
-        available_set
-        - expected_set
-    )
-
-    duplicate_codes = sorted(
-        code
-        for code, files
-        in code_to_files.items()
-        if len(files) > 1
-    )
-
-    return (
-        pdf_files,
-        code_to_files,
-        missing_codes,
-        unexpected_codes,
-        duplicate_codes,
-    )
+def resolve_pdf(root, code, record):
+    # Only canonical PDFs in 05_pdfs; never consume failed run downloads.
+    raw = str(record.get('document_path') or '').replace('\\', '/')
+    filename = raw.rsplit('/', 1)[-1]
+    if filename not in {f'{code}.pdf', f'{code}_ACTA.pdf'}:
+        return None
+    path = root / '05_pdfs' / filename
+    return path if path.is_file() else None
 
 
-# =============================================================================
-# RESUMABLE PROCESSING
-# =============================================================================
-
-def load_previous_results():
-    previous_results = {}
-
-    if not OUTPUT_FILE.exists():
-        return previous_results
-
+def export(rows, output, summary, directory_audit):
+    frame = pd.DataFrame(rows)
+    frame['queries_observations_count'] = pd.array(frame['queries_observations_count'], dtype='Int64')
+    # CSV and checkpoints remain usable if Excel is open.
+    csv_tmp = output.with_suffix('.tmp.csv')
+    frame.to_csv(csv_tmp, index=False, encoding='utf-8-sig')
+    os.replace(csv_tmp, output.with_suffix('.csv'))
+    temp = output.with_suffix('.tmp.xlsx')
     try:
-        dataframe = pd.read_excel(
-            OUTPUT_FILE
-        )
+        frame.to_excel(temp, index=False, engine='openpyxl')
+        os.replace(temp, output)
+    except PermissionError:
+        log('Excel locked: close the counts workbook and rerun; CSV/checkpoints are current.')
+    temp_summary = summary.with_suffix('.tmp.xlsx')
+    try:
+        with pd.ExcelWriter(temp_summary, engine='openpyxl') as writer:
+            frame.groupby('count_status', dropna=False).size().reset_index(name='procedures').to_excel(writer, sheet_name='status', index=False)
+            frame.groupby('processing_method', dropna=False).size().reset_index(name='procedures').to_excel(writer, sheet_name='methods', index=False)
+            frame.loc[frame.count_status != 'OK'].to_excel(writer, sheet_name='unresolved', index=False)
+            frame.loc[frame.count_status == 'OK', 'queries_observations_count'].astype(float).describe().to_frame('value').to_excel(writer, sheet_name='descriptive_stats')
+            pd.DataFrame(directory_audit, columns=['file_name','issue']).to_excel(writer, sheet_name='directory_audit', index=False)
+        os.replace(temp_summary, summary)
+    except PermissionError:
+        log('Summary Excel locked; checkpoints and counts CSV are current.')
+    return frame
 
-        required_columns = {
-            "procedure_code",
-            "file_name",
-            "count_status",
-        }
-
-        if not (
-            required_columns
-            .issubset(
-                dataframe.columns
-            )
-        ):
-            return previous_results
-
-        for _, row in (
-            dataframe.iterrows()
-        ):
-            if (
-                row.get(
-                    "count_status"
-                )
-                != "OK"
-            ):
-                continue
-
-            file_name = str(
-                row.get(
-                    "file_name",
-                    ""
-                )
-            ).strip()
-
-            if file_name:
-                previous_results[
-                    file_name
-                ] = row.to_dict()
-
-    except Exception as error:
-        log(
-            "  Warning: previous "
-            "Script 02 output could "
-            "not be loaded: "
-            f"{error}"
-        )
-
-    return previous_results
-
-
-def save_partial_results(
-    results
-):
-    dataframe = pd.DataFrame(
-        results
-    )
-
-    dataframe.to_excel(
-        OUTPUT_FILE,
-        index=False
-    )
-
-
-# =============================================================================
-# PROCESS ONE DOCUMENT
-# =============================================================================
-
-def process_document(
-    pdf_path
-):
-    local_result = analyze_locally(
-        pdf_path
-    )
-
-    log(
-        "      Local: "
-        f"total="
-        f"{local_result['total']} | "
-        f"type="
-        f"{local_result['document_type']} | "
-        f"confidence="
-        f"{local_result['confidence']} | "
-        f"status="
-        f"{local_result['status']}"
-    )
-
-    if (
-        local_result["status"]
-        == "OK"
-        and
-        local_result["confidence"]
-        == "HIGH"
-    ):
-        return local_result
-
-    if AI_PROVIDER in (
-        "",
-        "none",
-        "off",
-        "disabled",
-    ):
-        return {
-            **local_result,
-            "status":
-                "REVIEW_REQUIRED",
-        }
-
-    log(
-        "      AI fallback: "
-        f"{AI_PROVIDER}"
-    )
-
-    ai_result = (
-        analyze_with_ai_retries(
-            pdf_path
-        )
-    )
-
-    log(
-        "      AI: "
-        f"total={ai_result['total']} | "
-        f"type="
-        f"{ai_result['document_type']} | "
-        f"status="
-        f"{ai_result['status']}"
-    )
-
-    if (
-        ai_result["status"]
-        == "OK"
-    ):
-        ai_result["pages"] = (
-            local_result.get(
-                "pages"
-            )
-        )
-
-        return ai_result
-
-    return {
-        "total": None,
-        "document_type": (
-            local_result.get(
-                "document_type"
-            )
-            or
-            ai_result.get(
-                "document_type"
-            )
-        ),
-        "method": (
-            f"PYMUPDF+"
-            f"{AI_PROVIDER.upper()}"
-        ),
-        "confidence": "LOW",
-        "status":
-            "REVIEW_REQUIRED",
-        "notes": (
-            "Local analysis unresolved; "
-            f"AI status: "
-            f"{ai_result['status']}. "
-            f"{ai_result['notes']}"
-        )[:200],
-        "pages": (
-            local_result.get(
-                "pages"
-            )
-        ),
-    }
-
-
-# =============================================================================
-# PROCESSING SUMMARY
-# =============================================================================
-
-def save_processing_summary(
-    dataframe
-):
-    method_summary = (
-        dataframe[
-            "processing_method"
-        ]
-        .value_counts(
-            dropna=False
-        )
-        .rename_axis(
-            "processing_method"
-        )
-        .reset_index(
-            name="count"
-        )
-    )
-
-    method_summary[
-        "percentage"
-    ] = (
-        method_summary["count"]
-        / len(dataframe)
-        * 100
-    ).round(2)
-
-    status_summary = (
-        dataframe[
-            "count_status"
-        ]
-        .value_counts(
-            dropna=False
-        )
-        .rename_axis(
-            "count_status"
-        )
-        .reset_index(
-            name="count"
-        )
-    )
-
-    type_summary = (
-        dataframe[
-            "document_type"
-        ]
-        .value_counts(
-            dropna=False
-        )
-        .rename_axis(
-            "document_type"
-        )
-        .reset_index(
-            name="count"
-        )
-    )
-
-    successful = dataframe[
-        dataframe[
-            "count_status"
-        ] == "OK"
-    ].copy()
-
-    descriptive_statistics = (
-        successful[
-            "queries_observations_count"
-        ]
-        .describe(
-            percentiles=[
-                0.25,
-                0.50,
-                0.75,
-                0.90,
-                0.95,
-            ]
-        )
-        .rename(
-            "value"
-        )
-        .reset_index()
-        .rename(
-            columns={
-                "index":
-                    "statistic"
-            }
-        )
-    )
-
-    with pd.ExcelWriter(
-        SUMMARY_FILE,
-        engine="openpyxl"
-    ) as writer:
-        method_summary.to_excel(
-            writer,
-            sheet_name="methods",
-            index=False
-        )
-
-        status_summary.to_excel(
-            writer,
-            sheet_name="status",
-            index=False
-        )
-
-        type_summary.to_excel(
-            writer,
-            sheet_name="document_types",
-            index=False
-        )
-
-        descriptive_statistics.to_excel(
-            writer,
-            sheet_name="descriptive_stats",
-            index=False
-        )
-
-
-# =============================================================================
-# MAIN PIPELINE
-# =============================================================================
 
 def main():
-    log("=" * 78)
-    log(
-        "QUERY AND OBSERVATION COUNT "
-        "- ROAD INFRASTRUCTURE TENDERS"
-    )
-    log("=" * 78)
-    log(
-        "Source documents: "
-        "Script 01 SEACE acquisition output"
-    )
-    log(
-        "Input directory: 05_pdfs"
-    )
-    log()
-
-    # -------------------------------------------------------------------------
-    # 1. Validate analytical sample
-    # -------------------------------------------------------------------------
-
-    log(
-        "[1] Validating "
-        "analytical sample..."
-    )
-
-    expected_codes = (
-        load_expected_procedures()
-    )
-
-    log(
-        "  Expected procedures "
-        "from Script 00: "
-        f"{len(expected_codes)}"
-    )
-
-    # -------------------------------------------------------------------------
-    # 2. Audit PDF input
-    # -------------------------------------------------------------------------
-
-    log()
-    log(
-        "[2] Auditing "
-        "Script 01 document output..."
-    )
-
-    (
-        pdf_files,
-        code_to_files,
-        missing_codes,
-        unexpected_codes,
-        duplicate_codes,
-    ) = audit_pdf_directory(
-        expected_codes
-    )
-
-    represented_codes = (
-        set(expected_codes)
-        & set(code_to_files)
-    )
-
-    log(
-        f"  PDF files found: "
-        f"{len(pdf_files)}"
-    )
-
-    log(
-        "  Expected procedures "
-        "represented: "
-        f"{len(represented_codes)}"
-    )
-
-    log(
-        f"  Missing procedures: "
-        f"{len(missing_codes)}"
-    )
-
-    log(
-        f"  Unexpected procedures: "
-        f"{len(unexpected_codes)}"
-    )
-
-    log(
-        "  Duplicate procedure "
-        "documents: "
-        f"{len(duplicate_codes)}"
-    )
-
-    if missing_codes:
-        log(
-            "  Missing procedure codes: "
-            + ", ".join(
-                map(
-                    str,
-                    missing_codes
-                )
-            )
-        )
-
-    if unexpected_codes:
-        log(
-            "  Unexpected procedure codes: "
-            + ", ".join(
-                map(
-                    str,
-                    unexpected_codes
-                )
-            )
-        )
-
-    if duplicate_codes:
-        log(
-            "  Duplicate procedure codes: "
-            + ", ".join(
-                map(
-                    str,
-                    duplicate_codes
-                )
-            )
-        )
-
-    if (
-        missing_codes
-        or unexpected_codes
-        or duplicate_codes
-    ):
-        raise RuntimeError(
-            "05_pdfs does not match "
-            "the Script 00 analytical "
-            "sample. Resolve the document "
-            "audit before counting."
-        )
-
-    # -------------------------------------------------------------------------
-    # 3. Configure processing
-    # -------------------------------------------------------------------------
-
-    log()
-    log(
-        "[3] Configuring "
-        "processing methods..."
-    )
-
-    log(
-        "  Primary method: PyMuPDF"
-    )
-
-    if AI_PROVIDER in (
-        "",
-        "none",
-        "off",
-        "disabled",
-    ):
-        log(
-            "  AI fallback: disabled"
-        )
-
-    else:
-        log(
-            "  AI fallback provider: "
-            f"{AI_PROVIDER}"
-        )
-
-        log(
-            "  AI model: "
-            f"{AI_MODEL or 'NOT SET'}"
-        )
-
-        if not AI_API_KEY:
-            log(
-                "  Warning: AI_API_KEY "
-                "is not configured."
-            )
-
-    previous_results = (
-        load_previous_results()
-    )
-
-    log(
-        "  Previous verified results: "
-        f"{len(previous_results)}"
-    )
-
-    # -------------------------------------------------------------------------
-    # 4. Process documents
-    # -------------------------------------------------------------------------
-
-    log()
-    log(
-        "[4] Processing "
-        "PDF documents..."
-    )
-
-    results = []
-
-    ordered_pdfs = [
-        code_to_files[code][0]
-        for code in expected_codes
-    ]
-
-    for index, pdf_path in enumerate(
-        ordered_pdfs,
-        start=1
-    ):
-        procedure_code = (
-            extract_procedure_code(
-                pdf_path
-            )
-        )
-
-        file_name = (
-            pdf_path.name
-        )
-
-        log()
-        log(
-            f"[{index}/"
-            f"{len(ordered_pdfs)}] "
-            f"Procedure "
-            f"{procedure_code} | "
-            f"{file_name}"
-        )
-
-        if (
-            file_name
-            in previous_results
-        ):
-            log(
-                "      Existing verified "
-                "count: reused"
-            )
-
-            results.append(
-                previous_results[
-                    file_name
-                ]
-            )
-
-            continue
-
-        result = process_document(
-            pdf_path
-        )
-
-        # ---------------------------------------------------------------------
-        # Filename/content consistency safeguard
-        # ---------------------------------------------------------------------
-
-        if (
-            "_ACTA"
-            in pdf_path.stem.upper()
-        ):
-            if not (
-                result["status"]
-                == "OK"
-                and
-                result[
-                    "document_type"
-                ]
-                == "ACTA_NO_FORMULACION"
-                and
-                result["total"]
-                == 0
-            ):
-                result = {
-                    **result,
-                    "total": None,
-                    "confidence": "LOW",
-                    "status":
-                        "REVIEW_REQUIRED",
-                    "notes": (
-                        "Filename identifies "
-                        "a no-formulation act, "
-                        "but document content "
-                        "did not verify it."
-                    ),
-                }
-
-        results.append(
-            {
-                "procedure_code":
-                    procedure_code,
-
-                "file_name":
-                    file_name,
-
-                "document_type":
-                    result.get(
-                        "document_type"
-                    )
-                    or "",
-
-                "queries_observations_count":
-                    result.get(
-                        "total"
-                    ),
-
-                "processing_method":
-                    result.get(
-                        "method"
-                    )
-                    or "",
-
-                "confidence":
-                    result.get(
-                        "confidence"
-                    )
-                    or "",
-
-                "count_status":
-                    result.get(
-                        "status"
-                    )
-                    or "",
-
-                "pages":
-                    result.get(
-                        "pages"
-                    ),
-
-                "notes":
-                    result.get(
-                        "notes"
-                    )
-                    or "",
-            }
-        )
-
-        if index % 10 == 0:
-            save_partial_results(
-                results
-            )
-
-            log(
-                "      Partial results "
-                "saved."
-            )
-
-        time.sleep(
-            PAUSE_BETWEEN_PDFS
-        )
-
-    # -------------------------------------------------------------------------
-    # 5. Save outputs
-    # -------------------------------------------------------------------------
-
-    log()
-    log(
-        "[5] Saving "
-        "Script 02 outputs..."
-    )
-
-    dataframe = pd.DataFrame(
-        results
-    )
-
-    dataframe.to_excel(
-        OUTPUT_FILE,
-        index=False
-    )
-
-    save_processing_summary(
-        dataframe
-    )
-
-    log(
-        f"  Counts workbook: "
-        f"{OUTPUT_FILE.name}"
-    )
-
-    log(
-        f"  Summary workbook: "
-        f"{SUMMARY_FILE.name}"
-    )
-
-    # -------------------------------------------------------------------------
-    # 6. Final audit
-    # -------------------------------------------------------------------------
-
-    successful = dataframe[
-        dataframe[
-            "count_status"
-        ] == "OK"
-    ].copy()
-
-    review = dataframe[
-        dataframe[
-            "count_status"
-        ] != "OK"
-    ].copy()
-
-    pliegos = successful[
-        successful[
-            "document_type"
-        ] == "PLIEGO"
-    ]
-
-    no_formulation_acts = (
-        successful[
-            successful[
-                "document_type"
-            ]
-            == "ACTA_NO_FORMULACION"
-        ]
-    )
-
-    verified_zero = (
-        successful[
-            (
-                successful[
-                    "queries_observations_count"
-                ] == 0
-            )
-            &
-            (
-                successful[
-                    "document_type"
-                ]
-                == "ACTA_NO_FORMULACION"
-            )
-        ]
-    )
-
-    log()
-    log("=" * 78)
-    log(
-        "QUERY / OBSERVATION "
-        "COUNT AUDIT"
-    )
-    log("=" * 78)
-
-    log(
-        "Expected procedures:              "
-        f"{len(expected_codes)}"
-    )
-
-    log(
-        "PDF documents processed:          "
-        f"{len(dataframe)}"
-    )
-
-    log(
-        "Pliegos successfully processed:   "
-        f"{len(pliegos)}"
-    )
-
-    log(
-        "No-formulation acts:              "
-        f"{len(no_formulation_acts)}"
-    )
-
-    log(
-        "Successfully counted:             "
-        f"{len(successful)}"
-    )
-
-    log(
-        "Verified zero counts:             "
-        f"{len(verified_zero)}"
-    )
-
-    log(
-        "Manual review required:           "
-        f"{len(review)}"
-    )
-
-    if len(review) > 0:
-        log()
-        log(
-            "PROCEDURES REQUIRING REVIEW"
-        )
-        log("-" * 78)
-
-        for _, row in (
-            review.iterrows()
-        ):
-            log(
-                f"  "
-                f"{int(row['procedure_code'])}"
-                f" | "
-                f"{row['file_name']}"
-                f" | "
-                f"{row['count_status']}"
-                f" | "
-                f"{row['notes']}"
-            )
-
-    log()
-    log("=" * 78)
-
-    pipeline_complete = (
-        len(dataframe)
-        == len(expected_codes)
-        and
-        len(successful)
-        == len(expected_codes)
-        and
-        len(review)
-        == 0
-    )
-
-    if pipeline_complete:
-        log(
-            "PIPELINE STATUS: COMPLETE"
-        )
-
-    else:
-        log(
-            "PIPELINE STATUS: INCOMPLETE"
-        )
-
-    log("=" * 78)
-
-    save_log()
-
-
-# =============================================================================
-# EXECUTION
-# =============================================================================
-
-if __name__ == "__main__":
+    global AI_PROVIDER
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--project-root', type=Path)
+    parser.add_argument('--procedure-code', help='Process only this case; export retains the complete selection')
+    parser.add_argument('--batch-size', type=int, help='Maximum new/unresolved PDF attempts; default all')
+    parser.add_argument('--force', action='store_true', help='Recount instead of reusing matching successful checkpoints')
+    parser.add_argument('--ocr', action='store_true', help='Try local Tesseract OCR on pages with insufficient text')
+    parser.add_argument('--ocr-language', default='spa')
+    parser.add_argument('--allow-ai', action='store_true', help='Enable configured Gemini fallback; sends unresolved PDFs to provider, may incur charges')
+    args = parser.parse_args()
+    if args.batch_size is not None and args.batch_size < 1:
+        parser.error('--batch-size must be positive')
+    root = args.project_root.resolve() if args.project_root else next((p for p in Path(__file__).resolve().parents if (p/'00_data').is_dir()), None)
+    if root is None:
+        parser.error('Cannot locate project root; use --project-root PATH')
+    AI_PROVIDER = os.getenv('AI_PROVIDER', 'none').strip().lower() if args.allow_ai else 'none'
+    results = root/'02_results'/'01_sample_and_data'
+    logs = root/'03_logs'/'01_sample_and_data'
+    checkpoints = results/'02_query_counts'/'state'
+    for folder in (results,logs,checkpoints):folder.mkdir(parents=True,exist_ok=True)
+    logfile = logs/f"02_count_queries_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}.log"
+    lock_stream = (checkpoints.parent/'count.lock').open('a+b')
+    lock_stream.seek(0,2)
+    if lock_stream.tell()==0:lock_stream.write(b'0');lock_stream.flush()
+    lock_stream.seek(0)
     try:
-        main()
+        if os.name=='nt':
+            import msvcrt
+            msvcrt.locking(lock_stream.fileno(),msvcrt.LK_NBLCK,1)
+        else:
+            import fcntl
+            fcntl.flock(lock_stream.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
+    except OSError:
+        lock_stream.close()
+        raise RuntimeError('Another Script 02 instance is running')
+    try:
+        sample = pd.read_excel(results/'00_1_sample_selection.xlsx', dtype=str, keep_default_na=False)
+        if 'procedure_code' not in sample:raise ValueError('Script 00 output lacks procedure_code')
+        codes = [code_string(v) for v in sample.procedure_code]
+        if not codes or len(codes)!=len(set(codes)):raise ValueError('Selection must contain unique nonmissing codes')
+        requested = code_string(args.procedure_code) if args.procedure_code else None
+        if requested and requested not in codes:raise ValueError('Requested code not selected by Script 00')
+        acquisition = load_acquisition(root,codes)
+        allowed_files = set()
+        rows=[]; attempted=0;reused=0
+        config = {'rules':RULES_VERSION,'ocr':args.ocr,'ocr_language':args.ocr_language,
+                  'ai_provider':AI_PROVIDER,'ai_model':AI_MODEL if args.allow_ai else ''}
+        signature = hashlib.sha256(json.dumps(config,sort_keys=True).encode()).hexdigest()
+        log(f'QUERY COUNT | {VERSION} | selected={len(codes)} | combined Q only')
+        log(f'Local OCR={args.ocr} | AI fallback={AI_PROVIDER}')
+        output=results/'02_1_query_counts.xlsx';summary=results/'02_2_processing_summary.xlsx'
+        for code in codes:
+            a=acquisition[code]
+            base={'procedure_code':code,'queries_observations_count':None,'count_status':'NOT_PROCESSED',
+                  'document_type':'','processing_method':'NOT_PROCESSED','confidence':'',
+                  'acquisition_status':a.get('acquisition_status','NOT_ATTEMPTED'),
+                  'acquisition_document_status':a.get('document_status',''),
+                  'document_identity_validation':a.get('document_identity_validation',''),
+                  'file_name':'','document_sha256':'','notes':'','updated_at_utc':now(),
+                  'counter_signature':signature,'ai_proposed_total':None}
+            if a.get('document_status') != 'OK':
+                base.update(count_status='IDENTITY_UNRESOLVED' if a.get('document_status')=='PDF_IDENTITY_MISMATCH' else 'DOCUMENT_NOT_ACQUIRED',
+                            notes='Script 01 did not accept the target document; Q remains missing')
+            elif a.get('document_identity_validation')!='NOMENCLATURE_MATCH':
+                base.update(count_status='IDENTITY_UNRESOLVED',notes='Automatic nomenclature match absent; Q remains missing')
+            else:
+                path=resolve_pdf(root,code,a)
+                if path is None:
+                    base.update(count_status='PDF_MISSING',notes='Accepted canonical document not present in 05_pdfs')
+                else:
+                    allowed_files.add(path.name)
+                    filehash=sha256(path)
+                    base.update(file_name=path.name,document_sha256=filehash)
+                    if not a.get('document_sha256') or filehash!=a.get('document_sha256'):
+                        base.update(count_status='PDF_HASH_MISMATCH',notes='PDF differs from Script 01 fingerprint or fingerprint absent')
+                    else:
+                        checkpoint=checkpoints/f'{code}.json'
+                        prior=json.loads(checkpoint.read_text(encoding='utf-8')) if checkpoint.exists() else {}
+                        same=(prior.get('document_sha256')==filehash and prior.get('counter_signature')==signature)
+                        selected=requested is None or code==requested
+                        if same and prior.get('count_status')=='OK' and not (args.force and selected):
+                            base.update(prior);reused+=1
+                        elif not selected or (args.batch_size is not None and attempted>=args.batch_size):
+                            if same:base.update(prior)
+                            else:base.update(count_status='NOT_PROCESSED',notes='Outside requested case or batch limit')
+                        else:
+                            attempted+=1
+                            try:
+                                counted=extract_and_analyze(path,args.ocr,args.ocr_language)
+                                base.update(counted)
+                                if path.stem.upper().endswith('_ACTA') and not (base['count_status']=='OK' and base['queries_observations_count']==0):
+                                    base.update(queries_observations_count=None,count_status='ACTA_NOT_VERIFIED',confidence='LOW')
+                                if base['count_status']!='OK' and AI_PROVIDER not in {'','none','off','disabled'}:
+                                    proposal=analyze_with_ai_retries(path)
+                                    total=proposal.get('total')
+                                    if type(total) is int and total>=0:
+                                        base.update(ai_proposed_total=total,count_status='AI_PROPOSAL_UNVERIFIED',confidence='LOW')
+                                    base['notes']+=f" | AI {proposal.get('status')}: {proposal.get('notes','')}"
+                            except Exception as exc:
+                                base.update(queries_observations_count=None,count_status='READ_ERROR',notes=f'{type(exc).__name__}: {str(exc)[:500]}')
+                            base['updated_at_utc']=now()
+                            # Save every processed case before exports or next PDF.
+                            atomic_json(checkpoint,base)
+                            log(f"[{attempted}] {code} | Q={base['queries_observations_count']} | {base['count_status']}")
+            rows.append(base)
+        audit=[]
+        pdfdir=root/'05_pdfs'
+        for p in sorted(pdfdir.glob('*')):
+            if p.is_file() and p.suffix.lower()=='.pdf' and p.name not in allowed_files:
+                audit.append({'file_name':p.name,'issue':'NOT_USED_BY_ACCEPTED_ACQUISITION'})
+        frame=export(rows,output,summary,audit)
+        log(f"Selected={len(codes)} | Valid Q={int((frame.count_status=='OK').sum())} | Missing/unresolved Q={int((frame.count_status!='OK').sum())}")
+        log(f'PDF attempts this run={attempted} | Successful counts reused={reused}')
+        log(f'Counts: {output}\nSummary: {summary}')
+        log('All selected procedures retained. No imputation; final analytical filtering belongs to Script 03.')
+    finally:
+        logfile.write_text('\n'.join(LOG_LINES)+'\n',encoding='utf-8')
+        lock_stream.close()
 
-    except Exception as error:
-        log()
-        log("=" * 78)
-        log(
-            "PIPELINE FAILED"
-        )
-        log("=" * 78)
 
-        log(
-            f"{type(error).__name__}: "
-            f"{error}"
-        )
-
-        save_log()
-
-        raise
+if __name__=='__main__':
+    try:main()
+    except Exception as exc:
+        print(f'PIPELINE FAILED: {type(exc).__name__}: {exc}',file=sys.stderr)
+        sys.exit(1)
