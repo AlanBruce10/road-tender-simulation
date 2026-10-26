@@ -19,8 +19,8 @@ from pathlib import Path
 import pandas as pd
 import pymupdf
 
-VERSION = '2.0-acquisition-linked-count'
-RULES_VERSION = 'combined-Q-2.0.1'
+VERSION = '2.1-structural-records-and-acts'
+RULES_VERSION = 'combined-Q-2.1'
 AI_PROVIDER = 'none'
 AI_MODEL = os.getenv('AI_MODEL', '').strip()
 AI_API_KEY = os.getenv('AI_API_KEY', '').strip()
@@ -81,15 +81,24 @@ RECORD = re.compile(r'\b(?:consulta|observaci[oó]n)\s*:\s*(?:nro\.?|n[°ºo.]|n
 LEGACY_RECORD = re.compile(r'\bNro\.?\s*(\d+)\s*.{0,180}?\bConsulta\s*/\s*Observaci[oó]n\s*:', re.I | re.S)
 ZERO_COMBINED = re.compile(
     r'\bno\s+se\s+(?:han\s+)?(?:formulado|formularon|registrado|registraron|presentado|presentaron|recibido|recibieron)'
-    r'\s+(?:las\s+|ninguna\s+|ningunas\s+)?consultas?\s*(?:y\s*/\s*o|y/o|ni|y|u|o)\s*observaciones?\b')
+    r'\s+(?:(?:la\s+)?formulaci[oó]n(?:es)?\s+de\s+)?(?:las\s+|ninguna\s+|ningunas\s+)?consultas?\s*(?:y\s*/\s*o|y/o|ni|y|u|o)\s*observaciones?\b')
 ZERO_TITLE = re.compile(r'\bacta\s+de\s+no\s+formulacion\s+de\s+consultas?\s*(?:y/o|y|ni|o)\s*observaciones?\b')
 
 
+STRUCTURAL_RECORD = re.compile(
+    r'^\s*Nro\.?\s*(\d+)\s*\n\s*Consulta\s*/\s*Observaci[oó]n\s*:',
+    re.I | re.M)
+EXPLICIT_RECORD = re.compile(
+    r'^\s*(?:consulta|observaci[oó]n)\s*:\s*(?:nro\.?|n[°ºo.]|n[uú]mero)\s*:?\s*(\d+)\s*$',
+    re.I | re.M)
+
+
 def record_numbers(text):
-    # Prefer the explicit record heading; fallback supports the older layout.
-    matches = list(RECORD.finditer(text))
+    # The SEACE form heading owns the record ID. Numbers cited in answers
+    # must never override the actual form headings.
+    matches = list(STRUCTURAL_RECORD.finditer(text))
     if not matches:
-        matches = list(LEGACY_RECORD.finditer(text))
+        matches = list(EXPLICIT_RECORD.finditer(text))
     return [int(m.group(1)) for m in matches]
 
 
