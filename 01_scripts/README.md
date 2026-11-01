@@ -60,11 +60,11 @@ python 01_scripts/04_model_validation/09_sensitivity_analysis.py
 |---|---|---|---|
 | `00_select_sample.py` | 01 | Multi-year record linkage (2020–2025) and road-scope screening | `00_1_sample_selection.xlsx` |
 | `01_download_pdfs.py` | 01 | Automated SEACE scraper and schedule extraction | `01_1_acquisition_status.xlsx`, `05_pdfs/` |
-| `02_count_queries.py` | 01 | Structural parsing of consultation/observation count ($Q$) | `02_1_query_counts.xlsx` |
-| `03_integrate_results.py` | 01 | Quality control, identity checks, and master eligible dataset | `03_2_model_ready_dataset.xlsx` ($N=2,004$) |
+| `02_count_queries.py` | 01 | Structural parsing of consultation/observation count (Q) | `02_1_query_counts.xlsx` |
+| `03_integrate_results.py` | 01 | Quality control, identity checks, and master eligible dataset | `03_2_model_ready_dataset.xlsx` (N = 2,004) |
 | `04_exploratory_analysis.py` | 02 | Non-parametric correlations and dispersion diagnostics | `04_1_descriptive_statistics.xlsx` |
 | `05_scenarios_and_calibration.py` | 02 | Conditional Lognormal fitting, Hurdle model, and copula | `05_3_model_parameters.json` |
-| `06_convergence_analysis.py` | 03 | Monte Carlo stability assessment validating $N=100,000$ | `06_2_convergence_decision.json` |
+| `06_convergence_analysis.py` | 03 | Monte Carlo stability assessment validating N = 100,000 | `06_2_convergence_decision.json` |
 | `07_discrete_event_simulation.py` | 03 | Two-stage DES engine generating 300,000 synthetic runs | `07_2_simulation_summary.xlsx` |
-| `08_model_validation.py` | 04 | K-S, Welch t-test, Levene test ($p=1.48 \times 10^{-24}$), and Bootstrap CI | `08_2_hypothesis_decision.json` |
+| `08_model_validation.py` | 04 | K-S, Welch t-test, Levene test (p = 1.48 × 10⁻²⁴), and Bootstrap CI | `08_2_hypothesis_decision.json` |
 | `09_sensitivity_analysis.py` | 04 | Robustness across tertiles, copula vs. independence, and years | `09_1_sensitivity_metrics.xlsx` |
