@@ -228,3 +228,8 @@ __marimo__/
 
 # Temporary Microsoft Excel files
 ~$*.xlsx
+05_pdfs/*.pdf
+05_pdfs/unverified_existing/
+02_results/03_stochastic_simulation/*.csv.gz
+*.tmp
+*.lock
