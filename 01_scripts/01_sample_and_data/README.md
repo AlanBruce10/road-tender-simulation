@@ -111,22 +111,55 @@ The rules cover:
 
 Date completeness is not used as an exclusion criterion at this stage. Final temporal eligibility is assessed by Script 03 using the schedules acquired by Script 01.
 
+The eight road rules, 25 nonroad rules, selection criteria, and scope boundaries remain unchanged. Required columns and supported cell types are validated before screening. Missing optional fields and unparseable dates are recorded for review without introducing additional selection filters.
+
 ### Execution
+
+For an initial execution with no existing output directory:
 
 ```bash
 python 01_scripts/01_sample_and_data/00_select_sample.py
 ```
 
+For an isolated reproduction using the existing local source files:
+
+```bash
+python 01_scripts/01_sample_and_data/00_select_sample.py --project-root . --output-root 02_results/reproducibility/script00_run_001
+```
+
+- `--project-root` identifies the repository containing `00_data/`; when omitted, the root is located from the script path.
+- `--output-root` identifies a separate root under which the usual `02_results/` and `03_logs/` subdirectories are created. When omitted, outputs use the project root.
+- The script refuses an existing `02_results/01_sample_and_data/` directory under the output root. Use a fresh output root for each reproduction; existing results are never replaced.
+
+Run the automated synthetic tests independently of the research data:
+
+```bash
+python 01_scripts/01_sample_and_data/00_select_sample.py --self-test
+```
+
+The tests cover scope classification, identifiers, consolidation, dates, input validation, output integrity, and write/publication failures.
+
 ### Main outputs
 
-Under `02_results/01_sample_and_data/`:
+Under `02_results/01_sample_and_data/`, relative to the selected output root:
 
 | File | Content |
 |---|---|
 | `00_1_sample_selection.xlsx` | Selected procurement procedures and retained source information |
 | `00_2_sample_selection_flow.xlsx` | Selection funnel, criteria, and audit information |
+| `audit/00_3_candidate_notices.csv.gz` | Source notice records associated with retained candidate procedures |
+| `audit/00_4_candidate_awards.csv.gz` | Source award records associated with retained candidate procedures |
+| `audit/00_5_screening_decisions.csv.gz` | Row-level exclusion, final scope, and pending-review decisions |
 
-The script also saves detailed audit files and execution information.
+All five outputs are generated in a temporary directory, reopened, and checked against the in-memory tables before the complete directory is published by a single rename. Inputs are hashed again before publication to detect changes during execution.
+
+The accompanying `00_run_manifest.json` records the unique run identifier, code SHA-256, Python and dependency versions, parameters, input paths and hashes, schema diagnostics, and each output's size and SHA-256. Execution metadata also appear in the audit workbook's `settings` sheet. Individual logs are saved as `03_logs/01_sample_and_data/00_sample_selection_<run_id>.log` under the output root.
+
+### Reference reproduction
+
+A controlled reproduction using the same 12 source Excel files reproduced **all 2,018 selected procedure identifiers and their 49 output columns**, including attributes, scope decisions, dates, and missing values. Every funnel stage and the **660 procedures with unresolved scope** matched the existing reference outputs. Comparison normalized only equivalent representations of empty cells, numeric values, and dates; no numerical tolerance or text normalization was applied.
+
+The five output hashes matched the execution manifest, and the source files and existing outputs retained their pre-execution SHA-256 values. The expanded decision trace covers all 385,300 source notice rows without duplicate terminal decisions. These checks establish technical reproducibility of the implemented selection; independent assessment of textual scope classification remains necessary.
 
 ## 6. Script 01 — Schedule and PDF Acquisition
 

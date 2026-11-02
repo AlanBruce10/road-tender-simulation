@@ -4,12 +4,25 @@ Run from any directory. Place in 01_scripts/01_sample_and_data/.
 Dependencies: pandas, openpyxl. No external API is used.
 The main workbook contains the final selection for this screening stage.
 Documentary and temporal verification belong to subsequent pipeline stages.
+Reproducibility changes (implementation 3.1): input contracts, complete decision
+traces, code/environment metadata, validated five-file publication and no overwrite.
+Official names, existing sheet/column contracts and substantive rules are retained.
+Use --output-root NEW_ROOT for isolated reproduction; --self-test uses synthetic data.
+The additional JSON manifest and unique logs are local execution provenance.
 """
 from __future__ import annotations
 
 import argparse
-from datetime import datetime
+from datetime import date, datetime, timezone
 import hashlib
+import importlib.metadata
+import json
+import math
+import numbers
+import platform
+import tempfile
+import traceback
+import uuid
 from pathlib import Path
 import re
 import shutil
@@ -17,10 +30,12 @@ import sys
 import unicodedata
 
 import pandas as pd
+import openpyxl
 
 YEARS = tuple(range(2020, 2026))
 KEYS = ["codigoconvocatoria", "n_item"]
 SCHEMA_VERSION = "3.0-final-selection"
+IMPLEMENTATION_VERSION = "3.1-reproducible-publication"
 # Versioned, deterministic textual rules; no external language model is used.
 # Positive expressions identify the contracted asset, not isolated location names.
 ROAD_RULES = {
@@ -197,6 +212,71 @@ def count(df):
     return len(df), len(df[KEYS].drop_duplicates()), df[KEYS[0]].nunique()
 
 
+# Input contracts do not change substantive eligibility. Missing optional fields
+# are audited and filled with NA; invalid dates remain subject to the original
+# retain-and-review policy. Never repair a key or description by guessing.
+REQUIRED_COLUMNS = {
+    "notice": KEYS + ["objetocontractual", "tipoprocesoseleccion", "descripcion_proceso", "fecha_convocatoria"],
+    "award": KEYS,
+}
+OPTIONAL_COLUMNS = {
+    "notice": ["descripcion_item", "fechaintegracionbases", "fechapresentacionpropuesta",
+               "montoreferencial", "codigoentidad", "entidad", "tipoentidad",
+               "sistema_contratacion", "tipocompra", "moneda", "SECTOR / NIVEL DE GOBIERNO", "estadoitem"],
+    "award": ["fecha_buenapro", "fecha_consentimiento_bp", "monto_adjudicado_item_soles"],
+}
+DATE_COLUMNS = {"fecha_convocatoria", "fechaintegracionbases", "fechapresentacionpropuesta",
+                "fecha_buenapro", "fecha_consentimiento_bp"}
+AMOUNT_COLUMNS = {"montoreferencial", "monto_adjudicado_item_soles"}
+SCHEMA_ISSUES = []
+OUTPUT_NAMES = ["00_1_sample_selection.xlsx", "00_2_sample_selection_flow.xlsx",
+                "audit/00_3_candidate_notices.csv.gz", "audit/00_4_candidate_awards.csv.gz",
+                "audit/00_5_screening_decisions.csv.gz"]
+
+
+def sha256(path):
+    h = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
+def validate_source(df, family, filename):
+    """Validate structure/types before screening; preserve original cell values."""
+    missing = sorted(set(REQUIRED_COLUMNS[family]) - set(df.columns))
+    if missing:
+        raise ValueError(f"{filename}: missing required columns {missing}")
+    if not df.columns.is_unique:
+        raise ValueError(f"{filename}: repeated source column names")
+    for col in OPTIONAL_COLUMNS[family]:
+        if col not in df:
+            SCHEMA_ISSUES.append({"file": filename, "column": col, "issue": "optional_column_absent", "count": len(df)})
+            df[col] = pd.NA
+    for col in KEYS:
+        for value in df[col].dropna():
+            if isinstance(value, bool) or not isinstance(value, (str, numbers.Real)):
+                raise ValueError(f"{filename}: unsupported identifier type in {col}: {type(value).__name__}")
+            if isinstance(value, numbers.Real) and (not math.isfinite(value) or value != int(value) or abs(value) > 2**53):
+                raise ValueError(f"{filename}: nonintegral, nonfinite or unsafe numeric identifier in {col}")
+    for col in ["objetocontractual", "tipoprocesoseleccion", "descripcion_proceso", "descripcion_item"]:
+        if col in df and any(not isinstance(v, str) for v in df[col].dropna()):
+            raise ValueError(f"{filename}: {col} must contain text or missing values")
+    for col in DATE_COLUMNS.intersection(df.columns):
+        present = df[col].notna() & df[col].astype(str).str.strip().ne("")
+        allowed = df.loc[present, col].map(lambda v: not isinstance(v, bool) and isinstance(v, (str, numbers.Real, date)))
+        if not allowed.all():
+            raise ValueError(f"{filename}: unsupported date cell type in {col}")
+        bad = int((present & parse_dates(df[col]).isna()).sum())
+        if bad:
+            SCHEMA_ISSUES.append({"file": filename, "column": col, "issue": "unparseable_date_retained", "count": bad})
+    for col in AMOUNT_COLUMNS.intersection(df.columns):
+        bad = int((df[col].notna() & pd.to_numeric(df[col], errors="coerce").isna()).sum())
+        if bad:
+            SCHEMA_ISSUES.append({"file": filename, "column": col, "issue": "nonnumeric_optional_amount", "count": bad})
+    return df
+
+
 def read_sources(data_dir):
     frames, manifest, inventory = {}, [], []
     for family, prefix in [("notice", "CONOSCE_CONVOCATORIAS"), ("award", "CONOSCE_ADJUDICACIONES")]:
@@ -206,15 +286,24 @@ def read_sources(data_dir):
             if len(matches) != 1:
                 raise ValueError(f"Expected exactly one {prefix}{year}_*.xlsx in {data_dir}; found {len(matches)}")
             path = matches[0]
-            df = pd.read_excel(path)
-            if not df.columns.is_unique:
-                raise ValueError(f"Repeated source column names: {path.name}")
-            required = KEYS + (["objetocontractual", "tipoprocesoseleccion", "descripcion_proceso", "fecha_convocatoria"] if family == "notice" else [])
-            missing = sorted(set(required) - set(df.columns))
-            if missing:
-                raise ValueError(f"{path.name}: missing {missing}")
+            digest = sha256(path)
+            # Check raw headers before pandas can mangle duplicate names.
+            book = openpyxl.load_workbook(path, read_only=True, data_only=True)
+            try:
+                header_rows = list(book.worksheets[0].iter_rows(min_row=1, max_row=1, values_only=True))
+                headers = header_rows[0] if header_rows else ()
+                named = [h for h in headers if h is not None]
+                if len(named) != len(set(named)):
+                    raise ValueError(f"Repeated source column names: {path.name}")
+            finally:
+                book.close()
+            with pd.ExcelFile(path, engine="openpyxl") as source_book:
+                df = pd.read_excel(source_book)
             for col in df.columns:
                 inventory.append({"family": family, "file": path.name, "column": col, "missing": int(df[col].isna().sum()), "rows": len(df)})
+            validate_source(df, family, path.name)
+            if sha256(path) != digest:
+                raise ValueError(f"Input changed while being read: {path}")
             for key in KEYS:
                 df[f"raw_key__{key}"] = df[key]
                 df[key] = df[key].map(key_value).astype("string")
@@ -222,8 +311,6 @@ def read_sources(data_dir):
             df["source_year"] = year
             df["source_excel_row"] = range(2, len(df) + 2)
             parts.append(df)
-            with path.open("rb") as stream:
-                digest = hashlib.file_digest(stream, "sha256").hexdigest() if hasattr(hashlib, "file_digest") else hashlib.sha256(stream.read()).hexdigest()
             manifest.append({"family": family, "year": year, "file": path.name, "records": len(df), "sha256": digest})
             log(f"  {family} {year}: {len(df):,} records")
         frames[family] = pd.concat(parts, ignore_index=True)
@@ -245,22 +332,10 @@ def safe_excel(df):
     return result
 
 
-def run(project_root):
-    log(f"SAMPLE SELECTION AUDIT | {SCHEMA_VERSION}")
+def build_outputs(project_root, out, metadata):
+    """Build in private staging only; publication belongs to run()."""
+    log(f"SAMPLE SELECTION AUDIT | {SCHEMA_VERSION} | {metadata['run_id']}")
     log("Notice cohort: 2020-2025 | No monetary cutoff | Stage dates retained without exclusion")
-    out = project_root / "02_results" / "01_sample_and_data"
-    logs = project_root / "03_logs" / "01_sample_and_data"
-    out.mkdir(parents=True, exist_ok=True)
-    logs.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-    for name in ["00_1_sample_selection.xlsx", "00_2_sample_selection_flow.xlsx"]:
-        path = out / name
-        if path.exists():
-            try:
-                with path.open("r+b"):
-                    pass
-            except PermissionError as exc:
-                raise PermissionError(f"Close the Excel file before running: {path}") from exc
     frames, manifest, inventory = read_sources(project_root / "00_data")
     notices, awards = frames["notice"], frames["award"]
     flow, decisions = [], []
@@ -294,6 +369,8 @@ def run(project_root):
     outside = notice_dates.notna() & ~notice_dates.between("2020-01-01", "2025-12-31 23:59:59")
     current = select(current, ~outside, "04_notice_cohort", "Exclude only confirmed notice dates outside 2020-2025; missing or unparseable dates require review")
     current["notice_date_unverified"] = parse_dates(current.fecha_convocatoria).isna()
+    if current.empty:
+        raise ValueError("No ordinary works tenders remain before scope classification")
     classified = current.apply(lambda r: pd.Series(classify_scope(r["descripcion_proceso"], r.get("descripcion_item", ""))), axis=1)
     current = pd.concat([current, classified], axis=1)
     text = current["descripcion_proceso"].fillna("").map(norm) + " | " + current.get("descripcion_item", pd.Series("", index=current.index)).fillna("").map(norm)
@@ -315,7 +392,7 @@ def run(project_root):
     linkage = nk.merge(ak, on=KEYS, how="outer", indicator=True, validate="one_to_one")
 
     date_columns = {"notice_date": "fecha_convocatoria", "integrated_terms_date": "fechaintegracionbases", "proposal_date": "fechapresentacionpropuesta"}
-    metadata = {"reference_amount": "montoreferencial", "entity_code": "codigoentidad", "entity_name": "entidad", "entity_type": "tipoentidad", "contracting_system": "sistema_contratacion", "purchase_type": "tipocompra", "source_currency": "moneda", "government_level": "SECTOR / NIVEL DE GOBIERNO", "selection_procedure": "tipoprocesoseleccion", "contractual_object": "objetocontractual"}
+    metadata_columns = {"reference_amount": "montoreferencial", "entity_code": "codigoentidad", "entity_name": "entidad", "entity_type": "tipoentidad", "contracting_system": "sistema_contratacion", "purchase_type": "tipocompra", "source_currency": "moneda", "government_level": "SECTOR / NIVEL DE GOBIERNO", "selection_procedure": "tipoprocesoseleccion", "contractual_object": "objetocontractual"}
     candidates = []
     for code, group in current.groupby("codigoconvocatoria", sort=True):
         award_group = trace_awards.loc[trace_awards.codigoconvocatoria.eq(code)]
@@ -323,7 +400,7 @@ def run(project_root):
         award_group = award_group.loc[award_group.n_item.isin(group.n_item)]
         row = {"procedure_code": code, "procedure_description": consensus(group, "descripcion_proceso"), "item_count": group.n_item.nunique(), "notice_record_count": len(group), "award_record_count": len(award_group), "award_link_available": not award_group.empty, "road_matches": " | ".join(sorted(set(group.road_matches))), "scope_review_required": bool(group.scope_review_required.any()), "execution_scope_review": bool(group.execution_scope_review.any()), "scope_decision": "unresolved" if group.scope_decision.eq("unresolved").any() else "included", "scope_reason": " | ".join(sorted(set(group.scope_reason))), "scope_rule_ids": " | ".join(sorted(set(group.scope_rule_ids))), "nonroad_matches": " | ".join(sorted(set(group.nonroad_matches)))}
         conflicts = []
-        for target, source in metadata.items():
+        for target, source in metadata_columns.items():
             row[target] = consensus(group, source)
             if source in group and group[source].dropna().nunique() > 1:
                 conflicts.append(source)
@@ -376,19 +453,29 @@ def run(project_root):
     log(f"06_scope_output: {len(master):,} -> {len(included):,} unique procedures; {len(unresolved):,} unresolved")
     scope_summary = all_scope_rows.groupby(["scope_decision", "scope_reason"], dropna=False).agg(
         records=(KEYS[0], "size"), procedures=(KEYS[0], "nunique")).reset_index()
-    assert master.procedure_code.is_unique
-    assert len(master) == current.codigoconvocatoria.nunique()
+    if master.procedure_code.isna().any() or not master.procedure_code.is_unique:
+        raise ValueError("Consolidation produced missing or duplicate procedure_code")
+    if len(master) != current.codigoconvocatoria.nunique():
+        raise ValueError("Consolidation count differs from retained unique procedure identifiers")
+    # Keep the existing CSV columns and first-exclusion rows. Add explicit final
+    # scope decisions for every retained source row, including unresolved codes.
+    final_rows = current[KEYS + ["source_file", "source_excel_row"]].copy()
+    final_map = master.set_index("procedure_code")
+    final_rows["stage"] = "06_scope_output"
+    final_rows["decision"] = final_rows.codigoconvocatoria.map(final_map.scope_decision).replace({"unresolved": "pending_review"})
+    final_rows["reason"] = final_rows.codigoconvocatoria.map(final_map.scope_reason)
+    decisions.append(final_rows)
+    review = master.record_resolution_required | master.scope_review_required | master.quality_review_required | master.execution_scope_review
+    review_codes = set(master.loc[review, "procedure_code"])
+    review_rows = final_rows.loc[final_rows.codigoconvocatoria.isin(review_codes)].copy()
+    review_rows["stage"] = "07_quality_review"
+    review_rows["decision"] = "pending_review"
+    review_rows["reason"] = "Scope, record, chronology, missing-date or execution-modality review; does not alter scope inclusion"
+    decisions.append(review_rows)
 
     audit_dir = out / "audit"
     audit_dir.mkdir(exist_ok=True)
-    names = ["00_1_sample_selection.xlsx", "00_2_sample_selection_flow.xlsx", "audit/00_3_candidate_notices.csv.gz", "audit/00_4_candidate_awards.csv.gz", "audit/00_5_screening_decisions.csv.gz"]
-    existing = [out / name for name in names if (out / name).exists()]
-    if existing:
-        backup = out / "previous_runs" / stamp
-        backup.mkdir(parents=True)
-        for path in existing:
-            shutil.copy2(path, backup / path.name)
-        log(f"Previous outputs backed up: {backup}")
+    names = OUTPUT_NAMES
     # Preserve all raw source values, including text dates and both original keys.
     trace_notices.to_csv(out / names[2], index=False, encoding="utf-8-sig", compression="gzip")
     trace_awards.to_csv(out / names[3], index=False, encoding="utf-8-sig", compression="gzip")
@@ -406,6 +493,12 @@ def run(project_root):
         {"parameter": "nonroad_regex", "value": str(NONROAD_RULES)},
         {"parameter": "classifier", "value": "Contextual deterministic rules; no external AI/API"},
     ])
+    metadata["input_files"] = manifest.to_dict(orient="records")
+    metadata["schema_issues"] = list(SCHEMA_ISSUES)
+    settings = pd.concat([settings, pd.DataFrame([
+        {"parameter": "execution_" + key, "value": json.dumps(value, ensure_ascii=False, default=str)}
+        for key, value in metadata.items()
+    ])], ignore_index=True)
     categories = []
     for field in ["sistema_contratacion", "tipocompra", "estadoitem"]:
         if field in current:
@@ -444,21 +537,378 @@ def run(project_root):
     log(summary.to_string(index=False))
     for label, frame in [("Selected", included), ("Not selected: insufficient or mixed scope", unresolved)]:
         log(f"{label}: total-time unavailable/unresolved={(~frame.total_time_available).sum():,}; complete stage dates={frame.complete_stage_dates.sum():,}; chronology alerts={frame.chronology_issue.sum():,}")
-    log("Completed. Final selection: 00_1_sample_selection.xlsx | Funnel and audit: 00_2_sample_selection_flow.xlsx")
-    return logs
+    log("BUILT | Staging only; validation and publication still pending")
+    return {
+        "inputs": manifest.to_dict(orient="records"),
+        "frames": [safe_excel(included), None, trace_notices, trace_awards, pd.concat(decisions, ignore_index=True)],
+        "sheets": {name: safe_excel(frame) for name, frame in sheets.items()},
+    }
+
+
+def validate_outputs(out, expected):
+    """Reopen all five outputs and compare logical content with in-memory tables."""
+    inventory = []
+    for index, name in enumerate(OUTPUT_NAMES):
+        path = out / name
+        if not path.is_file() or not path.stat().st_size:
+            raise ValueError(f"Missing or empty output: {name}")
+        if index == 1:
+            with pd.ExcelFile(path, engine="openpyxl") as book:
+                if book.sheet_names != list(expected["sheets"]):
+                    raise ValueError("Audit workbook sheets differ from expected contract")
+                pairs = [(sheet, frame, pd.read_excel(book, sheet_name=sheet, dtype=object, keep_default_na=False))
+                         for sheet, frame in expected["sheets"].items()]
+        elif index == 0:
+            pairs = [(name, expected["frames"][index], pd.read_excel(path, dtype=object, engine="openpyxl", keep_default_na=False))]
+        else:
+            pairs = [(name, expected["frames"][index], pd.read_csv(path, dtype=object, keep_default_na=False, encoding="utf-8-sig"))]
+        for label, original, reopened in pairs:
+            # Match the original writer's serialization, including empty cells,
+            # Excel date objects and pandas CSV numeric formatting.
+            if list(original.columns) != list(reopened.columns) or len(original) != len(reopened):
+                raise ValueError(f"Output structure mismatch: {label}")
+            if index in (0, 1):
+                for col in original:
+                    left = original[col]
+                    right = reopened[col]
+                    if pd.api.types.is_datetime64_any_dtype(left):
+                        equal = pd.to_datetime(left).fillna(pd.Timestamp.min).reset_index(drop=True).eq(pd.to_datetime(right).fillna(pd.Timestamp.min).reset_index(drop=True)).all()
+                    else:
+                        def cell_equal(a, b):
+                            empty_a = pd.isna(a) or a == ""
+                            empty_b = pd.isna(b) or b == ""
+                            if empty_a or empty_b:
+                                return empty_a and empty_b
+                            if isinstance(a, bool) or isinstance(b, bool):
+                                return type(a) is type(b) and a == b
+                            if isinstance(a, numbers.Real) and isinstance(b, numbers.Real):
+                                # Excel stores about 15 significant digits; tolerate
+                                # serialization roundoff, never coerce text keys.
+                                return math.isclose(a, b, rel_tol=1e-14, abs_tol=1e-12)
+                            return str(a) == str(b)
+                        equal = all(cell_equal(a, b) for a, b in zip(left, right))
+                    if not equal:
+                        raise ValueError(f"Output value mismatch: {label}/{col}")
+            else:
+                # Serialize expected CSV in memory with identical pandas rules.
+                import io
+                reference = pd.read_csv(io.StringIO(original.to_csv(index=False)), dtype=object, keep_default_na=False)
+                pd.testing.assert_frame_equal(reference, reopened, check_dtype=False)
+        inventory.append({"path": name, "bytes": path.stat().st_size, "sha256": sha256(path)})
+    return inventory
+
+
+def run(project_root, output_root=None):
+    """Publish a complete new output directory, never replace existing results.
+
+    --output-root is a separate project-shaped root. Both default and isolated
+    execution refuse an existing 02_results/01_sample_and_data directory.
+    Sibling staging and one rename prevent partially published definitive sets.
+    A crash before publication can leave a clearly temporary staging directory.
+    """
+    project_root = Path(project_root).resolve()
+    output_root = Path(output_root).resolve() if output_root is not None else project_root
+    out = output_root / "02_results" / "01_sample_and_data"
+    if out.exists() or out.is_symlink():
+        raise FileExistsError(f"Refusing to replace existing results: {out}. Use a fresh --output-root.")
+    if (project_root / "00_data") == output_root or (project_root / "00_data") in output_root.parents:
+        raise ValueError("Output root must not be inside original 00_data")
+    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ") + "_" + uuid.uuid4().hex
+    logs = output_root / "03_logs" / "01_sample_and_data"
+    logs.mkdir(parents=True, exist_ok=True)
+    logfile = logs / f"00_sample_selection_{run_id}.log"
+    LOG.clear()
+    SCHEMA_ISSUES.clear()
+    metadata = {
+        "run_id": run_id, "started_utc": datetime.now(timezone.utc).isoformat(),
+        "implementation_version": IMPLEMENTATION_VERSION,
+        "script_path": str(Path(__file__).resolve()), "script_sha256": sha256(__file__),
+        "python": platform.python_version(),
+        "dependencies": {name: importlib.metadata.version(name) for name in ("pandas", "numpy", "openpyxl")},
+        "project_root": str(project_root), "input_root": str(project_root / "00_data"),
+        "output_root": str(output_root), "years": list(YEARS),
+        "parameters": {"schema_version": SCHEMA_VERSION, "amount_cutoff": None,
+                       "contractual_object": "OBRA", "selection_procedure": "LICITACION PUBLICA",
+                       "missing_dates": "retain_and_review", "scope_classifier": "unchanged_deterministic_rules"},
+    }
+    out.parent.mkdir(parents=True, exist_ok=True)
+    staging = Path(tempfile.mkdtemp(prefix=f".00_{run_id}_", suffix=".tmp", dir=out.parent))
+    try:
+        expected = build_outputs(project_root, staging, metadata)
+        metadata["outputs"] = validate_outputs(staging, expected)
+        for entry in expected["inputs"]:
+            if sha256(project_root / "00_data" / entry["file"]) != entry["sha256"]:
+                raise ValueError(f"Input changed during execution: {entry['file']}")
+        if sha256(__file__) != metadata["script_sha256"]:
+            raise ValueError("Script changed during execution; refusing publication")
+        metadata["completed_utc"] = datetime.now(timezone.utc).isoformat()
+        metadata["status"] = "COMPLETE"
+        (staging / "00_run_manifest.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
+        if out.exists() or out.is_symlink():
+            raise FileExistsError(f"Output appeared during execution; refusing publication: {out}")
+        staging.rename(out)
+        log(f"COMPLETE | Published five validated outputs: {out}")
+        return out
+    except Exception:
+        metadata["status"] = "FAILED"
+        log("FAILED | No definitive outputs published\n" + traceback.format_exc())
+        if staging.exists():
+            if staging.is_symlink() or staging.resolve().parent != out.parent.resolve() or not staging.name.startswith(f".00_{run_id}_"):
+                raise RuntimeError("Unsafe staging cleanup path; temporary directory retained")
+            shutil.rmtree(staging)
+        raise
+    finally:
+        with logfile.open("x", encoding="utf-8") as stream:
+            stream.write(json.dumps({k: v for k, v in metadata.items() if k not in ("input_files", "schema_issues")}, ensure_ascii=False) + "\n")
+            stream.write("\n".join(LOG) + "\n")
+
+
+
+def run_self_tests():
+    """Synthetic regression and fault-injection tests; never read research data."""
+    import contextlib
+    import io
+    import unittest
+    from unittest import mock
+
+    class SyntheticTests(unittest.TestCase):
+        def setUp(self):
+            self.temp = tempfile.TemporaryDirectory(prefix="thesis_script00_test_")
+            self.addCleanup(self.temp.cleanup)
+            self.root = Path(self.temp.name) / "input"
+            self.data = self.root / "00_data"
+            self.data.mkdir(parents=True)
+            self.output = Path(self.temp.name) / "isolated"
+            self.input_hashes = {}
+            for year in YEARS:
+                def notice(code, item=1, description="MEJORAMIENTO DE CARRETERA", **overrides):
+                    row = {col: pd.NA for col in REQUIRED_COLUMNS["notice"] + OPTIONAL_COLUMNS["notice"]}
+                    row.update(codigoconvocatoria=code, n_item=item, objetocontractual="OBRA",
+                               tipoprocesoseleccion="LICITACION PUBLICA", descripcion_proceso=description,
+                               descripcion_item=description, fecha_convocatoria=f"01/02/{year}",
+                               fechaintegracionbases=f"10/02/{year}", fechapresentacionpropuesta=f"15/02/{year}",
+                               montoreferencial=100, moneda="PEN", codigoentidad="E01")
+                    row.update(overrides)
+                    return row
+                code = str(year) + "01"
+                rows = [notice(code)]
+                if year == 2020:
+                    rows += [notice(code, 2, montoreferencial=200),
+                             notice("202002", description="CONSTRUCCION DE INSTITUCION EDUCATIVA"),
+                             notice("202003", description="INTERVENCION GENERAL"),
+                             notice("202004", description="MEJORAMIENTO DE CARRETERA"),
+                             notice("202004", 2, description="CONSTRUCCION DE INSTITUCION EDUCATIVA"),
+                             notice("202005", objetocontractual="SERVICIO"),
+                             notice("202006", fecha_convocatoria="01/01/2019"),
+                             notice(None), notice("202007", fecha_convocatoria=None, montoreferencial=1)]
+                path = self.data / f"CONOSCE_CONVOCATORIAS{year}_test.xlsx"
+                pd.DataFrame(rows).to_excel(path, index=False, engine="openpyxl")
+                awards = pd.DataFrame([{"codigoconvocatoria": code, "n_item": 1,
+                                       "fecha_buenapro": f"20/02/{year}",
+                                       "fecha_consentimiento_bp": f"25/02/{year}",
+                                       "monto_adjudicado_item_soles": 100}])
+                award_path = self.data / f"CONOSCE_ADJUDICACIONES{year}_test.xlsx"
+                awards.to_excel(award_path, index=False, engine="openpyxl")
+            self.input_hashes = {p.name: sha256(p) for p in self.data.glob("*.xlsx")}
+
+        def execute(self, output=None):
+            with contextlib.redirect_stdout(io.StringIO()):
+                return run(self.root, output or self.output)
+
+        def assert_inputs_unchanged(self):
+            self.assertEqual(self.input_hashes, {p.name: sha256(p) for p in self.data.glob("*.xlsx")})
+
+        def test_classification_boundaries(self):
+            cases = [("REHABILITACION DE CARRETERA", "included"),
+                     ("CONSTRUCCION DE PUENTE VEHICULAR", "included"),
+                     ("MEJORAMIENTO DE CALLE DEL CEMENTERIO", "included"),
+                     ("CONSTRUCCION DE PISTAS Y VEREDAS", "included"),
+                     ("CONSTRUCCION DE VEREDAS PEATONALES", "excluded"),
+                     ("CONSTRUCCION DE PISTA DE ATERRIZAJE", "excluded"),
+                     ("CONSTRUCCION DE INSTITUCION EDUCATIVA", "excluded"),
+                     ("MEJORAMIENTO DE CARRETERA Y AGUA POTABLE", "unresolved"),
+                     ("INTERVENCION GENERAL", "unresolved")]
+            for description, expected in cases:
+                with self.subTest(description=description):
+                    self.assertEqual(classify_scope(description, "")["scope_decision"], expected)
+
+        def test_identifiers(self):
+            self.assertEqual(key_value(123.0), "123")
+            self.assertEqual(key_value("00123"), "00123")
+            self.assertEqual(key_value(" 123.00 "), "123")
+            self.assertTrue(pd.isna(key_value(None)))
+            self.assertTrue(pd.isna(key_value(" ")))
+
+        def test_consensus(self):
+            self.assertEqual(consensus(pd.DataFrame({"x": ["A", "A", None]}), "x"), "A")
+            self.assertTrue(pd.isna(consensus(pd.DataFrame({"x": ["A", "B"]}), "x")))
+            self.assertTrue(pd.isna(consensus(pd.DataFrame({"x": [None]}), "x")))
+
+        def test_dates(self):
+            values = parse_dates(pd.Series([43831, "31/12/2025", "invalid", None, 20]))
+            self.assertEqual(values.iloc[0], pd.Timestamp("2020-01-01"))
+            self.assertEqual(values.iloc[1], pd.Timestamp("2025-12-31"))
+            self.assertTrue(values.iloc[2:].isna().all())
+
+        def test_required_columns(self):
+            with self.assertRaisesRegex(ValueError, "missing required"):
+                validate_source(pd.DataFrame({"codigoconvocatoria": [1]}), "notice", "synthetic")
+
+        def test_optional_fields_and_invalid_date_are_audited(self):
+            frame = pd.DataFrame({"codigoconvocatoria": [1], "n_item": [1],
+                                  "objetocontractual": ["OBRA"], "tipoprocesoseleccion": ["LICITACION PUBLICA"],
+                                  "descripcion_proceso": ["CARRETERA"], "fecha_convocatoria": ["invalid"]})
+            SCHEMA_ISSUES.clear()
+            validate_source(frame, "notice", "synthetic")
+            self.assertIn("descripcion_item", frame)
+            self.assertTrue(any(x["issue"] == "unparseable_date_retained" for x in SCHEMA_ISSUES))
+            self.assertTrue(any(x["issue"] == "optional_column_absent" for x in SCHEMA_ISSUES))
+
+        def test_invalid_identifier_type(self):
+            for value in [True, 1.5, float("inf"), 2**54]:
+                with self.subTest(value=value), self.assertRaisesRegex(ValueError, "identifier"):
+                    validate_source(pd.DataFrame({"codigoconvocatoria": [value], "n_item": [1]}), "award", "synthetic")
+
+        def test_invalid_description_type(self):
+            frame = pd.DataFrame({col: [1] for col in REQUIRED_COLUMNS["notice"]})
+            with self.assertRaisesRegex(ValueError, "text"):
+                validate_source(frame, "notice", "synthetic")
+
+        def test_duplicate_raw_headers(self):
+            path = self.data / "CONOSCE_CONVOCATORIAS2020_test.xlsx"
+            book = openpyxl.Workbook()
+            book.active.append(["codigoconvocatoria", "codigoconvocatoria", "n_item"])
+            book.save(path)
+            book.close()
+            with self.assertRaisesRegex(ValueError, "Repeated source column"):
+                self.execute()
+            self.assertFalse((self.output / "02_results/01_sample_and_data").exists())
+
+        def test_missing_or_multiple_source_files(self):
+            path = self.data / "CONOSCE_CONVOCATORIAS2020_test.xlsx"
+            shutil.copy2(path, self.data / "CONOSCE_CONVOCATORIAS2020_extra.xlsx")
+            with self.assertRaisesRegex(ValueError, "exactly one"):
+                self.execute()
+
+        def test_end_to_end_contract_integrity_and_decisions(self):
+            out = self.execute()
+            self.assertTrue(all((out / n).is_file() for n in OUTPUT_NAMES))
+            selection = pd.read_excel(out / OUTPUT_NAMES[0], dtype={"procedure_code": str})
+            self.assertEqual(set(selection.procedure_code), {str(y) + "01" for y in YEARS} | {"202007"})
+            row = selection.set_index("procedure_code").loc["202001"]
+            self.assertEqual(row.item_count, 2)
+            self.assertTrue(row.record_resolution_required)
+            self.assertTrue(pd.isna(row.reference_amount))
+            self.assertTrue(pd.isna(selection.set_index("procedure_code").loc["202007", "notice_date"]))
+            decisions = pd.read_csv(out / OUTPUT_NAMES[4], dtype=str)
+            self.assertTrue({"included", "excluded", "pending_review"}.issubset(set(decisions.decision)))
+            mixed = decisions.loc[decisions.codigoconvocatoria.eq("202004") & decisions.stage.eq("06_scope_output")]
+            self.assertEqual(set(mixed.decision), {"pending_review"})
+            # One terminal screening outcome for every original notice row;
+            # additional quality-review events do not replace scope decisions.
+            terminal = decisions.loc[decisions.stage.ne("07_quality_review")]
+            self.assertFalse(terminal.duplicated(["source_file", "source_excel_row"]).any())
+            original_rows = sum(len(pd.read_excel(p)) for p in self.data.glob("CONOSCE_CONVOCATORIAS*.xlsx"))
+            self.assertEqual(len(terminal), original_rows)
+            manifest = json.loads((out / "00_run_manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(manifest["status"], "COMPLETE")
+            self.assertEqual(manifest["script_sha256"], sha256(__file__))
+            self.assertEqual(len(manifest["input_files"]), 12)
+            self.assertEqual(len(manifest["outputs"]), 5)
+            for entry in manifest["outputs"]:
+                self.assertEqual(entry["sha256"], sha256(out / entry["path"]))
+            self.assert_inputs_unchanged()
+
+        def test_existing_results_never_replaced(self):
+            out = self.output / "02_results/01_sample_and_data"
+            out.mkdir(parents=True)
+            sentinel = out / "00_1_sample_selection.xlsx"
+            sentinel.write_bytes(b"preserve-current-result")
+            with self.assertRaisesRegex(FileExistsError, "Refusing"):
+                self.execute()
+            self.assertEqual(sentinel.read_bytes(), b"preserve-current-result")
+            self.assert_inputs_unchanged()
+
+        def check_failed_publication(self, patcher, error):
+            with patcher, self.assertRaises(error):
+                self.execute()
+            self.assertFalse((self.output / "02_results/01_sample_and_data").exists())
+            self.assertEqual(list((self.output / "02_results").glob(".00_*.tmp")), [])
+            logs = list((self.output / "03_logs/01_sample_and_data").glob("*.log"))
+            self.assertEqual(len(logs), 1)
+            self.assertIn("FAILED", logs[0].read_text(encoding="utf-8"))
+            self.assert_inputs_unchanged()
+
+        def test_csv_write_failure(self):
+            self.check_failed_publication(mock.patch.object(pd.DataFrame, "to_csv", side_effect=OSError("synthetic disk error")), OSError)
+
+        def test_excel_write_failure(self):
+            self.check_failed_publication(mock.patch.object(pd.DataFrame, "to_excel", side_effect=PermissionError("synthetic locked workbook")), PermissionError)
+
+        def test_publication_rename_failure(self):
+            self.check_failed_publication(mock.patch.object(Path, "rename", side_effect=PermissionError("synthetic rename denied")), PermissionError)
+
+        def test_corrupt_output_blocks_publication(self):
+            original = validate_outputs
+            def corrupt(out, expected):
+                (out / OUTPUT_NAMES[2]).write_bytes(b"not-a-gzip-file")
+                return original(out, expected)
+            self.check_failed_publication(mock.patch.dict(globals(), {"validate_outputs": corrupt}), OSError)
+
+        def test_missing_source_file(self):
+            # Only synthetic files in this test's own TemporaryDirectory.
+            (self.data / "CONOSCE_CONVOCATORIAS2020_test.xlsx").unlink()
+            with self.assertRaisesRegex(ValueError, "exactly one"):
+                self.execute()
+            self.assertFalse((self.output / "02_results/01_sample_and_data").exists())
+
+        def test_source_mutation_blocks_publication(self):
+            original = validate_outputs
+            def mutate(out, expected):
+                verified = original(out, expected)
+                source = self.data / "CONOSCE_CONVOCATORIAS2020_test.xlsx"
+                with source.open("ab") as stream:
+                    stream.write(b"synthetic concurrent mutation")
+                return verified
+            with mock.patch.dict(globals(), {"validate_outputs": mutate}), self.assertRaisesRegex(ValueError, "Input changed"):
+                self.execute()
+            self.assertFalse((self.output / "02_results/01_sample_and_data").exists())
+
+        def test_output_value_corruption_blocks_publication(self):
+            original = validate_outputs
+            def corrupt(out, expected):
+                path = out / OUTPUT_NAMES[0]
+                book = openpyxl.load_workbook(path)
+                try:
+                    book.active.cell(2, 1, "unexpected-procedure")
+                    book.save(path)
+                finally:
+                    book.close()
+                return original(out, expected)
+            self.check_failed_publication(mock.patch.dict(globals(), {"validate_outputs": corrupt}), ValueError)
+
+        def test_formula_text_escape(self):
+            frame = pd.DataFrame({"text": ["=1+1", "@name", "plain"]})
+            escaped = safe_excel(frame)
+            self.assertEqual(escaped.text.tolist(), ["'=1+1", "'@name", "plain"])
+            self.assertEqual(frame.text.iloc[0], "=1+1")
+
+    result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(SyntheticTests))
+    if not result.wasSuccessful():
+        raise RuntimeError("Synthetic self-tests failed; no real-data execution is permitted")
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project-root", type=Path)
+    parser.add_argument("--output-root", type=Path, help="Fresh project-shaped output root; existing result directories are never replaced")
+    parser.add_argument("--self-test", action="store_true", help="Run synthetic automated tests in temporary directories only")
     args = parser.parse_args()
+    if args.self_test:
+        return run_self_tests()
     root = args.project_root.resolve() if args.project_root else root_from_script()
-    logs = root / "03_logs" / "01_sample_and_data"
-    logs.mkdir(parents=True, exist_ok=True)
-    try:
-        run(root)
-    finally:
-        (logs / "00_sample_selection.log").write_text("\n".join(LOG), encoding="utf-8")
+    run(root, args.output_root)
+
 
 
 if __name__ == "__main__":
