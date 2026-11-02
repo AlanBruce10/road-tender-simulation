@@ -125,27 +125,74 @@ These results support descriptive and exploratory use of the reference cohort. T
 ## 2. Script 05 — Scenarios and Calibration
 
 ### Purpose
-`05_scenarios_and_calibration.py` calibrates the conditional stochastic distributions for each tender stage and establishes the information-asymmetry partitions.
+`05_scenarios_and_calibration.py` calibrates distributions of **published schedule intervals** in the unchanged reference cohort of **2,004 eligible code-level records**. The scope is retrospective calibration conditional on Q, not verified actual durations, causal estimation, or operational prediction at the initial notice. Q is the combined count defined in Script 04; the main horizon is query close to award end.
+
+**M2 (Q + government) is the scientific reference. M1 (Q only) and M4 (Q + government + procedure reference amount) remain executable, calibrated alternatives.** Their point-estimate specifications are exported for a future SIXA Streamlit calculator; no calculator or adaptation of scripts 06–09 is implemented here.
 
 ### Key Methodological Features
-- **Location-Scale Parameterization:** Standardizes Q into z = [ln(1 + Q) − 2.741] / 1.188 and estimates continuous parameters via maximum likelihood:
-  - Stage 1 (Absolution): Lognormal with conditional location: a = 2.293, b = 0.458.
-  - Stage 2 (Integration): Two-part Hurdle model (p_zero = 0.998; 99.8% duration is 0 days; empirical mixture when positive).
-  - Stage 3 (Post-Integration to Award): Lognormal with conditional location and scale: a = 3.119, b = 0.129, c = −0.439, d = 0.136.
-- **Multivariate Gaussian Copula:** Models inter-stage dependence using randomized Probability Integral Transform (PIT) to handle zero-mass points cleanly.
-- **Asymmetry Scenarios:**
-  - **Primary Scheme (P25 - P75):** Low (Q < 7), Medium (7 ≤ Q ≤ 35), High (Q > 35).
-  - **Sensitivity Scheme (Tertiles):** Low (Q ≤ 10), Medium (11 ≤ Q ≤ 27), High (Q > 27).
-- **Group-Balanced 5-Fold Cross-Validation:** Allocates procedures into 5 project-balanced folds to avoid CUI/entity leakage.
+- **Controlled Comparison:** M0 is an intercept-only benchmark; M1 uses Q; M2 adds government; M3 adds ln(procedure reference amount); M4 includes both adjustments. Three matched covariate models without Q assess its additional predictive information and are not selection candidates. Q remains the primary explanatory variable.
+- **Comparable Lognormal Models:** Positive total, absolution and post-integration intervals use `ln(T) = mu + sigma * epsilon`, with standard normal epsilon. Ordered design names and coefficients are exported. Government and amount enter location only; log-sigma depends on standardized log1p(Q) for total/post-integration and is constant for absolution. No interactions or additional distribution families are introduced in this comparison.
+- **Training-Only Transformations:** Q uses standardized ln(1 + Q); amount uses standardized ln(amount). Means and population standard deviations are fitted within training partitions. Amount is the **nominal PEN reference amount of the procedure**, not the item or awarded amount; original values remain unchanged. There is no monetary eligibility cutoff or inflation adjustment.
+- **Institutional Coding:** Categories derive from traced `source00_entity_type`, rather than the mixed sector/level field. Regional and national indicators are centered using their training proportions among local/regional/national records. Local is represented by the corresponding negative centered contrasts. FONAFE retains its special label and receives zero government contrasts: the training-weighted average contrast in log-location, not a reassignment, independently estimated FONAFE coefficient, or mixture of predictive distributions. Unknown categories must be rejected.
+- **Sparse Integration:** Retains an empirical zero/positive mixture: p_zero = 0.998004 and four positive values, 17, 15, 38 and 38 days. No covariate regression or reliable tail estimation is claimed. Unsupported held-out positive values are reported, not silently removed from log-score calculations.
+- **Model-Specific Dependence:** Gaussian copulas use residual normal-score correlations after the corresponding marginal adjustment. Integration remains independent in this working dependence model. The consumer export retains M2's approved copula and evaluates missing M1/M4 residual copulas from their existing fitted coefficients, without marginal refitting. A direct total marginal is distinct from the simulated sum of phases; joint phase-sum validation remains pending.
+- **Nested Grouped Validation:** Three outer folds and three inner folds retain connected entity/project components and related families together. Reproducible government/size balancing uses no outcomes, with seed `20251025`; no favorable seed search is performed. Inner transformations, fits and scenario cuts exclude held-out records. Outer fixed-candidate comparisons are descriptive; `NESTED_SELECTED` evaluates the internal selection procedure. Final application selection uses a separate full-cohort inner comparison, not outer errors.
+- **Selection and Uncertainty:** Eligible models M1–M4 are compared using inner total log-density and a paired component-cluster one-standard-error simplicity rule. National guardrails limit MAE deterioration to 10%, coverage deterioration to five percentage points and absolute-bias deterioration to ten percentage points relative to M1. Any fallback is audited. These are selection heuristics, not engineering adequacy guarantees. Fixed-model sandwich covariance for M2 uses 680 dependency components and excludes selection, cutpoint, copula and sparse-mass uncertainty. Alternatives support point-estimate simulation; M2 coefficient uncertainty must not be borrowed for M1/M4.
+- **Q Scenarios:** The full-cohort primary scheme is Low Q < 7, Medium 7 <= Q <= 35, High Q > 35. Tertiles are sensitivity only: Low Q <= 10, Medium 10 < Q <= 27, High Q > 27. Primary cutpoints use linear empirical P25/P75; tied boundary values remain medium. Fold-specific labels use training-only cuts. These are relative consultation/observation-volume categories, not universal asymmetry thresholds.
+- **Conditional Scenario Profiles:** The export preserves complete observed Q/government/procedure-amount tuples with code, entity, component, year and scenario identifiers. To aggregate a scenario, filter whole rows by government and an explicitly declared amount band, normalize weights within the supported subset and resample complete tuples. Never independently sample the three covariates. Empty subsets are unsupported, with no silent widening or institutional substitution. A fixed user-entered tuple can be evaluated conditionally, but a hypothetical combination is not evidence of empirical joint support. Row sampling does not establish observational independence.
+- **Related Families:** `811044`/`848861` and `995451`/`1058629` remain together in validation. Six fixed-model sensitivity views include n = 2,004, exclusion n = 2,000 and all four one-per-pair n = 2,002 alternatives. The latter are sensitivities, not definitive deduplications; the maximum absolute standardized total-mean change was 0.091%.
 
 ### Execution
-From the repository root:
+From the repository root, use a fresh independent output root:
+
 ```bash
-python 01_scripts/02_statistical_analysis/05_scenarios_and_calibration.py
+python 01_scripts/02_statistical_analysis/05_scenarios_and_calibration.py --project-root . --output-root 02_results/reproducibility/script05_run_001 --seed 20251025
 ```
 
+To export M1/M2/M4 from a completed, hash-verified calibration **without rerunning marginal estimation, selection or cross-validation**, use another fresh output root:
+
+```bash
+python 01_scripts/02_statistical_analysis/05_scenarios_and_calibration.py --project-root . --export-existing-calibration 02_results/reproducibility/script05_run_001/02_results/02_statistical_analysis --output-root 02_results/reproducibility/script05_export_001
+```
+
+The exporter requires the approved M2 reference. Calibration and export refuse existing output directories, verify staged artifacts and protect the source files. The fitting-code fingerprint and the later export-code fingerprint remain distinct. Generated artifacts stay local under the project's exclusions; committing the script/README does not publish calibration data or deployment assets.
+
+Run the **25 synthetic tests** separately:
+
+```bash
+python 01_scripts/02_statistical_analysis/05_scenarios_and_calibration.py --self-test
+```
+
+The tests cover input/temporal validation, scenario ties, grouped leakage, reproducibility, model/design contracts, FONAFE, parameter uncertainty, sparse/constant outcomes, synthetic end-to-end calibration, hashes, failed writes and corruption. Export tests prohibit optimization, verify exact coefficient/transform preservation and complete profile tuples, and check that changing amount affects M4 through its exported coefficient while leaving M1/M2 unchanged.
+
 ### Main Outputs (`02_results/02_statistical_analysis/`)
-- `05_1_classified_dataset.xlsx`: The 2,004 procedures with assigned scenario labels and fold indices.
-- `05_2_calibration_audit.xlsx`: Model selection tables (AIC/BIC), transition matrices, and parameter audits.
-- `05_3_model_parameters.json`: Complete calibrated specification and copula matrix used by the simulation engine.
-- `05_cv_models/`: Calibrated parameters for each of the 5 cross-validation training folds.
+Paths are relative to the selected calibration or export output root.
+
+- `05_1_classified_dataset.csv` / `.xlsx`: All 2,004 records, original fields, derived government/log-amount fields, scenario labels and outer fold assignments.
+- `05_2_calibration_audit.xlsx`: M0–M4 comparisons, matched Q contrasts, inner selection, outer metrics by fold/government/year, parameters, family sensitivities and consumer incompatibilities.
+- `05_3_model_parameters.json`: Calibration schema `3.0-nested-covariates`, final M2 specification, complete full-cohort candidate coefficients/transforms, validation diagnostics, M2 uncertainty and copula. It is not a legacy `coefficients_abcd` contract.
+- `05_4_cv_assignments.csv`, `05_5_out_of_fold_predictions.csv`, `05_6_nested_assignments.json`: Outer assignments, candidate/selected external predictions and auditable inner membership.
+- `05_cv_models/fold_01.json` through `fold_03.json`: Outer training-only fits, selection and held-out identifiers.
+- `05_run_manifest.json`: Input/code fingerprints, versions, seed, protected-file fingerprints and SHA-256 values of the ten calibration artifacts. Unique logs are under `03_logs/02_statistical_analysis/`.
+- `05_7_simulation_bundle.json`: Consumer schema `sixa-calibration-bundle/1.0`, M2 reference and complete M1/M2/M4 marginal coefficients, transformations, design equations, institutional policy, model-specific copulas, inverse-sampling definitions, scenario boundaries, empirical support, provenance and per-model hashes. Coefficients must be loaded from the artifact, not copied into application code.
+- `05_8_joint_profiles.csv`: Linked empirical Q/government/procedure-amount profiles with normalized row weights and group/family linkage. The consumer bundle records its relative path and SHA-256.
+- `05_export_manifest.json`: Export provenance and SHA-256 values for the consumer bundle and joint profiles; the original calibration remains unchanged.
+
+### Reference Results and Limitations
+The controlled nested calibration completed in 36.56 seconds, preserving all 2,004 records; calibration artifact hashes and 41 protected-file hashes were verified. Scores below use held-out components for the query-close-to-award total; positive-day log-scores are working continuous densities, not exact discrete-day probabilities.
+
+| Candidate | Mean log-score (higher is better) | Median-prediction MAE (days) | Mean bias | Central 80% coverage |
+|---|---:|---:|---:|---:|
+| M0 | -4.6382 | 26.77 | -4.30% | 84.68% |
+| M1 | -4.5505 | 24.83 | -4.56% | 84.58% |
+| M2 | -4.5221 | 23.80 | -3.71% | 84.33% |
+| M3 | -4.5388 | 24.38 | -4.09% | 84.68% |
+| M4 | -4.5199 | 23.60 | -3.34% | 84.68% |
+
+M2 was selected for the final fit by simplicity relative to M4. The outer internal selections were M1, M1 and M4: their combined MAE was 24.79 days, bias -5.85% and coverage 83.88%. Candidate improvements therefore do not demonstrate stable model selection. Q retained additional descriptive predictive information after covariate adjustment; neither coefficient interpretation nor predictive improvement establishes causality.
+
+National results remain limited: only 56 records across six entities, with 50 concentrated in two entities. M2 improved national mean bias to -5.43% and coverage to 66.07%, but equal-entity MAE worsened from 60.03 to 68.27 days relative to M1. The nested selection procedure achieved only 35.71% national coverage and -53.28% bias. FONAFE has one record and no population-level validation. These limitations must remain visible in any future consumer.
+
+Year-specific M2 bias ranges from +11.15% (2020) to -16.36% (2024). The pooled cohort was previously explored; results are internal development evidence, not an untouched external or future-year test. Marginal ranges do not prove joint support: extrapolation, sparse institutional profiles and nominal-price comparability must be flagged. Simulated variability at fixed coefficients does not include all parameter/model uncertainty.
+
+**Scripts 06–09 are not yet compatible with the new covariate contract.** They require explicit adapters, joint-profile handling and progressive validation. The exports enable future SIXA to load and evaluate M1/M2/M4 without hardcoded coefficients; they do not constitute a validated calculator or authorization to run subsequent scripts.
