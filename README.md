@@ -15,7 +15,7 @@ This repository contains the complete reproducible computational pipeline develo
 
 The research analyzes public road-infrastructure procurement procedures registered in the Peruvian **OECE-SEACE Open Data Portal** during **2020–2025**. 
 
-The computational workflow reconstructs the national tender population, audits procedural schedules, extracts and validates consultation and observation records (Q) from official administrative documents, models inter-stage duration distributions via location-scale parametric formulations and copula dependence, executes Discrete Event Simulations (DES) with Monte Carlo sampling, and formally tests the central hypothesis linking information asymmetry to award-time uncertainty.
+The computational workflow reconstructs the national tender population, audits procedural schedules, extracts and validates consultation and observation records (Q) from official administrative documents, models inter-stage duration distributions via location-scale parametric formulations and copula dependence, simulates sequential administrative schedule intervals by conditional Monte Carlo using calibrated marginals, joint empirical profiles, and residual dependence modeled by copulas, and formally tests the central hypothesis linking information asymmetry to award-time uncertainty.
 
 The master analytical cohort comprises **2,004 eligible public road-infrastructure tenders** verified through a rigorous seven-gate quality control protocol.
 
@@ -26,7 +26,7 @@ The master analytical cohort comprises **2,004 eligible public road-infrastructu
 ### Key Empirical & Simulation Results
 1. **Historical scenario sensitivity:** The high/low SD ratio is 1.728 for P25/P75 and 1.752 for tertiles. Whole-component bootstrap 95% intervals are [1.169, 2.653] and [1.280, 2.369], respectively. These contrasts are descriptive.
 2. **Residual dependence pilot:** All 117 contrasts met their Monte Carlo precision tolerances. Under M1 high, the adjusted-minus-identity changes were +0.51151 days in SD and +1.00337 days in P95.
-3. **Simulated DES Outcomes (N = 100,000 per scenario):**
+3. **Conditional Monte Carlo Outcomes (N = 100,000 per scenario):**
    - **Low Asymmetry (Q < 7):** Mean = 30.45 d, Std (σ) = 17.60 d, 90th Percentile (P90) = 51.0 d.
    - **Medium Asymmetry (7 ≤ Q ≤ 35):** Mean = 45.25 d, Std (σ) = 30.32 d, 90th Percentile (P90) = 80.0 d.
    - **High Asymmetry (Q > 35):** Mean = 62.17 d, Std (σ) = 47.12 d, 90th Percentile (P90) = 115.0 d.
