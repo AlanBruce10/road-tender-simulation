@@ -1,8 +1,9 @@
-# Stochastic Simulation (Monte Carlo & Discrete Event Simulation)
+# Conditional Monte Carlo Simulation
 
 This directory contains the computational simulation engines that model the award-time uncertainty of Peruvian road procurement procedures.
 
-These scripts fulfill **Specific Objective 3** of the thesis:
+**Specific Objective 3**, as stated in the originally approved research project:
+
 > *Model stochastically the procurement duration for each information asymmetry scenario using Monte Carlo simulation and Discrete Event Simulation (DES) in Python.*
 
 ---
@@ -93,7 +94,7 @@ Each contains the analytical outputs in `02_results/03_stochastic_simulation/` a
 ### Scope and Downstream Responsibilities
 Precision applies only to the nine empirical model/scenario mixtures evaluated with fixed calibrated parameters. It is not a certificate for arbitrary fixed profiles, amount bands, sparsely represented government levels or future populations. In particular, national/FONAFE support limitations from Script 05 persist. Monte Carlo error, inherent interval variability, profile heterogeneity, parameter uncertainty and model-selection uncertainty are distinct.
 
-Script 07 requires a separate audit and controlled adaptation to reuse the importable core and scenario-specific decisions; its existing implementation is not approved by this convergence study. Script 08 must assess empirical validity of the phase-sum distribution with appropriate dependence-aware validation. Script 09 handles substantive model/scenario sensitivities. No causal claim, verified actual-duration claim or independent DES capability follows from numerical convergence.
+The approved Script 07 reuses the importable core and both convergence decision directories. Script 08 separates internal phase-sum diagnostics from marginal out-of-fold evaluation. Joint out-of-fold validation of the phase sum remains unavailable. Script 09 evaluates descriptive and structural sensitivity.
 
 ---
 

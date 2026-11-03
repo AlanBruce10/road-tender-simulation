@@ -17,7 +17,7 @@ Run the scripts in this order:
 
 Scripts 00, 02, and 03 process local files. Script 01 requires access to SEACE.
 
-These scripts prepare the data. Statistical estimation, Monte Carlo simulation, discrete-event simulation (DES), and model validation belong to subsequent stages.
+These scripts prepare the data. Statistical estimation, conditional Monte Carlo simulation and model evaluation belong to subsequent stages.
 
 ## 2. Requirements
 
@@ -335,7 +335,7 @@ Under `02_results/01_sample_and_data/`:
 - The fiche schedules and acquisition validation from Script 01.
 - The combined Q measurement from Script 02.
 
-It exports both a complete integrated register and the common eligible cohort for subsequent DES and Monte Carlo analysis.
+It exports both a complete integrated register and the common eligible cohort for subsequent conditional Monte Carlo analysis.
 
 ### Final eligibility controls
 

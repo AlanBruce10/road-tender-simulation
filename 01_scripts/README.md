@@ -17,11 +17,11 @@ The pipeline comprises **10 sequentially numbered scripts (00–09)** organized 
 │   ├── 04_exploratory_analysis.py
 │   └── 05_scenarios_and_calibration.py
 │
-├── 03_stochastic_simulation/    # Objective 3: Monte Carlo convergence and Discrete Event Simulation (DES)
+├── 03_stochastic_simulation/    # Objective 3: Monte Carlo precision and conditional simulation
 │   ├── 06_convergence_analysis.py
 │   └── 07_conditional_monte_carlo_simulation.py
 │
-└── 04_model_validation/         # Objective 4: Goodness-of-fit, hypothesis testing, and sensitivity analysis
+└── 04_model_validation/         # Objective 4: Internal diagnostics, marginal OOF evaluation, and sensitivity
     ├── 08_model_validation.py
     └── 09_sensitivity_analysis.py
 ```
@@ -29,6 +29,8 @@ The pipeline comprises **10 sequentially numbered scripts (00–09)** organized 
 ---
 
 ## Execution Sequence
+
+The commands below use approved local artifacts where historical paths are shown. A clean clone does not include source data or run artifacts. Supply the integrated dataset from 03 to 04/05 and use fresh output roots. Script 06 consumes the 05 export bundle and produces separate initial and supplemental decisions. Script 07 requires both decision directories and the same bundle. Script 08 requires nested calibration, the bundle and the 07 run. Stage 1 of 09 additionally requires the matching 08 run. Set the Script 09 shell variables using its [input contract](04_model_validation/README.md#execution-and-contracts). For a new chain, update the input paths to the outputs of the corresponding upstream runs.
 
 All scripts are self-contained, reproducible, and designed to be executed from the **repository root**:
 
@@ -40,11 +42,12 @@ python 01_scripts/01_sample_and_data/02_count_queries.py
 python 01_scripts/01_sample_and_data/03_integrate_results.py
 
 # Phase 2: Statistical Modeling & Calibration (Specific Objective 2)
-python 01_scripts/02_statistical_analysis/04_exploratory_analysis.py
-python 01_scripts/02_statistical_analysis/05_scenarios_and_calibration.py
+python 01_scripts/02_statistical_analysis/04_exploratory_analysis.py --project-root . --output-root 02_results/reproducibility/script04_new
+python 01_scripts/02_statistical_analysis/05_scenarios_and_calibration.py --project-root . --output-root 02_results/reproducibility/script05_new
 
 # Phase 3: Stochastic Simulation (Specific Objective 3)
-python 01_scripts/03_stochastic_simulation/06_convergence_analysis.py
+python 01_scripts/03_stochastic_simulation/06_convergence_analysis.py --bundle-dir 02_results/reproducibility/script05_sixa_export_20261102_01/02_results/02_statistical_analysis --output-root 02_results/reproducibility/script06_initial_new --protocol initial --seed 20251025
+python 01_scripts/03_stochastic_simulation/06_convergence_analysis.py --bundle-dir 02_results/reproducibility/script05_sixa_export_20261102_01/02_results/02_statistical_analysis --output-root 02_results/reproducibility/script06_supplement_new --protocol supplement --seed 2026110306 --chunk-size 100000
 python 01_scripts/03_stochastic_simulation/07_conditional_monte_carlo_simulation.py --bundle-dir 02_results/reproducibility/script05_sixa_export_20261102_01/02_results/02_statistical_analysis --initial-dir 02_results/reproducibility/script06_real_20261103T030931307613Z/02_results/03_stochastic_simulation --supplement-dir 02_results/reproducibility/script06_supplement_real_20261103T032752392276Z/02_results/03_stochastic_simulation --output-root 02_results/reproducibility/script07_new --models M1 M2 M4 --scenarios low medium high --seed 2026110307 --chunk-size 50000
 
 # Phase 4: Model Validation & Robustness (Specific Objective 4)
@@ -66,7 +69,7 @@ python 01_scripts/04_model_validation/09_sensitivity_analysis.py stage2 --bundle
 | `03_integrate_results.py` | 01 | Quality control, identity checks, and master eligible dataset | `03_2_model_ready_dataset.xlsx` (N = 2,004) |
 | `04_exploratory_analysis.py` | 02 | Non-parametric correlations and dispersion diagnostics | `04_1_descriptive_statistics.xlsx` |
 | `05_scenarios_and_calibration.py` | 02 | Conditional Lognormal fitting, Hurdle model, and copula | `05_3_model_parameters.json` |
-| `06_convergence_analysis.py` | 03 | Monte Carlo stability assessment validating N = 100,000 | `06_2_convergence_decision.json` |
+| `06_convergence_analysis.py` | 03 | Monte Carlo precision by model and Q scenario | `06_2_convergence_decision.json` |
 | `07_conditional_monte_carlo_simulation.py` | 03 | Conditional Monte Carlo orchestrator reusing Script 06 | `07_2_simulation_summary.json` |
 | `08_model_validation.py` | 04 | Internal phase-sum diagnostics, saved marginal OOF evaluation and methodological limits; no joint OOF phase-sum validation | `08_A_internal_diagnostics.json`, `08_B_oof_marginal_evaluation.json`, `08_C_methodological_limits.json` |
 | `09_sensitivity_analysis.py` | 04 | Descriptive and structural sensitivity plus a paired residual dependence pilot | Stage 1 JSON/CSV and manifest; Stage 2 replicate, precision and manifest JSON |

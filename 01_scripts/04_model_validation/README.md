@@ -1,8 +1,9 @@
-# Model Validation and Hypothesis Testing
+# Internal Diagnostics, Marginal OOF Evaluation, and Sensitivity
 
-This directory contains the scripts dedicated to the statistical validation of the simulation model and the formal empirical testing of the research hypothesis.
+This directory contains internal simulation diagnostics, marginal out-of-fold evaluation, and sensitivity analyses.
 
-These scripts fulfill **Specific Objective 4** of the thesis:
+**Specific Objective 4**, as stated in the originally approved research project:
+
 > *Validate the model by contrasting simulated procurement times against real historical records using the Kolmogorov-Smirnov (K-S) and Student's t tests at a significance level of α = 0.05, and test the dispersion hypothesis H1: σ_high > σ_low.*
 
 ---
@@ -122,6 +123,8 @@ The pilot used nine M1/M2/M4 × low/medium/high configurations, 30 independent r
 All 117 contrasts met the Bonferroni half-width tolerances of 0.05 days for mean, 0.10 for SD and median, 0.25 for P90/P95, and 0.10 percentage points for each exceedance. The report also includes pointwise 95% t intervals and flags constant replicate differences separately. These intervals quantify Monte Carlo precision with fixed parameters at one N. Finite-sample SD and quantile bias, parameter uncertainty, and joint predictive validity remain unresolved. The pilot supports neither equivalence nor general invariance. No expansion is planned in this phase.
 
 ### Execution and contracts
+
+Stage 1 checks exact provenance against the Script 08 manifest, including absolute input paths. Relocating a run can fail this check despite matching file hashes. Stage 2 requires the approved Stage 1 manifest at the repository-relative location given below. These are current contract limitations when moving the analysis to another machine.
 
 Set the following shell variables to the approved local directories.
 
