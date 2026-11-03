@@ -89,7 +89,7 @@ road-tender-simulation/
 | 05 | `05_scenarios_and_calibration.py`| OE2 | Fits location-scale Lognormal, Hurdle model, copula, and defines P25/P75 |
 | 06 | `06_convergence_analysis.py` | OE3 | MCSE stability audit proving N = 100,000 required for variance convergence |
 | 07 | `07_conditional_monte_carlo_simulation.py`| OE3 | Conditional Monte Carlo orchestrator reusing Script 06 with model/scenario-specific N |
-| 08 | `08_model_validation.py` | OE4 | Validates real vs. simulated fit (K-S, Welch t-test) and tests H1 (Levene test) |
+| 08 | `08_model_validation.py` | OE4 | Separates internal phase-sum diagnostics, saved marginal grouped-CV evaluation and the absence of joint OOF validation |
 | 09 | `09_sensitivity_analysis.py` | OE4 | Evaluates robustness across tertiles, copula dependence, and yearly cohorts |
 
 ---
@@ -143,7 +143,7 @@ python 01_scripts/03_stochastic_simulation/06_convergence_analysis.py
 python 01_scripts/03_stochastic_simulation/07_conditional_monte_carlo_simulation.py --bundle-dir 02_results/reproducibility/script05_sixa_export_20261102_01/02_results/02_statistical_analysis --initial-dir 02_results/reproducibility/script06_real_20261103T030931307613Z/02_results/03_stochastic_simulation --supplement-dir 02_results/reproducibility/script06_supplement_real_20261103T032752392276Z/02_results/03_stochastic_simulation --output-root 02_results/reproducibility/script07_new --models M1 M2 M4 --scenarios low medium high --seed 2026110307 --chunk-size 50000
 
 # Validation & Robustness (OE4)
-python 01_scripts/04_model_validation/08_model_validation.py
+python 01_scripts/04_model_validation/08_model_validation.py --calibration-dir 02_results/reproducibility/script05_nested_20261102T054434700539Z_1eec8469/02_results/02_statistical_analysis --bundle-dir 02_results/reproducibility/script05_sixa_export_20261102_01/02_results/02_statistical_analysis --simulation-dir 02_results/reproducibility/script07_real_20261103T035847496236Z/02_results/03_stochastic_simulation --output-root 02_results/reproducibility/script08_new --bootstrap-reps 2000 --seed 2026110308
 python 01_scripts/04_model_validation/09_sensitivity_analysis.py
 ```
 
