@@ -19,7 +19,7 @@ The pipeline comprises **10 sequentially numbered scripts (00–09)** organized 
 │
 ├── 03_stochastic_simulation/    # Objective 3: Monte Carlo convergence and Discrete Event Simulation (DES)
 │   ├── 06_convergence_analysis.py
-│   └── 07_discrete_event_simulation.py
+│   └── 07_conditional_monte_carlo_simulation.py
 │
 └── 04_model_validation/         # Objective 4: Goodness-of-fit, hypothesis testing, and sensitivity analysis
     ├── 08_model_validation.py
@@ -45,7 +45,7 @@ python 01_scripts/02_statistical_analysis/05_scenarios_and_calibration.py
 
 # Phase 3: Stochastic Simulation (Specific Objective 3)
 python 01_scripts/03_stochastic_simulation/06_convergence_analysis.py
-python 01_scripts/03_stochastic_simulation/07_discrete_event_simulation.py
+python 01_scripts/03_stochastic_simulation/07_conditional_monte_carlo_simulation.py --bundle-dir 02_results/reproducibility/script05_sixa_export_20261102_01/02_results/02_statistical_analysis --initial-dir 02_results/reproducibility/script06_real_20261103T030931307613Z/02_results/03_stochastic_simulation --supplement-dir 02_results/reproducibility/script06_supplement_real_20261103T032752392276Z/02_results/03_stochastic_simulation --output-root 02_results/reproducibility/script07_new --models M1 M2 M4 --scenarios low medium high --seed 2026110307 --chunk-size 50000
 
 # Phase 4: Model Validation & Robustness (Specific Objective 4)
 python 01_scripts/04_model_validation/08_model_validation.py
@@ -65,6 +65,6 @@ python 01_scripts/04_model_validation/09_sensitivity_analysis.py
 | `04_exploratory_analysis.py` | 02 | Non-parametric correlations and dispersion diagnostics | `04_1_descriptive_statistics.xlsx` |
 | `05_scenarios_and_calibration.py` | 02 | Conditional Lognormal fitting, Hurdle model, and copula | `05_3_model_parameters.json` |
 | `06_convergence_analysis.py` | 03 | Monte Carlo stability assessment validating N = 100,000 | `06_2_convergence_decision.json` |
-| `07_discrete_event_simulation.py` | 03 | Two-stage DES engine generating 300,000 synthetic runs | `07_2_simulation_summary.xlsx` |
+| `07_conditional_monte_carlo_simulation.py` | 03 | Conditional Monte Carlo orchestrator reusing Script 06 | `07_2_simulation_summary.json` |
 | `08_model_validation.py` | 04 | K-S, Welch t-test, Levene test (p = 1.48 × 10⁻²⁴), and Bootstrap CI | `08_2_hypothesis_decision.json` |
 | `09_sensitivity_analysis.py` | 04 | Robustness across tertiles, copula vs. independence, and years | `09_1_sensitivity_metrics.xlsx` |
