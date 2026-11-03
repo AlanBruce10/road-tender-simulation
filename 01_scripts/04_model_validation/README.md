@@ -12,7 +12,7 @@ These scripts fulfill **Specific Objective 4** of the thesis:
 | Script | Title | Methodological Role |
 |---|---|---|
 | `08_model_validation.py` | Internal Diagnostics & Marginal Grouped-CV Evaluation | Separates internal phase-sum concordance, saved marginal OOF evidence and the absence of joint OOF validation; reports component-bootstrap uncertainty without IID simulation-versus-observation tests |
-| `09_sensitivity_analysis.py` | Multi-Dimensional Robustness | Evaluates sensitivity to scenario cutpoints (P25/P75 vs. Tertiles), inter-stage copula dependence vs. independence, and yearly stability (2020–2025) |
+| `09_sensitivity_analysis.py` | Sensitivity analysis | Historical partitions, model comparisons, composition, annual descriptions, saved discrepancies and a paired residual dependence pilot |
 
 ---
 
@@ -96,28 +96,50 @@ Script 09 requires a separate audit for substantive sensitivities. It is not exe
 
 ---
 
-## 2. Script 09 — Sensitivity and Robustness Analysis
+## 2. Script 09 — Sensitivity Analysis
 
-### Purpose
-`09_sensitivity_analysis.py` stress-tests the scientific conclusions across three alternative analytical dimensions to guarantee that findings are not artifacts of specific modeling choices.
+### Stage 1 — Descriptive and structural sensitivity
 
-### Sensitivity Dimensions
-1. **Scenario Cutpoint Invariance:**
-   - Primary scheme (P25 - P75: Q < 7 vs. Q > 35): Ratio = 1.73, Levene p = 1.48 × 10⁻²⁴.
-   - Tertiles scheme (Low Q ≤ 10 vs. High Q > 27): Ratio = 1.75, Levene p = 6.65 × 10⁻²⁷.
-   - Confirms that the dispersion effect is completely invariant to the partitioning convention.
-2. **Temporal Subgroup Stability (2020 to 2025):**
-   - Evaluates the variance ratio separately for each of the six study years.
-   - In all six individual years, σ_high exceeds σ_low (H1 direction maintained = True; ratios ranging from 1.32 to 3.38).
-3. **Copula vs. Independence Benchmark:**
-   - Contrasts the full multi-stage Gaussian copula model against an independent stage assumption (Mean: 61.49 d vs. 61.46 d; P90: 113.6 d vs. 113.8 d), validating that copula dependence captures residual correlation without distorting total durations.
+The default mode reuses approved artifacts from Scripts 05–08 for the 2,004 procedures and 680 entity/project components. Q is the verified consultation and observation count. Durations describe published schedules.
 
-### Execution
-From the repository root:
+- P25/P75 uses Q < 7, 7 ≤ Q ≤ 35, and Q > 35. Tertiles use Q ≤ 10, 10 < Q ≤ 27, and Q > 27. The historical high/low SD ratios are 1.728 and 1.752, respectively. With 2,000 whole-component bootstrap replicates, the pointwise 95% percentile intervals are [1.169, 2.653] and [1.280, 2.369].
+- M1 and M4 are compared with M2 within each saved empirical scenario. Simulation budgets are metadata and do not weight scenarios. The historical M1-high individual SD precision warning remains (0.543690 days versus a 0.500000-day tolerance).
+- Composition is reported by government level, nominal procedure amount in PEN, notice year and component. National Government and FONAFE have limited support. Annual comparisons cover 2020–2025, with the 2023 primary extreme contrast withheld for sparse support.
+- Script 08 discrepancies retain the observed-minus-simulated sign for SD, P90, P95 and exceedances. Marginal out-of-fold evidence remains separate. Joint out-of-fold validation of the three-phase sum is unavailable. Scenario contrasts combine changes in Q and profile composition.
+
+### Stage 2 — Paired residual dependence pilot
+
+The explicit mode compares the approved Gaussian residual copula with an identity matrix constructed in memory. Both arms reuse Script 06, joint profiles, weights, calibrated marginal transformations, and integration treatment. Common random numbers share profile selection and base normals within each pair. The total is the continuous sum of the three phases. Shared profiles can induce marginal dependence under the identity copula.
+
+The pilot used nine M1/M2/M4 × low/medium/high configurations, 30 independent replicates, two arms and 50,000 draws per arm and replicate, totaling 27 million realizations. The fixed seed is `202611030901` and the stream namespace is `residual_dependence_pilot_v1:`. The 13 contrasts per configuration use adjusted minus identity for mean, sample SD, median, linear P90/P95 and eight strict exceedances (30, 45, 60, 75, 90, 120, 150 and 180 days). Exceedance differences are in percentage points.
+
+| High Q model | SD change (days) | P95 change (days) |
+|---|---:|---:|
+| M1 | +0.51151 | +1.00337 |
+| M2 | +0.02597 | +0.03242 |
+| M4 | +0.03103 | +0.03447 |
+
+All 117 contrasts met the Bonferroni half-width tolerances of 0.05 days for mean, 0.10 for SD and median, 0.25 for P90/P95, and 0.10 percentage points for each exceedance. The report also includes pointwise 95% t intervals and flags constant replicate differences separately. These intervals quantify Monte Carlo precision with fixed parameters at one N. Finite-sample SD and quantile bias, parameter uncertainty, and joint predictive validity remain unresolved. The pilot supports neither equivalence nor general invariance. No expansion is planned in this phase.
+
+### Execution and contracts
+
+Set the following shell variables to the approved local directories.
+
+| Variable | Required input |
+|---|---|
+| `CALIBRATION_DIR` | Script 05 nested calibration directory, including the classified CSV, marginal OOF artifacts and run manifest |
+| `BUNDLE_DIR` | Script 05 export directory containing `05_7_simulation_bundle.json`, `05_8_joint_profiles.csv` and `05_export_manifest.json` |
+| `SIMULATION_DIR` | Script 07 run directory with nine compressed trajectory files, simulation summary and manifest |
+| `VALIDATION_DIR` | Script 08 run directory containing the A/B/C evidence and run manifest |
+| `STAGE1_ROOT`, `STAGE2_ROOT` | Distinct fresh output roots, for example under `02_results/reproducibility/` |
+
+Stage 2 verifies bundle provenance against the approved local Stage 1 manifest in `02_results/reproducibility/script09_real_20261103_stage1_01/02_results/04_model_validation/`.
+
 ```bash
-python 01_scripts/04_model_validation/09_sensitivity_analysis.py
+python 01_scripts/04_model_validation/09_sensitivity_analysis.py --calibration-dir "$CALIBRATION_DIR" --bundle-dir "$BUNDLE_DIR" --simulation-dir "$SIMULATION_DIR" --validation-dir "$VALIDATION_DIR" --output-root "$STAGE1_ROOT" --bootstrap-reps 2000 --seed 2026110309
+python 01_scripts/04_model_validation/09_sensitivity_analysis.py stage2 --bundle-dir "$BUNDLE_DIR" --output-root "$STAGE2_ROOT"
 ```
 
-### Main Outputs (`02_results/04_model_validation/`)
-- `09_1_sensitivity_metrics.xlsx`: Excel workbook documenting scenario comparisons, yearly stability tables, and copula sensitivity.
-- `figures/09_1_sensitivity_comparison.png`: Dual publication plots displaying yearly dispersion ratios and scheme comparisons.
+Stage 1 writes to `STAGE1_ROOT/02_results/04_model_validation/`. It publishes JSON and CSV for historical scenarios and model comparisons, JSON for composition, annual descriptions, saved discrepancies and methodological limits, and `09_run_manifest.json`. It generates no new trajectories. Bootstrap intervals are optional (`--bootstrap-reps 0` by default, otherwise at least 100); the default seed is `2026110309`.
+
+Stage 2 writes to `STAGE2_ROOT/02_results/04_model_validation_stage2/`. It publishes `09_stage2_replicates.json`, `09_stage2_precision.json` and `09_stage2_manifest.json`. Both modes stage files together, verify SHA-256 and reject existing output directories. Stage 2 stores replicate statistics rather than individual trajectories.

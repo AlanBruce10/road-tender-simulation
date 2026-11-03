@@ -49,7 +49,9 @@ python 01_scripts/03_stochastic_simulation/07_conditional_monte_carlo_simulation
 
 # Phase 4: Model Validation & Robustness (Specific Objective 4)
 python 01_scripts/04_model_validation/08_model_validation.py --calibration-dir 02_results/reproducibility/script05_nested_20261102T054434700539Z_1eec8469/02_results/02_statistical_analysis --bundle-dir 02_results/reproducibility/script05_sixa_export_20261102_01/02_results/02_statistical_analysis --simulation-dir 02_results/reproducibility/script07_real_20261103T035847496236Z/02_results/03_stochastic_simulation --output-root 02_results/reproducibility/script08_new --bootstrap-reps 2000 --seed 2026110308
-python 01_scripts/04_model_validation/09_sensitivity_analysis.py
+# Set the directory variables as described in the Script 09 contract.
+python 01_scripts/04_model_validation/09_sensitivity_analysis.py --calibration-dir "$CALIBRATION_DIR" --bundle-dir "$BUNDLE_DIR" --simulation-dir "$SIMULATION_DIR" --validation-dir "$VALIDATION_DIR" --output-root "$STAGE1_ROOT" --bootstrap-reps 2000 --seed 2026110309
+python 01_scripts/04_model_validation/09_sensitivity_analysis.py stage2 --bundle-dir "$BUNDLE_DIR" --output-root "$STAGE2_ROOT"
 ```
 
 ---
@@ -67,4 +69,4 @@ python 01_scripts/04_model_validation/09_sensitivity_analysis.py
 | `06_convergence_analysis.py` | 03 | Monte Carlo stability assessment validating N = 100,000 | `06_2_convergence_decision.json` |
 | `07_conditional_monte_carlo_simulation.py` | 03 | Conditional Monte Carlo orchestrator reusing Script 06 | `07_2_simulation_summary.json` |
 | `08_model_validation.py` | 04 | Internal phase-sum diagnostics, saved marginal OOF evaluation and methodological limits; no joint OOF phase-sum validation | `08_A_internal_diagnostics.json`, `08_B_oof_marginal_evaluation.json`, `08_C_methodological_limits.json` |
-| `09_sensitivity_analysis.py` | 04 | Robustness across tertiles, copula vs. independence, and years | `09_1_sensitivity_metrics.xlsx` |
+| `09_sensitivity_analysis.py` | 04 | Descriptive and structural sensitivity plus a paired residual dependence pilot | Stage 1 JSON/CSV and manifest; Stage 2 replicate, precision and manifest JSON |

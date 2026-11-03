@@ -23,20 +23,15 @@ The master analytical cohort comprises **2,004 eligible public road-infrastructu
 
 ## Central Research Hypothesis and Scientific Findings
 
-### Hypothesis Contract
-- **Alternative Hypothesis (H1):** Information asymmetry, measured by the volume of consultations and observations (Q), is positively associated with award-time uncertainty. Specifically, procurement procedures with Q above the 75th percentile (High Asymmetry) exhibit a significantly greater duration standard deviation (p < 0.05) than those below the 25th percentile (Low Asymmetry):
-  $$\sigma_{\text{high}} > \sigma_{\text{low}}$$
-- **Null Hypothesis (H0):** There is no significant difference in the standard deviation of procurement durations between High (Q > P75) and Low (Q < P25) asymmetry groups (p ≥ 0.05).
-
 ### Key Empirical & Simulation Results
-1. **Hypothesis Formally Confirmed:** The Levene test (Brown-Forsythe) on historical empirical records yielded a test statistic of **109.062** with an overwhelming p-value of **1.48 × 10⁻²⁴**, formally rejecting H0 and confirming H1.
-2. **Dispersion Multiplier:** The observed empirical standard deviation nearly doubles from **33.66 days** in Low Asymmetry to **58.15 days** in High Asymmetry (Observed Ratio: **1.73**; Bootstrap 95% Confidence Interval: **[1.27, 2.58]**, strictly greater than 1.0).
+1. **Historical scenario sensitivity:** The high/low SD ratio is 1.728 for P25/P75 and 1.752 for tertiles. Whole-component bootstrap 95% intervals are [1.169, 2.653] and [1.280, 2.369], respectively. These contrasts are descriptive.
+2. **Residual dependence pilot:** All 117 contrasts met their Monte Carlo precision tolerances. Under M1 high, the adjusted-minus-identity changes were +0.51151 days in SD and +1.00337 days in P95.
 3. **Simulated DES Outcomes (N = 100,000 per scenario):**
    - **Low Asymmetry (Q < 7):** Mean = 30.45 d, Std (σ) = 17.60 d, 90th Percentile (P90) = 51.0 d.
    - **Medium Asymmetry (7 ≤ Q ≤ 35):** Mean = 45.25 d, Std (σ) = 30.32 d, 90th Percentile (P90) = 80.0 d.
    - **High Asymmetry (Q > 35):** Mean = 62.17 d, Std (σ) = 47.12 d, 90th Percentile (P90) = 115.0 d.
-4. **Temporal Stability (2020–2025):** The variance expansion effect (σ_high > σ_low) holds true across every individual year of the six-year study period.
-5. **Invariance to Partitioning:** The effect remains equally robust under a 3-part tertile classification (Levene p = 6.65 × 10⁻²⁷, Ratio: 1.75).
+4. **Annual comparisons (2020–2025):** High-Q historical dispersion was larger in the five years with sufficient support. The 2023 contrast was withheld.
+
 
 ---
 
@@ -90,7 +85,7 @@ road-tender-simulation/
 | 06 | `06_convergence_analysis.py` | OE3 | MCSE stability audit proving N = 100,000 required for variance convergence |
 | 07 | `07_conditional_monte_carlo_simulation.py`| OE3 | Conditional Monte Carlo orchestrator reusing Script 06 with model/scenario-specific N |
 | 08 | `08_model_validation.py` | OE4 | Separates internal phase-sum diagnostics, saved marginal grouped-CV evaluation and the absence of joint OOF validation |
-| 09 | `09_sensitivity_analysis.py` | OE4 | Evaluates robustness across tertiles, copula dependence, and yearly cohorts |
+| 09 | `09_sensitivity_analysis.py` | OE4 | Descriptive and structural sensitivity plus a paired residual dependence pilot |
 
 ---
 
@@ -144,7 +139,9 @@ python 01_scripts/03_stochastic_simulation/07_conditional_monte_carlo_simulation
 
 # Validation & Robustness (OE4)
 python 01_scripts/04_model_validation/08_model_validation.py --calibration-dir 02_results/reproducibility/script05_nested_20261102T054434700539Z_1eec8469/02_results/02_statistical_analysis --bundle-dir 02_results/reproducibility/script05_sixa_export_20261102_01/02_results/02_statistical_analysis --simulation-dir 02_results/reproducibility/script07_real_20261103T035847496236Z/02_results/03_stochastic_simulation --output-root 02_results/reproducibility/script08_new --bootstrap-reps 2000 --seed 2026110308
-python 01_scripts/04_model_validation/09_sensitivity_analysis.py
+# Set the directory variables as described in the Script 09 contract.
+python 01_scripts/04_model_validation/09_sensitivity_analysis.py --calibration-dir "$CALIBRATION_DIR" --bundle-dir "$BUNDLE_DIR" --simulation-dir "$SIMULATION_DIR" --validation-dir "$VALIDATION_DIR" --output-root "$STAGE1_ROOT" --bootstrap-reps 2000 --seed 2026110309
+python 01_scripts/04_model_validation/09_sensitivity_analysis.py stage2 --bundle-dir "$BUNDLE_DIR" --output-root "$STAGE2_ROOT"
 ```
 
 All analytical outputs, summary tables, and high-resolution figures are automatically generated under `02_results/`.
